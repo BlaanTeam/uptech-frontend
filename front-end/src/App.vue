@@ -51,7 +51,7 @@ export default {
 
   created() {
     this.$http
-      .post("/getUsernameInfo", { username: "awbxking" })
+      .get("/")
       .then(resp => {
         console.log(resp.data);
       })
