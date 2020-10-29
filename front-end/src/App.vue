@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-app-bar app color="primary" dark>
+    <v-app-bar class="test" app color="primary" dark>
       <div class="d-flex align-center">
         <v-img
           alt="Vuetify Logo"
@@ -21,7 +21,7 @@
         />
       </div>
 
-      <v-spacer></v-spacer>
+      <v-spacer ></v-spacer>
 
       <v-btn
         href="https://github.com/vuetifyjs/vuetify/releases/latest"
@@ -62,6 +62,26 @@ export default {
 
   data: () => ({
     //
-  })
+  }),
+  module: {
+    rules: [
+      {
+        test: /\.scss$/,
+        use: [
+          'vue-style-loader',
+          'css-loader',
+          'sass-loader'
+        ]
+      }
+    ]
+  },
 };
+
+
+
 </script>
+<style lang="scss">
+
+
+</style>
+
