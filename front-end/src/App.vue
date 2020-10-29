@@ -49,6 +49,17 @@ export default {
     HelloWorld
   },
 
+  created() {
+    this.$http
+      .post("/getUsernameInfo", { username: "awbxking" })
+      .then(resp => {
+        console.log(resp.data);
+      })
+      .catch(err => {
+        console.log(err.response);
+      });
+  },
+
   data: () => ({
     //
   })
