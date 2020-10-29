@@ -1,0 +1,7 @@
+dbaeumer.vscode-eslint
+EditorConfig.EditorConfig
+esbenp.prettier-vscode
+humao.rest-client
+jcbuisson.vue
+octref.vetur
+shd101wyy.markdown-preview-enhanced
