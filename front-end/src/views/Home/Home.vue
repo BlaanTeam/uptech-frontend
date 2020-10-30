@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <v-carousel v-model="model" continuous>
+    <v-carousel v-model="model" style="height:100%">
       <v-carousel-item v-for="(color, i) in colors" :key="color">
         <v-sheet :color="color" height="100%" tile>
           <v-row class="fill-height" align="center" justify="center">
@@ -17,7 +17,7 @@ export default {
   name: "Home",
   data() {
     return {
-      model: 0,
+      model: 2,
       colors: ["primary", "secondary", "yellow darken-2", "red", "orange"]
     };
   }
