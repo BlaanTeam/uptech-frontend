@@ -1,18 +1,27 @@
 <template>
-  <v-navigation-drawer v-model="drawer" mini-variant permanent app width="180">
-    <v-layout align-center justify-space-between column fill-height>
+  <v-navigation-drawer
+    v-model="drawer"
+    :mini-variant.sync="mini"
+    permanent
+    width="180"
+    app
+  >
+    <v-layout
+      align-center
+      justify-space-between
+      column
+      fill-height
+      @mouseleave.stop="mini = true"
+    >
       <div>
         <v-list-item class="px-2">
-          <v-app-bar-nav-icon></v-app-bar-nav-icon>
+          <v-app-bar-nav-icon @click="mini = !mini"></v-app-bar-nav-icon>
+          <v-list-item-title class="pa-4">Up Tech</v-list-item-title>
         </v-list-item>
 
         <v-list nav dense>
           <v-list-item-group>
-            <div
-              v-for="(item, index) in items"
-              :key="index"
-              v-show="item.href != '/about_us'"
-            >
+            <div v-for="(item, index) in navItemsTop" :key="index">
               <v-tooltip right>
                 <template v-slot:activator="{ on }">
                   <v-list-item
@@ -36,20 +45,28 @@
         </v-list>
       </div>
       <v-list nav dense>
-        <v-tooltip right>
-          <template v-slot:activator="{ on }">
-            <v-list-item to="/settings" link v-on="on">
-              <v-list-item-icon>
-                <v-icon>mdi-cog</v-icon>
-              </v-list-item-icon>
-
-              <v-list-item-content>
-                <v-list-item-title>Settings</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </template>
-          <span>Settings</span>
-        </v-tooltip>
+        <v-list-item-group>
+          <div v-for="(item, index) in navItemsBottom" :key="index">
+            <v-tooltip right>
+              <template v-slot:activator="{ on }">
+                <v-list-item
+                  v-on="on"
+                  :exact="item.href === '/'"
+                  :to="item.href"
+                  tag="button"
+                >
+                  <v-list-item-action>
+                    <v-icon>{{ item.icon }}</v-icon>
+                  </v-list-item-action>
+                  <v-list-item-content>
+                    <v-list-item-title>{{ item.title }}</v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </template>
+              <span>{{ item.title }}</span>
+            </v-tooltip>
+          </div>
+        </v-list-item-group>
       </v-list>
     </v-layout>
   </v-navigation-drawer>
@@ -59,7 +76,8 @@ export default {
   data() {
     return {
       drawer: true,
-      items: [
+      mini: true,
+      navItemsTop: [
         { title: "Home", icon: "mdi-home", href: "/" },
         {
           title: "About Us",
@@ -68,6 +86,9 @@ export default {
         },
         { title: "Sign In", icon: "mdi-login", href: "/sign_in" },
         { title: "Sign Up", icon: "mdi-plus-box-multiple", href: "/sign_up" }
+      ],
+      navItemsBottom: [
+        { title: "Settings", icon: "mdi-cog", href: "/settings" }
       ]
     };
   },
