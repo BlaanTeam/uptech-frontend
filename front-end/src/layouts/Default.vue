@@ -1,7 +1,7 @@
 <template>
   <v-app dark>
     <Nav />
-    <slot />
+    <slot></slot>
   </v-app>
 </template>
 

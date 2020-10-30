@@ -64,7 +64,7 @@ export default {
         {
           title: "About Us",
           icon: "mdi-account-group-outline",
-          href: "/about_us"
+          href: "/about"
         },
         { title: "Sign In", icon: "mdi-login", href: "/sign_in" },
         { title: "Sign Up", icon: "mdi-plus-box-multiple", href: "/sign_up" }
