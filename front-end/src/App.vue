@@ -1,22 +1,16 @@
 <template>
   <Layout>
-    <v-main> </v-main>
+    <v-main>
+      <v-container fluid>
+        <router-view></router-view>
+      </v-container>
+    </v-main>
   </Layout>
 </template>
 
 <script>
 export default {
-  name: "App",
-  created() {
-    this.$http
-      .get("/")
-      .then(res => {
-        console.log(res.data);
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  }
+  name: "App"
 };
 </script>
 <style lang="scss"></style>
