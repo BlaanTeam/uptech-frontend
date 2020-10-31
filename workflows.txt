@@ -1,0 +1,15 @@
+
+Workflow :
+    Branches:
+        - master    -> Production
+        - dev       -> Development
+        - features  -> feat-xx-xx
+        - fixing    -> fix-xx-xx
+    Commits:
+        - Add       : xxx file
+                    : xxx feature
+        - Update    : xxx file
+                    : xxx feature
+                    : improve code
+        - Fix       : xxx file
+                    : xxx feature
