@@ -1,13 +1,25 @@
 <template>
-  <Layout>
+  <DefaultLayout v-if="true">
     <v-main>
       <router-view></router-view>
     </v-main>
-  </Layout>
+  </DefaultLayout>
+  <UserLayout v-else>
+    <v-main>
+      <router-view></router-view>
+    </v-main>
+  </UserLayout>
 </template>
 
 <script>
+import DefaultLayout from "@/layouts/Default";
+import UserLayout from "@/layouts/User";
+
 export default {
+  components: {
+    DefaultLayout,
+    UserLayout
+  },
   name: "App"
 };
 </script>

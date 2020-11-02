@@ -4,12 +4,9 @@ import router from "./router";
 import store from "./store";
 import vuetify from "./plugins/vuetify";
 import "./plugins/axios";
-import DefaultLayout from "@/layouts/Default";
+import "@/assets/style/index.scss";
 
 Vue.config.productionTip = false;
-
-// register as golbal layout
-Vue.component("Layout", DefaultLayout);
 
 new Vue({
   router,
