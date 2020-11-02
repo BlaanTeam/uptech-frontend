@@ -51,8 +51,8 @@
 </template>
 
 <script>
-import Guest from "@/components/home_components/Guest";
-import Privacy from "@/components/home_components/Privacy";
+import Guest from "@/components/HomeComponents/Guest";
+import Privacy from "@/components/HomeComponents/Privacy";
 
 export default {
   name: "Home",
