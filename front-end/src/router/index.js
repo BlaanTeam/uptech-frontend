@@ -1,8 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import Home from "../views/Home/Home.vue";
-import About from "../views/Home/About.vue";
-import NotFound from "../views/Errors/NotFound.vue";
 Vue.use(VueRouter);
 
 const routes = [
@@ -17,7 +15,7 @@ const routes = [
   {
     path: "/about",
     name: "About",
-    component: About,
+    component: () => import("@/views/Home/About"),
     meta: {
       title: "About Us"
     }
@@ -41,7 +39,7 @@ const routes = [
   {
     path: "*",
     name: "NotFound",
-    component: NotFound,
+    component: () => import("@/views/Errors/NotFound"),
     meta: {
       title: "Not Found"
     }
