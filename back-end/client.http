@@ -1,0 +1,6 @@
+# This file will include all API's endpoints and info about them 
+
+# Testing not found error
+ GET http://localhost:5000/localhost:3000/bad_endpoint
+
+####
