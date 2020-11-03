@@ -1,6 +1,6 @@
 <template>
   <v-layout class="header">
-    <v-app-bar app color="white" flat>
+    <v-app-bar color="white" flat>
       <!--------------- Brand area --------------->
       <v-layout class="d-flex">
         <h1>UpTech</h1>
