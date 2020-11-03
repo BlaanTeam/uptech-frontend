@@ -26,6 +26,7 @@
             dark
             class="ma-4 py-6 px-12"
             color="blue lighten-1"
+            to="/sign_up"
           >
             Sign Up
           </v-btn>

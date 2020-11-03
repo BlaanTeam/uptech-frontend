@@ -31,7 +31,7 @@ const routes = [
   {
     path: "/sign_up",
     name: "SignUp",
-    // component:,
+    component: () => import("@/views/Auth/SignUp"),
     meta: {
       title: "Sing Up"
     }

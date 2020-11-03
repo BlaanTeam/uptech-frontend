@@ -1,5 +1,5 @@
 <template>
-  <v-layout class="header">
+  <div class="header">
     <v-app-bar color="white" flat>
       <!--------------- Brand area --------------->
       <v-layout class="d-flex">
@@ -46,7 +46,7 @@
         </v-list-item-group>
       </v-list>
     </v-navigation-drawer>
-  </v-layout>
+  </div>
 </template>
 <script defer>
 export default {
