@@ -16,6 +16,7 @@
             dark
             class="ma-4 mr-6 py-6 px-12"
             color="#e08c04"
+            to="/sign_up"
           >
             Create an account
           </v-btn>
