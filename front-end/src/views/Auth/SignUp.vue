@@ -3,7 +3,7 @@
     <div class="background">
       <img src="@/assets/images/wave.svg" alt="wave svg background" />
     </div>
-    <v-row>
+    <v-row class="align-center">
       <v-col cols="5" offset="1" class="mt-4">
         <img
           src="@/assets/images/sign_up.svg"
