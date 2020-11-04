@@ -1,24 +1,24 @@
 <template>
-  <DefaultLayout v-if="true">
+  <UnAuthLayout v-if="false">
     <v-main>
       <router-view></router-view>
     </v-main>
-  </DefaultLayout>
-  <UserLayout v-else>
+  </UnAuthLayout>
+  <AuthLayout v-else>
     <v-main>
       <router-view></router-view>
     </v-main>
-  </UserLayout>
+  </AuthLayout>
 </template>
 
 <script>
-import DefaultLayout from "@/layouts/Default";
-import UserLayout from "@/layouts/User";
+import UnAuthLayout from "./layouts/UnAuthLayout";
+import AuthLayout from "@/layouts/AuthLayout";
 
 export default {
   components: {
-    DefaultLayout,
-    UserLayout
+    UnAuthLayout,
+    AuthLayout
   },
   name: "App"
 };
