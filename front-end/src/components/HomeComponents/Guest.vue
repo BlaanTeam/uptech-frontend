@@ -1,5 +1,5 @@
 <template>
-  <v-container class="guest my-10 py-10 d-flex">
+  <v-container class="guest my-10 py-10 d-flex black--text">
     <v-row class="align-center">
       <v-col cols="5" offset="1" class="mt-4">
         <img
