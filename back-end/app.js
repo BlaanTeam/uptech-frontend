@@ -7,10 +7,11 @@ const cors = require("cors");
 
 require("dotenv").config(); // Include .env variables
 require("./config/db"); // Iniatialize db
-
 const {
   app: { port },
 } = require("./config/config");
+
+// Include middlewares
 
 // Include API's routes
 const authRouter = require("./routes/authRouter");
@@ -25,6 +26,8 @@ app.use(cors());
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// Use the middlewares
 
 // Iniatialize static folder
 

@@ -1,6 +1,45 @@
 # This file will include all API's endpoints and info about them 
 
-# Testing not found error
- GET http://localhost:5000/localhost:3000/bad_endpoint
+# Initialize the variables
 
-####
+@baseURL = http://localhost:5000/api/v1
+
+
+### testing the not found error 
+
+GET {{baseURL}}/bad_endpoints
+
+### sing-in endpoint
+# endpoint : baseURL/auth/sign_in
+# method : POST
+# content-type : application/json
+# params :
+    # username -> required | string 
+    # password -> required | string
+    # remember -> optional | boolean
+POST {{baseURL}}/auth/sign_in
+Content-Type: application/json
+
+{
+    "username":"aWbxKIng2",
+    "password":"awbxDwking#3",
+    "rememberMe":false
+}
+
+
+### sing-in endpoint
+# endpoint : baseURL/auth/sign_up
+# method : POST
+# content-type : application/json
+# params :
+    # username  -> required | string 
+    # email     -> required | string
+    # password  -> required | string
+POST {{baseURL}}/auth/sign_up
+Content-Type: application/json
+
+{
+    "username":"awbxking2",
+    "email":"awbx2@gmail.com",
+    "password":"awbxDwking#3"
+}
