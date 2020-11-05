@@ -6,14 +6,14 @@ const logger = require("morgan");
 const cors = require("cors");
 
 require("dotenv").config(); // Include .env variables
-require("./config/db"); // Iniatialize db 
+require("./config/db"); // Iniatialize db
 
 const {
   app: { port },
 } = require("./config/config");
 
 // Include API's routes
-const authRoute = require("./routes/auth");
+const authRouter = require("./routes/authRouter");
 
 // Iniatialize server & app
 const app = express();
@@ -32,7 +32,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // Iniatialize API's endpoints
 
-app.use("/api/v1/auth", authRoute);
+app.use("/api/v1/auth", authRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -43,11 +43,11 @@ app.use(function (req, res, next) {
 app.use(function (err, req, res, next) {
   const error = {
     msg: err.message,
-  };   
+  };
 
   // return json response to client
   res.status(err.status || 500);
-  res.json({error});
+  res.json({ error });
 });
 
 // set port to express
