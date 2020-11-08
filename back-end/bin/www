@@ -55,5 +55,8 @@ function onError(error) {
 function onListening() {
   const addr = server.address();
   // debug(`Server start at http://${addr}:${addr.port}`)
-  console.debug(`Server starting at http://localhost:${addr.port}`);
+  console.debug(`
+  * Environment : ${process.env.ENV}\n
+  * Running on  http://localhost:${addr.port}/  (Press CTRL+C to quit)\n
+  `);
 }

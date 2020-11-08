@@ -18,6 +18,8 @@ const authRouter = require("./routes/authRouter");
 
 // Iniatialize server & app
 const app = express();
+app.set("port", port);
+app.set("env", process.env.ENV);
 const server = http.createServer(app);
 
 // Iniatialize extensions
@@ -26,6 +28,12 @@ app.use(cors());
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// add external url to req param
+app.use((req, res, next) => {
+  req.externalURL = `${req.protocol}://${req.hostname}:${req.app.settings.port}`;
+  next();
+});
 
 // Use the middlewares
 
@@ -52,9 +60,5 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.json({ error });
 });
-
-// set port to express
-
-app.set("port", port);
 
 module.exports = server;

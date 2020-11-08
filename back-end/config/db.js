@@ -1,10 +1,13 @@
 const mongoose = require("mongoose");
 const {
-  dbTest: { dbHost, dbUser, dbPass, dbName },
+  db: { dbHost, dbUser, dbPass, dbName },
 } = require("./config");
 
-// const dbURI = `mongodb+srv://${dbUser}:${dbPass}@${dbHost}/${dbName}?retryWrites=true&w=majority`;
-const dbURI = `mongodb://${dbUser}:${dbPass}@${dbHost}/${dbName}?authSource=admin`;
+const isDev = process.env.ENV === "development" ? true : false;
+
+const dbURI = `mongodb${
+  !isDev ? "+srv" : ""
+}://${dbUser}:${dbPass}@${dbHost}/${dbName}?authSource=admin&retryWrites=true&w=majority`;
 
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true });
 

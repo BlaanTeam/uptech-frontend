@@ -1,4 +1,4 @@
-const config = {
+const defaultConfig = {
   app: {
     port: process.env.PORT || 3000,
   },
@@ -11,6 +11,7 @@ const config = {
   jwtSecrets: {
     accessTokenSecretKey: process.env.JWT_ACCESS_TOKEN_SECRET_KEY,
     refreshTokenSecretKey: process.env.JWT_REFRESH_TOKEN_SECRET_KEY,
+    confirmationSerectKey: process.env.JWT_CONFIRMATION_SECRET_KEY,
   },
   db: {
     dbHost: process.env.DB_HOST,
@@ -19,13 +20,36 @@ const config = {
     dbPass: process.env.DB_PASS,
     dbName: process.env.DB_NAME,
   },
-  dbTest: {
-    dbHost: process.env.DB_HOST_TEST,
-    dbPort: process.env.DB_PORT_TEST,
-    dbUser: process.env.DB_USER_TEST,
-    dbPass: process.env.DB_PASS_TEST,
-    dbName: process.env.DB_NAME_TEST,
+  mailSmtp: {
+    host: process.env.MAIL_SMTP_HOST,
+    port: process.env.MAIL_SMTP_PORT,
+    secure: true,
+    auth: {
+      user: process.env.MAIL_SMTP_USER,
+      pass: process.env.MAIL_SMTP_PASS,
+    },
   },
 };
 
-module.exports = config;
+const development = { ...defaultConfig };
+
+const production = {
+  ...defaultConfig,
+  db: {
+    dbHost: process.env.DB_HOST_PRODUCTION,
+    dbPort: process.env.DB_PORT_PRODUCTION,
+    dbUser: process.env.DB_USER_PRODUCTION,
+    dbPass: process.env.DB_PASS_PRODUCTION,
+    dbName: process.env.DB_NAME_PRODUCTION,
+  },
+  app: {
+    port: process.env.PORT || 8080,
+  },
+};
+
+const config = {
+  development,
+  production,
+};
+
+module.exports = config[process.env.ENV];

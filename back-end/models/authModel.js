@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const Schema = mongoose.Schema;
 const Model = mongoose.model;
 const { pattern } = require("../config/config");
+const { func } = require("joi");
 
 mongoose.set("useCreateIndex", true);
 
@@ -59,7 +60,7 @@ const userSchema = new Schema({
     default: Date.now(),
     required: true,
   },
-  Pravite: {
+  pravite: {
     type: Boolean,
     default: false,
   },
@@ -91,8 +92,14 @@ userSchema.methods.isValidPassword = async function (password) {
 
 // check if email comfirmed
 
-userSchema.methods.isConfirmed = async function () {
+userSchema.methods.isConfirmed = function () {
   return !!this.mailConfirmed;
+};
+
+// confirm the account
+
+userSchema.methods.confirmAccount = function () {
+  this.mailConfirmed = true;
 };
 
 module.exports = {

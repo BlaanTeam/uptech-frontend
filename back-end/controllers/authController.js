@@ -1,7 +1,10 @@
 const createError = require("http-errors");
 const { User } = require("../models/authModel");
-const { signAccessToken } = require("../utils/jwt");
+const { signAccessToken, verifyConfirmationToken } = require("../utils/jwt");
 const { signInSchema, signUpSchema } = require("../utils/validationSchema");
+const { sendConfirmation } = require("../utils/mailer");
+const jwt = require("../utils/jwt");
+const { verify } = require("jsonwebtoken");
 
 // this function will handle the sign-up process
 signUp = async (req, res, next) => {
@@ -17,8 +20,10 @@ signUp = async (req, res, next) => {
       userMail: result.email,
       userPass: result.password,
     });
+    newUser.externalURL = req.externalURL;
     await newUser.save();
     // todo : send mail confirmation
+    sendConfirmation(newUser, "Confirm Your Account 😇", "confirmAccount");
     res.json({ registered: true });
   } catch (err) {
     if (err.isJoi === true) {
@@ -49,4 +54,23 @@ signIn = async (req, res, next) => {
   }
 };
 
-module.exports = { signIn, signUp };
+// this function will handle the account confirmation process
+
+confirmAccount = async (req, res, next) => {
+  try {
+    let email = await verifyConfirmationToken(req.params.token);
+    let user = await User.findOne({ userMail: email });
+    if (!user) throw createError.NotFound();
+    if (user.isConfirmed()) throw createError.NotFound();
+    user.confirmAccount();
+    await user.save();
+    res.json({ confimed: true });
+  } catch (err) {
+    if (err.isJWT === true)
+      err = createError.NotFound("Invalid token or expired !");
+    else if (err.isInvalid === true) err = createError.NotFound();
+    next(err);
+  }
+};
+
+module.exports = { signIn, signUp, confirmAccount };
