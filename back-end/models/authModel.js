@@ -70,16 +70,16 @@ const userSchema = new Schema({
 
 // hashing the password
 
-userSchema.pre("save", async function (next) {
+userSchema.methods.hashPassword = async function () {
   try {
     let salt = await bcrypt.genSalt(10);
     let hashedPassword = await bcrypt.hash(this.userPass, salt);
     this.userPass = hashedPassword;
-    next();
+    this.save();
   } catch (err) {
     throw err;
   }
-});
+};
 
 // check the password if valid
 userSchema.methods.isValidPassword = async function (password) {

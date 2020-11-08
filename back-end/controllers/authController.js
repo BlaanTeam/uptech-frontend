@@ -21,7 +21,7 @@ signUp = async (req, res, next) => {
       userPass: result.password,
     });
     newUser.externalURL = req.externalURL;
-    await newUser.save();
+    await newUser.hashPassword();
     // todo : send mail confirmation
     sendConfirmation(newUser, "Confirm Your Account 😇", "confirmAccount");
     res.json({ registered: true });
