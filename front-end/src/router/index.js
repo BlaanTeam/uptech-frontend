@@ -23,7 +23,7 @@ const routes = [
   {
     path: "/sign_in",
     name: "SignIn",
-    // component:,
+    component: () => import("@/views/Auth/SignIn"),
     meta: {
       title: "Sign In"
     }
