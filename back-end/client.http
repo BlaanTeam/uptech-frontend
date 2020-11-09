@@ -21,8 +21,8 @@ POST {{baseURL}}/auth/sign_in
 Content-Type: application/json
 
 {
-    "username":"aWbxKIng2",
-    "password":"awbxDwking#3",
+    "username":"abdelhad_sabani",
+    "password":"awbxkig@1S",
     "rememberMe":false
 }
 
@@ -39,7 +39,51 @@ POST {{baseURL}}/auth/sign_up
 Content-Type: application/json
 
 {
-    "username":"awbxking2",
-    "email":"awbx2@gmail.com",
-    "password":"awbxDwking#3"
+    "username":"abdelhad_sabani",
+    "email":"abdo.sabani30@gmail.com",
+    "password":"awbxKING30@"
+}
+
+### confirm-account endpoint
+# endpoint : baseURL/auth/confirm_account
+# method : POST
+# content-type : application/json
+# params :
+    # token     -> required | string
+@confirm_account_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFiZG8uc2FiYW5pMzBAZ21haWwuY29tIiwiaWF0IjoxNjA0ODc3OTM5LCJleHAiOjE2MDQ5NjQzMzl9.dB1_oH6OcfUA8hpn8Of5wI1XAOYqrvkFxrbpaU5OP8Y"
+POST {{baseURL}}/auth/confirm_account
+Content-Type: application/json
+
+{  
+     "token":{{confirm_account_token}}
+}
+
+### forgot-password endpoint
+# endpoint : baseURL/auth/forgot_password
+# method : POST
+# content-type : application/json
+# params :
+    # email     -> required | string
+POST {{baseURL}}/auth/forgot_password
+Content-Type: application/json
+
+{
+    "email":"abdo.sabani30@gmail.com"
+}
+
+### reset-password endpoint
+# endpoint : baseURL/auth/reset_password
+# method : POST
+# content-type : application/json
+# params :
+    # token     -> required | string
+    # password  -> required | string
+@reset_password_token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFiZG8uc2FiYW5pMzBAZ21haWwuY29tIiwiaWF0IjoxNjA0ODgxMzM4LCJleHAiOjE2MDQ4ODMxMzh9.0vQQToQ_h7I-LAv1OuGSUkyeXXzOIYaG7ZtjIUTYiYA"
+
+POST {{baseURL}}/auth/reset_password
+Content-Type: application/json
+
+{
+    "token":{{reset_password_token}},
+    "password":"awbxkig@1S"
 }

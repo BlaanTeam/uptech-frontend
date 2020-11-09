@@ -41,7 +41,42 @@ const signUpSchema = joi.object({
     .required(),
 });
 
+// this function will check the req.body and if all params validate will return them else will throw an error with missing
+const confirmAccountSchema = joi.object({
+  token: joi
+    .string()
+    .pattern(pattern.jwtToken)
+    .message("Invalid token")
+    .required(),
+});
+
+// this function will check the req.body and if all params validate will return them else will throw an error with missing
+forgotPasswordSchema = joi.object({
+  email: joi
+    .string()
+    .pattern(pattern.email)
+    .message("Please fill a valid email")
+    .required(),
+});
+
+// this function will check the req.body and if all params validate will return them else will throw an error with missing
+resetPasswordSchema = joi.object({
+  token: joi
+    .string()
+    .pattern(pattern.jwtToken)
+    .message("Please fill a valid token")
+    .required(),
+  password: joi
+    .string()
+    .pattern(pattern.password)
+    .message("Please fill a valid password")
+    .required(),
+});
+
 module.exports = {
   signInSchema,
   signUpSchema,
+  confirmAccountSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
 };

@@ -1,10 +1,18 @@
 const createError = require("http-errors");
 const { User } = require("../models/authModel");
-const { signAccessToken, verifyConfirmationToken } = require("../utils/jwt");
-const { signInSchema, signUpSchema } = require("../utils/validationSchema");
-const { sendConfirmation } = require("../utils/mailer");
-const jwt = require("../utils/jwt");
-const { verify } = require("jsonwebtoken");
+const {
+  signAccessToken,
+  verifyConfirmationToken,
+  verifyForgotPassword,
+} = require("../utils/jwt");
+const {
+  signInSchema,
+  signUpSchema,
+  confirmAccountSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
+} = require("../utils/validationSchema");
+const { sendConfirmation, sendForgotPassword } = require("../utils/mailer");
 
 // this function will handle the sign-up process
 signUp = async (req, res, next) => {
@@ -24,11 +32,11 @@ signUp = async (req, res, next) => {
     await newUser.hashPassword();
     // todo : send mail confirmation
     sendConfirmation(newUser, "Confirm Your Account 😇", "confirmAccount");
+    res.status(201);
     res.json({ registered: true });
   } catch (err) {
-    if (err.isJoi === true) {
-      err.status = 422;
-    }
+    if (err.isJoi === true) err.status = 422;
+
     next(err);
   }
 };
@@ -47,9 +55,8 @@ signIn = async (req, res, next) => {
     let accessToken = await signAccessToken(user.userName, result.rememberMe);
     res.json({ accessToken });
   } catch (err) {
-    if (err.isJoi === true) {
-      err.status = 422;
-    }
+    if (err.isJoi === true) err.status = 422;
+
     next(err);
   }
 };
@@ -58,19 +65,62 @@ signIn = async (req, res, next) => {
 
 confirmAccount = async (req, res, next) => {
   try {
-    let email = await verifyConfirmationToken(req.params.token);
+    let result = await confirmAccountSchema.validateAsync(req.body);
+    let email = await verifyConfirmationToken(result.token);
     let user = await User.findOne({ userMail: email });
     if (!user) throw createError.NotFound();
     if (user.isConfirmed()) throw createError.NotFound();
     user.confirmAccount();
     await user.save();
-    res.json({ confimed: true });
+    res.json({ confirmed: true });
   } catch (err) {
+    if (err.isJoi === true) err.status = 404;
     if (err.isJWT === true)
-      err = createError.NotFound("Invalid token or expired !");
+      err = createError.UnprocessableEntity("Invalid token or expired !");
     else if (err.isInvalid === true) err = createError.NotFound();
     next(err);
   }
 };
 
-module.exports = { signIn, signUp, confirmAccount };
+// this function will handle the forgot password process
+
+forgotPassword = async (req, res, next) => {
+  try {
+    let result = await forgotPasswordSchema.validateAsync(req.body);
+    let user = await User.findOne({ userMail: result.email });
+    if (!user) throw createError.NotFound("This email not exist !");
+    user.externalURL = req.externalURL;
+    sendForgotPassword(user, "Reset Your Password");
+    res.json({
+      msg: "An email contain the link to reset password has been sent !",
+    });
+  } catch (err) {
+    if (err.isJoi === true) err.status = 422;
+    next(err);
+  }
+};
+
+// this function will handle the reset password process
+
+const resetPassword = async (req, res, next) => {
+  try {
+    let result = await resetPasswordSchema.validateAsync(req.body);
+    let email = await verifyForgotPassword(result.token);
+    let user = await User.findOne({ userMail: email });
+    if (!user) throw createError.Forbidden();
+    user.resetPassword(result.password);
+    res.json({ msg: "The password has been update !" });
+  } catch (err) {
+    if (err.isJWT === true)
+      err = createError.UnprocessableEntity("Invalid token or expired !");
+    next(err);
+  }
+};
+
+module.exports = {
+  signIn,
+  signUp,
+  confirmAccount,
+  forgotPassword,
+  resetPassword,
+};

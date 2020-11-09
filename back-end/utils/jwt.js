@@ -33,7 +33,7 @@ const verifyAccessToken = async (accessToken) => {
 
 const signConfirmationToken = async (email) => {
   try {
-    let token = await jwt.sign({ email }, jwtSecrets.confirmationSerectKey, {
+    let token = await jwt.sign({ email }, jwtSecrets.confirmationSecretKey, {
       expiresIn: "24h",
     });
     return token;
@@ -43,7 +43,30 @@ const signConfirmationToken = async (email) => {
 };
 const verifyConfirmationToken = async (token) => {
   try {
-    let payload = await jwt.verify(token, jwtSecrets.confirmationSerectKey);
+    let payload = await jwt.verify(token, jwtSecrets.confirmationSecretKey);
+    return payload["email"];
+  } catch (err) {
+    if (err.name === "TokenExpiredError" || err.name === "JsonWebTokenError") {
+      err.isJWT = true;
+    }
+    throw err;
+  }
+};
+
+const signForgotPassword = async (email) => {
+  try {
+    let token = await jwt.sign({ email }, jwtSecrets.forgotPasswordSecretKey, {
+      expiresIn: "30m",
+    });
+    return token;
+  } catch (err) {
+    throw err;
+  }
+};
+
+const verifyForgotPassword = async (token) => {
+  try {
+    let payload = await jwt.verify(token, jwtSecrets.forgotPasswordSecretKey);
     return payload["email"];
   } catch (err) {
     if (err.name === "TokenExpiredError" || err.name === "JsonWebTokenError") {
@@ -58,4 +81,6 @@ module.exports = {
   verifyAccessToken,
   signConfirmationToken,
   verifyConfirmationToken,
+  signForgotPassword,
+  verifyForgotPassword,
 };

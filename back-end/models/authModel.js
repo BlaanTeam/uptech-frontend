@@ -3,7 +3,6 @@ const bcrypt = require("bcrypt");
 const Schema = mongoose.Schema;
 const Model = mongoose.model;
 const { pattern } = require("../config/config");
-const { func } = require("joi");
 
 mongoose.set("useCreateIndex", true);
 
@@ -76,6 +75,16 @@ userSchema.methods.hashPassword = async function () {
     let hashedPassword = await bcrypt.hash(this.userPass, salt);
     this.userPass = hashedPassword;
     this.save();
+  } catch (err) {
+    throw err;
+  }
+};
+// reset password
+
+userSchema.methods.resetPassword = async function (password) {
+  try {
+    this.userPass = password;
+    await this.hashPassword();
   } catch (err) {
     throw err;
   }

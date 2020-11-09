@@ -2,16 +2,13 @@ const nodemailer = require("nodemailer");
 const fs = require("fs");
 const path = require("path");
 const { compile } = require("handlebars");
-const { mailSmtp, jwtSecrets } = require("../config/config");
-const {
-  signConfirmationToken,
-  verifyConfirmationToken,
-} = require("../utils/jwt");
-const { sign } = require("crypto");
+const { mailSmtp } = require("../config/config");
+const { signConfirmationToken, signForgotPassword } = require("../utils/jwt");
 
 // SMTP transporter
 const transporter = nodemailer.createTransport(mailSmtp);
 
+// templates path
 templatesPath = path.join(__dirname, "../templates/");
 
 // this function will parse variables in html template depend on context variables
@@ -27,6 +24,7 @@ const renderTemplate = (filename, context) => {
   }
 };
 
+// this function will send an email to target specified in mailOptions
 const sendMail = (mailOptions) => {
   try {
     transporter.sendMail(
@@ -48,14 +46,16 @@ const sendMail = (mailOptions) => {
   }
 };
 
+// this function will choose the template from templates
 chooseTemplate = (template) => {
   return path.join(templatesPath, `${template}.html`);
 };
 
+// this function will send  confirmation request to user mail
 const sendConfirmation = async (user, subject, template) => {
   try {
     let token = await signConfirmationToken(user.userMail);
-    user.token_url = `${user.externalURL}/api/v1/auth/confirm_account/${token}`;
+    user.token_url = `${user.externalURL}/confirm_account/${token}`;
     sendMail({
       to: user.userMail,
       subject: subject,
@@ -67,4 +67,20 @@ const sendConfirmation = async (user, subject, template) => {
   }
 };
 
-module.exports = { sendConfirmation };
+// this function will send reset password request to user mail
+const sendForgotPassword = async (user, subject) => {
+  try {
+    let token = await signForgotPassword(user.userMail);
+    user.token_url = `${user.externalURL}/reset_password/${token}`;
+    sendMail({
+      to: user.userMail,
+      subject: subject,
+      filename: chooseTemplate("forgotPassword"),
+      context: { user },
+    });
+  } catch (err) {
+    throw err;
+  }
+};
+
+module.exports = { sendConfirmation, sendForgotPassword };
