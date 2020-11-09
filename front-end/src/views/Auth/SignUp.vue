@@ -1,21 +1,18 @@
 <template>
   <v-container fluid class="sign-up d-flex">
-    <div class="background">
-      <img src="@/assets/images/wave.svg" alt="wave svg background" />
-    </div>
-    <v-row class="align-center">
-      <v-col cols="5" offset="1" class="mt-4">
+    <Wave class="background" />
+    <v-row no-gutters class="sign-up__form align-center">
+      <v-col class="align-self-end px-6 d-none d-sm-flex">
         <img
           src="@/assets/images/sign_up.svg"
           alt="Guest illustration"
           width="350"
         />
       </v-col>
-      <v-col cols="5">
+      <v-col class="px-10 align-self-start mt-10">
         <v-form ref="form" v-model="valid" lazy-validation>
           <v-text-field
             prepend-icon="mdi-account"
-            dense
             class="my-6"
             v-model="username"
             :counter="16"
@@ -28,7 +25,6 @@
 
           <v-text-field
             prepend-icon="mdi-email"
-            dense
             class="my-6"
             v-model="email"
             :rules="emailRules"
@@ -39,7 +35,6 @@
           ></v-text-field>
           <v-text-field
             prepend-icon="mdi-lock"
-            dense
             class="my-6"
             v-model="password"
             :type="show1 ? 'text' : 'password'"
@@ -58,7 +53,7 @@
             required
           ></v-checkbox>
 
-          <v-btn color="blue" dark class="ml-2 mt-6" elevation="0" rounded>
+          <v-btn color="#F9A826" dark class="ml-2 mt-6" elevation="0" rounded>
             Continue
           </v-btn>
         </v-form>
@@ -68,7 +63,11 @@
 </template>
 
 <script>
+import Wave from "@/components/svg/SignUpSvg";
 export default {
+  components: {
+    Wave
+  },
   data: () => ({
     valid: false,
     username: "",
@@ -99,8 +98,6 @@ export default {
 </script>
 <style lang="scss">
 .sign-up {
-  padding: 0;
-  margin: 0;
   position: relative;
   height: 100%;
   z-index: 1;
@@ -110,6 +107,11 @@ export default {
     width: 100vw;
     bottom: 0px;
     left: 0;
+    fill: #e7e6e6;
+  }
+  &__form {
+    max-width: 90vw;
+    margin: 0 auto;
   }
 }
 </style>
