@@ -11,11 +11,12 @@ const {
   confirmAccountSchema,
   forgotPasswordSchema,
   resetPasswordSchema,
+  reSendConfirmationSchema,
 } = require("../utils/validationSchema");
 const { sendConfirmation, sendForgotPassword } = require("../utils/mailer");
 
 // this function will handle the sign-up process
-signUp = async (req, res, next) => {
+const signUp = async (req, res, next) => {
   try {
     let result = await signUpSchema.validateAsync(req.body);
     let userEixst = await User.findOne({
@@ -42,7 +43,7 @@ signUp = async (req, res, next) => {
 };
 
 // this function will handle the sign-in process
-signIn = async (req, res, next) => {
+const signIn = async (req, res, next) => {
   try {
     let result = await signInSchema.validateAsync(req.body);
     let user = await User.findOne({ userName: result.username });
@@ -63,7 +64,7 @@ signIn = async (req, res, next) => {
 
 // this function will handle the account confirmation process
 
-confirmAccount = async (req, res, next) => {
+const confirmAccount = async (req, res, next) => {
   try {
     let result = await confirmAccountSchema.validateAsync(req.body);
     let email = await verifyConfirmationToken(result.token);
@@ -84,7 +85,7 @@ confirmAccount = async (req, res, next) => {
 
 // this function will handle the forgot password process
 
-forgotPassword = async (req, res, next) => {
+const forgotPassword = async (req, res, next) => {
   try {
     let result = await forgotPasswordSchema.validateAsync(req.body);
     let user = await User.findOne({ userMail: result.email });
@@ -117,10 +118,26 @@ const resetPassword = async (req, res, next) => {
   }
 };
 
+// this function will handle the re-send confirmation process
+
+const reSendConfirmation = async (req, res, next) => {
+  try {
+    let result = await reSendConfirmationSchema.validateAsync(req.body);
+    let user = await User.findOne({ userMail: result.email });
+    if (!user) throw createError.NotFound("This email not registered");
+    user.externalURL = req.externalURL;
+    sendConfirmation(user, "Confirm Your Account 😇", "confirmAccount");
+    res.json({ success: true });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   signIn,
   signUp,
   confirmAccount,
   forgotPassword,
   resetPassword,
+  reSendConfirmation,
 };

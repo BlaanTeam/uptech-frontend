@@ -21,13 +21,13 @@ POST {{baseURL}}/auth/sign_in
 Content-Type: application/json
 
 {
-    "username":"abdelhad_sabani",
-    "password":"awbxkig@1S",
+    "username":"oumoussa1",
+    "password":"tesTING3@",
     "rememberMe":false
 }
 
 
-### sing-in endpoint
+### sing-up endpoint
 # endpoint : baseURL/auth/sign_up
 # method : POST
 # content-type : application/json
@@ -39,9 +39,9 @@ POST {{baseURL}}/auth/sign_up
 Content-Type: application/json
 
 {
-    "username":"abdelhad_sabani",
-    "email":"abdo.sabani30@gmail.com",
-    "password":"awbxKING30@"
+    "username":"oumoussa1",
+    "email":"bepog86447@x1post.com",
+    "password":"oumouSSa1@"
 }
 
 ### confirm-account endpoint
@@ -50,7 +50,7 @@ Content-Type: application/json
 # content-type : application/json
 # params :
     # token     -> required | string
-@confirm_account_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFiZG8uc2FiYW5pMzBAZ21haWwuY29tIiwiaWF0IjoxNjA0ODc3OTM5LCJleHAiOjE2MDQ5NjQzMzl9.dB1_oH6OcfUA8hpn8Of5wI1XAOYqrvkFxrbpaU5OP8Y"
+@confirm_account_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImJlcG9nODY0NDdAeDFwb3N0LmNvbSIsImlhdCI6MTYwNDk2MjMwMywiZXhwIjoxNjA1MDQ4NzAzfQ.wYMVdw3doIXipMxsqKl6EKYoI8oI5Z7VNmYCZQyvc5I"
 POST {{baseURL}}/auth/confirm_account
 Content-Type: application/json
 
@@ -68,7 +68,7 @@ POST {{baseURL}}/auth/forgot_password
 Content-Type: application/json
 
 {
-    "email":"abdo.sabani30@gmail.com"
+    "email":"bepog86447@x1post.com"
 }
 
 ### reset-password endpoint
@@ -78,12 +78,21 @@ Content-Type: application/json
 # params :
     # token     -> required | string
     # password  -> required | string
-@reset_password_token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFiZG8uc2FiYW5pMzBAZ21haWwuY29tIiwiaWF0IjoxNjA0ODgxMzM4LCJleHAiOjE2MDQ4ODMxMzh9.0vQQToQ_h7I-LAv1OuGSUkyeXXzOIYaG7ZtjIUTYiYA"
+@reset_password_token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImJlcG9nODY0NDdAeDFwb3N0LmNvbSIsImlhdCI6MTYwNDk2MjQ1NiwiZXhwIjoxNjA0OTY0MjU2fQ.EtldkVcpBHU-l2qtoQ3XD5YY7zfYfgzaV-qY1PhqzeA"
 
 POST {{baseURL}}/auth/reset_password
 Content-Type: application/json
 
 {
     "token":{{reset_password_token}},
-    "password":"awbxkig@1S"
+    "password":"tesTING3@"
 }
+
+### re-send confirmation endpoint
+# endpoint : baseURL/auth/resend_confirmatio
+# method : POST
+# content-type : application/json
+# params :
+    # email     -> required | string
+
+POST {{baseURL}}/auth/resend_confirmatio
