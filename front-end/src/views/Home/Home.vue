@@ -8,7 +8,7 @@
         <v-row class="first-section__header">
           <v-col class="ml-10">
             <h1 class="first-section__title display-2 pb-2 ">
-              Lorem ipsum adipisicing 
+              Lorem ipsum adipisicing
             </h1>
             <h2 class="first-section__title display-1 pb-10">
               amet consectetur adipisicing
