@@ -1,22 +1,24 @@
 <template>
-  <v-layout class="header">
-    <v-app-bar color="white" flat>
+  <div class="header d-flex">
+    <v-app-bar class="header__nav" flat>
       <!--------------- Brand area --------------->
-      <v-layout class="d-flex">
-        <h1>UpTech</h1>
-      </v-layout>
+      <div class="d-flex">
+        <h1>Brand</h1>
+      </div>
+      <v-spacer></v-spacer>
       <!------------------ Links for computer devices -------------------->
-      <v-layout class="d-none d-sm-flex links">
+      <div class="d-none d-sm-flex links ">
         <router-link v-for="link in links" :key="link.name" :to="link.href">
-          <v-btn class="btn" text>
+          <v-btn text>
             {{ link.name }}
           </v-btn>
         </router-link>
-      </v-layout>
-      <v-spacer class="d-sm-none d-flex"></v-spacer>
-      <router-link class="d-none d-sm-flex" to="/faq">
-        <v-btn class="btn" text>
-          <v-icon left>mdi-frequently-asked-questions</v-icon>FAQ
+      </div>
+      <v-spacer></v-spacer>
+      <router-link class="login d-none d-sm-flex" :to="router">
+        <v-btn color="#d68605" rounded elevation="0" dark>
+          <v-icon left>mdi-login</v-icon>
+          {{ auth }}
         </v-btn>
       </router-link>
       <!---------------- button for mobile devices ------------------------>
@@ -37,16 +39,16 @@
             </v-list-item-icon>
             <v-list-item-title>{{ link.name }}</v-list-item-title>
           </v-list-item>
-          <v-list-item to="/faq">
-            <v-list-item-icon>
-              <v-icon>mdi-frequently-asked-questions</v-icon>
-            </v-list-item-icon>
-            <v-list-item-title>FAQ</v-list-item-title>
+          <v-list-item to="/login">
+            <v-btn>
+              <v-icon left>mdi-login</v-icon>
+              Login
+            </v-btn>
           </v-list-item>
         </v-list-item-group>
       </v-list>
     </v-navigation-drawer>
-  </v-layout>
+  </div>
 </template>
 <script defer>
 export default {
@@ -59,7 +61,25 @@ export default {
     ],
     drawer: false,
     group: ""
-  })
+  }),
+  computed: {
+    auth() {
+      return this.$route.name === "SignIn" ? "register" : "login";
+    },
+    router() {
+      return this.$route.name === "SignIn" ? "/sign_up" : "/sign_in";
+    }
+  }
 };
 </script>
-<style></style>
+<style lang="scss">
+.header {
+  &__nav {
+    background: inherit !important;
+  }
+  .router-link-exact-active:not(.login) {
+    border-bottom: 2px solid #f5c908;
+    // border-radius: 10px;
+  }
+}
+</style>

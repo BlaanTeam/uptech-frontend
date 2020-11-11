@@ -1,5 +1,5 @@
 <template>
-  <UnAuthLayout v-if="false">
+  <UnAuthLayout v-if="true">
     <v-main>
       <router-view></router-view>
     </v-main>

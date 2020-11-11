@@ -1,18 +1,19 @@
 <template>
-  <v-container class="guest my-10 py-10 d-flex">
+  <v-container fluid class="guest d-flex">
+    <div class="guest__background">
+      <WaveSvg />
+    </div>
     <v-row class="align-center">
-      <v-col cols="5" offset="1" class="mt-4">
-        <img
-          src="@/assets/images/guest.svg"
-          alt="Guest illustration"
-          width="350"
-        />
+      <v-col cols="5" offset="1" class="mt-4 image">
+        <GuestSvg />
       </v-col>
       <v-col cols="5">
         <h1 class="display-2 py-2">Login as guest</h1>
         <p class="display-1">
-          Once you logged in as guest you can browse all of the public content
-          on our servers without providing any personal informations
+          Lorem ipsum dolor sit, amet consectetur adipisicing elit. Maiores
+          aliquid, blanditiis, necessitatibus eveniet debitis voluptas mollitia
+          laudantium dignissimos quaerat reprehenderit repellat laboriosam ad
+          saepe ipsa, iusto sapiente placeat sint vero!
         </p>
       </v-col>
     </v-row>
@@ -20,10 +21,36 @@
 </template>
 
 <script>
-export default {};
+import WaveSvg from "@/components/svg/WaveSvg";
+import GuestSvg from "@/components/svg/GuestSvg";
+
+export default {
+  components: {
+    WaveSvg,
+    GuestSvg
+  }
+};
 </script>
 <style lang="scss">
 .guest {
-  min-height: 85vh;
+  min-height: 80vh;
+  position: relative;
+  padding: 100px 0 60px 0;
+  background: #e9e8e8;
+  z-index: 1;
+  .image {
+    svg {
+      width: 500px;
+    }
+  }
+  &__background {
+    z-index: -1;
+    #wave-one {
+      position: absolute;
+      bottom: -105px;
+      left: 0;
+      fill: #e9e8e8;
+    }
+  }
 }
 </style>

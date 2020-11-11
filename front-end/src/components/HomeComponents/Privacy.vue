@@ -26,7 +26,5 @@ export default {};
 <style lang="scss" scoped>
 .privacy {
   min-height: 100vh;
-  clip-path: polygon(100% 0%, 0% 10%, 0% 100%, 100% 90%);
-  background-color: #f3cd7c;
 }
 </style>

@@ -23,7 +23,7 @@ const routes = [
   {
     path: "/sign_in",
     name: "SignIn",
-    // component:,
+    component: () => import("@/views/Auth/SignIn"),
     meta: {
       title: "Sign In"
     }
@@ -31,7 +31,7 @@ const routes = [
   {
     path: "/sign_up",
     name: "SignUp",
-    // component:,
+    component: () => import("@/views/Auth/SignUp"),
     meta: {
       title: "Sing Up"
     }
