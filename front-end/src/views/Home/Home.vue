@@ -63,15 +63,18 @@ export default {
 <style lang="scss" scoped>
 .home {
   .first-section {
+    padding: 0 0 50px 0 !important;
     min-height: 80vh;
     position: relative;
     &__background {
+      width: 100vw;
+      height: 100px;
       z-index: 2;
+      position: absolute;
+      bottom: -100px;
+      left: 0;
       #wave-one {
-        position: absolute;
-        bottom: -105px;
-        left: 0;
-        fill: #ffffff;
+        fill: white;
       }
     }
   }

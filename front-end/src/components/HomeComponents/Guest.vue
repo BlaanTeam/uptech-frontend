@@ -44,11 +44,12 @@ export default {
     }
   }
   &__background {
-    z-index: -1;
+    width: 100vw;
+    z-index: 2;
+    position: absolute;
+    bottom: -10vw;
+    left: 0;
     #wave-one {
-      position: absolute;
-      bottom: -105px;
-      left: 0;
       fill: #e9e8e8;
     }
   }
