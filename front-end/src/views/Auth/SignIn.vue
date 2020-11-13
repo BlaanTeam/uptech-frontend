@@ -1,29 +1,29 @@
 <template>
   <v-container fluid fill-height class="sign-in">
     <div class="sign-in__background">
-      <WaveSvg />
+      <WaveSvg :fillColor="$theme.currentTheme.secondarybg" />
     </div>
     <CloudSvg
       v-for="(n, i) in ['one', 'two', 'three', 'four']"
       :key="i"
       :id="n"
+      :fillColor="$theme.currentTheme.secondarybg"
     />
-    <v-card class="mx-auto" width="550">
-      <v-avatar color="#F9A826">
+    <v-card class="mx-auto bg lighten-1" width="550">
+      <v-avatar class="d-block mx-auto primary" width="60px">
         <v-icon dark>
           mdi-account-circle
         </v-icon>
       </v-avatar>
 
-      <v-card-title class="display-1 justify-center brown--text">
+      <v-card-title class="display-1 justify-center">
         Welcome Back
       </v-card-title>
 
-      <v-card-text>
+      <v-card-text class="">
         <v-form>
           <v-text-field
             v-model="email"
-            :rules="[rules.required, rules.email]"
             label="E-mail"
             hint="test"
           ></v-text-field>
@@ -31,7 +31,6 @@
             class="my-6"
             v-model="password"
             :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
-            :rules="[rules.required, rules.min]"
             :type="show1 ? 'text' : 'password'"
             name="password"
             label="Password"
@@ -40,7 +39,7 @@
         </v-form>
       </v-card-text>
 
-      <v-btn block class="py-6" color="#d18409" dark elevation="0">
+      <v-btn block class="py-6" color="primary" dark elevation="0">
         Login
       </v-btn>
     </v-card>
@@ -96,8 +95,6 @@ export default {
       position: absolute;
       bottom: 0px;
       left: 0;
-      // color: #d18409
-      fill: rgb(207, 206, 206);
     }
   }
 
@@ -106,19 +103,18 @@ export default {
   #three,
   #four {
     position: absolute;
-    fill: #e0e0e0;
   }
   #one {
-    top: 50px;
-    left: 0;
+    top: 100px;
+    left: -15%;
   }
   #two {
-    top: -10px;
+    top: -5px;
     left: 20%;
   }
   #three {
-    top: -30px;
-    left: 60%;
+    top: -20px;
+    left: 50%;
   }
   #four {
     top: 20px;
