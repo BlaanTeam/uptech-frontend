@@ -1,13 +1,12 @@
 <template>
   <v-container fluid class="sign-up d-flex">
-    <Wave class="background" />
+    <SignupWaveSvg
+      :fillColor="$theme.currentTheme.secondarybg"
+      class="background"
+    />
     <v-row no-gutters class="sign-up__form align-center">
-      <v-col class="align-self-end px-6 d-none d-sm-flex">
-        <img
-          src="@/assets/images/sign_up.svg"
-          alt="Guest illustration"
-          width="350"
-        />
+      <v-col class="d-none d-sm-flex">
+        <SignupSvg width="400" />
       </v-col>
       <v-col class="px-10 align-self-start mt-10">
         <v-form ref="form" v-model="valid" lazy-validation>
@@ -63,10 +62,13 @@
 </template>
 
 <script>
-import Wave from "@/components/svg/SignUpSvg";
+import SignupWaveSvg from "@/components/svg/SignupWaveSvg";
+import SignupSvg from "@/components/svg/SignupSvg";
+
 export default {
   components: {
-    Wave
+    SignupWaveSvg,
+    SignupSvg
   },
   data: () => ({
     valid: false,
@@ -107,7 +109,6 @@ export default {
     width: 100vw;
     bottom: 0px;
     left: 0;
-    fill: #e7e6e6;
   }
   &__form {
     max-width: 90vw;

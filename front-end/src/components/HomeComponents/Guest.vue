@@ -1,7 +1,7 @@
 <template>
-  <v-container fluid class="guest d-flex">
+  <v-container fluid class="guest d-flex secondarybg">
     <div class="guest__background">
-      <WaveSvg />
+      <WaveSvg :fillColor="$theme.currentTheme.secondarybg" />
     </div>
     <v-row class="align-center">
       <v-col cols="5" offset="1" class="mt-4 image">
@@ -36,7 +36,6 @@ export default {
   min-height: 80vh;
   position: relative;
   padding: 100px 0 60px 0;
-  background: #e9e8e8;
   z-index: 1;
   .image {
     svg {
@@ -49,9 +48,6 @@ export default {
     position: absolute;
     bottom: -10vw;
     left: 0;
-    #wave-one {
-      fill: #e9e8e8;
-    }
   }
 }
 </style>

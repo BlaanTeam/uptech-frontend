@@ -7,7 +7,7 @@
         migrated to a parallel universe.
       </p>
       <v-spacer></v-spacer>
-      <NotFoudSvg />
+      <NotFoudSvg width="400" />
     </div>
   </v-container>
 </template>

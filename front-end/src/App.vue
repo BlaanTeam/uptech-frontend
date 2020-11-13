@@ -1,10 +1,13 @@
 <template>
-  <UnAuthLayout v-if="true">
+  <UnAuthLayout
+    v-if="true"
+    :style="{ background: $vuetify.theme.currentTheme.bg }"
+  >
     <v-main>
       <router-view></router-view>
     </v-main>
   </UnAuthLayout>
-  <AuthLayout v-else>
+  <AuthLayout v-else :style="{ background: $vuetify.theme.currentTheme.bg }">
     <v-main>
       <router-view></router-view>
     </v-main>
@@ -23,4 +26,8 @@ export default {
   name: "App"
 };
 </script>
-<style lang="scss"></style>
+<style lang="scss">
+a {
+  text-decoration: none;
+}
+</style>

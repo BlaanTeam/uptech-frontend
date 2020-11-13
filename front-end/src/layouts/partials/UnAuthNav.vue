@@ -15,8 +15,9 @@
         </router-link>
       </div>
       <v-spacer></v-spacer>
+      <DarkMode />
       <router-link class="login d-none d-sm-flex" :to="router">
-        <v-btn color="#d68605" rounded elevation="0" dark>
+        <v-btn color="primary" rounded elevation="0" dark>
           <v-icon left>mdi-login</v-icon>
           {{ auth }}
         </v-btn>
@@ -51,7 +52,11 @@
   </div>
 </template>
 <script defer>
+import DarkMode from "@/components/DarkMode";
 export default {
+  components: {
+    DarkMode
+  },
   data: () => ({
     // Links ----------------------
     links: [
