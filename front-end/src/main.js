@@ -4,6 +4,7 @@ import router from "./router";
 import store from "./store";
 import vuetify from "./plugins/vuetify";
 import "./plugins/axios";
+import i18n from "./i18n";
 
 Vue.prototype.$theme = vuetify.framework.theme;
 Vue.config.productionTip = false;
@@ -12,5 +13,6 @@ new Vue({
   router,
   store,
   vuetify,
+  i18n,
   render: h => h(App)
 }).$mount("#app");
