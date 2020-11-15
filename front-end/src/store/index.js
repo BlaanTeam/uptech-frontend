@@ -27,13 +27,37 @@ export default new Vuex.Store({
         Vue.prototype.$http
           .post("/auth/sign_in", payload)
           .then(res => {
-            if (res.status === 200 && res.accessToken) {
+            if (res.status === 200 && res.data.code === 2032) {
               context.commit("AUTH_SUCCESS", {
                 accessToken: res.data.accessToken,
-                user: res.data.user
+                user: {}
               });
               resolve(res);
             }
+          })
+          .catch(err => {
+            reject(err);
+          });
+      });
+    },
+    signUp: (context, payload) => {
+      return new Promise((resolve, reject) => {
+        Vue.prototype.$http
+          .post("/auth/sign_up", payload)
+          .then(res => {
+            resolve(res);
+          })
+          .catch(err => {
+            reject(err);
+          });
+      });
+    },
+    confirmAccount: (context, payload) => {
+      return new Promise((resolve, reject) => {
+        Vue.prototype.$http
+          .post("/auth/confirm_account", payload)
+          .then(res => {
+            resolve(res);
           })
           .catch(err => {
             reject(err);
