@@ -30,7 +30,7 @@
             :rules="usernameRules"
           ></v-text-field>
           <v-text-field
-            class="mt-6"
+            class="mt-4"
             v-model="password"
             :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
             :type="show ? 'text' : 'password'"
@@ -43,7 +43,14 @@
             name="rememberMe"
             v-model="rememberMe"
             :label="$t('forms.rememberMe')"
-          ></v-checkbox>
+          >
+          </v-checkbox>
+          <router-link class="my-2 d-block" to="forgot_password">
+            Forgot password ?
+          </router-link>
+          <router-link class="my-2 d-block" block to="resend_confirmation">
+            Resend confirmation ?
+          </router-link>
         </v-form>
       </v-card-text>
       <v-btn
@@ -69,14 +76,15 @@ export default {
     WaveSvg,
     CloudSvg
   },
-  data: () => ({
-    show: false,
-
-    // models
-    username: "",
-    password: "",
-    rememberMe: false
-  }),
+  data() {
+    return {
+      show: false,
+      // models
+      username: "",
+      password: "",
+      rememberMe: false
+    };
+  },
   computed: {
     usernameRules() {
       return [
@@ -103,17 +111,62 @@ export default {
   methods: {
     handlesubmit() {
       if (this.valid) {
+        let loader = this.$loading.show({ container: null, canCancel: false });
         this.$store
           .dispatch("signIn", {
             username: this.username,
             password: this.password,
-            rememberMe: this.this.rememberMe
+            rememberMe: this.rememberMe
           })
           .then(res => {
-            console.log(res);
+            loader.hide();
+            if (res.status === 200 && res.data.code === 2032) {
+              this.$router.push({ name: "Feeds" });
+            }
           })
           .catch(err => {
-            console.log(err);
+            loader.hide();
+            this.password = "";
+            if (err.response) {
+              if (
+                err.response.status === 404 &&
+                err.response.data.error.code === 1030
+              ) {
+                this.$notify({
+                  group: "errors",
+                  type: "error",
+                  title: "authentication Error",
+                  text: err.response.data.error.msg
+                });
+              } else if (
+                err.response.status === 401 &&
+                err.response.data.error.code === 1024
+              ) {
+                this.$notify({
+                  group: "errors",
+                  type: "error",
+                  title: "authentication Error",
+                  text: err.response.data.error.msg
+                });
+              } else if (
+                err.response.status === 401 &&
+                err.response.data.error.code === 1063
+              ) {
+                this.$notify({
+                  group: "errors",
+                  type: "warn",
+                  title: "authentication Error",
+                  text: err.response.data.error.msg
+                });
+              } else {
+                this.$notify({
+                  group: "errors",
+                  type: "error",
+                  title: "authentication Error",
+                  text: "Something went wrong"
+                });
+              }
+            }
           });
       }
     }
