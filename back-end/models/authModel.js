@@ -63,6 +63,15 @@ const userSchema = new Schema({
     type: Boolean,
     default: false,
   },
+  reSendConfirmationTooManyRequest: {
+    timestamp: {
+      type: Date,
+    },
+    repeated: {
+      type: Number,
+      default: 0,
+    },
+  },
 });
 
 // Iniatialize Methods To userSchema
@@ -74,7 +83,6 @@ userSchema.methods.hashPassword = async function () {
     let salt = await bcrypt.genSalt(10);
     let hashedPassword = await bcrypt.hash(this.userPass, salt);
     this.userPass = hashedPassword;
-    this.save();
   } catch (err) {
     throw err;
   }
@@ -109,6 +117,31 @@ userSchema.methods.isConfirmed = function () {
 
 userSchema.methods.confirmAccount = function () {
   this.mailConfirmed = true;
+};
+
+// resend confirmation too many request
+
+userSchema.methods.reConfirmTooManyRequest = function () {
+  if (this.reSendConfirmationTooManyRequest.timestamp) {
+    this.reSendConfirmationTooManyRequest.repeated = 0;
+
+    if (
+      Date.now() - Date.parse(this.reSendConfirmationTooManyRequest.timestamp) >
+      8.64e7
+    ) {
+      this.reSendConfirmationTooManyRequest.timestamp = null;
+      this.reSendConfirmationTooManyRequest.repeated++;
+      return true;
+    } else {
+      return false;
+    }
+  } else if (this.reSendConfirmationTooManyRequest.repeated >= 4) {
+    this.reSendConfirmationTooManyRequest.timestamp = Date.now();
+    return false;
+  } else {
+    this.reSendConfirmationTooManyRequest.repeated++;
+    return true;
+  }
 };
 
 module.exports = {

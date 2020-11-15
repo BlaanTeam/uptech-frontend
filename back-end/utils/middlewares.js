@@ -1,4 +1,4 @@
-const createError = require("http-errors");
+const { createError } = require("./globals");
 const { verifyAccessToken } = require("./jwt");
 const { User } = require("../models/authModel");
 
@@ -6,18 +6,20 @@ const { User } = require("../models/authModel");
 const protectRouter = (router) => {
   router.use(async (req, res, next) => {
     try {
-      if (!req.headers["x-auth-token"]) throw createError.Unauthorized();
+      if (!req.headers["x-auth-token"])
+        new createError("Unauthorized !", 1075, 401);
 
       let accessToken = req.headers["x-auth-token"].trim();
       let payload = await verifyAccessToken(accessToken);
       let user = await User.findOne({ userName: payload.username });
-      if (!user) throw createError.Unauthorized();
+      if (!user) throw new createError("Unauthorized !", 1030, 401);
       req.currentUser = user;
       next();
     } catch (err) {
-      if (err.isJWT === true) {
-        err = createError.Unauthorized();
-      }
+      if (err.isExpired === true)
+        err = new createError("Invalid token or expired !", 1072, 401);
+      else if (err.isInvalid === true)
+        err = new createError("Invalid token or expired !", 1079, 401);
       next(err);
     }
   });

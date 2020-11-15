@@ -24,8 +24,10 @@ const verifyAccessToken = async (accessToken) => {
     );
     return payload;
   } catch (err) {
-    if (err.name === "TokenExpiredError" || err.name === "JsonWebTokenError") {
-      err.isJWT = true;
+    if (err.name === "TokenExpiredError") {
+      err.isExpired = true;
+    } else if (err.name === "JsonWebTokenError") {
+      err.isInvalid = true;
     }
     throw err;
   }
@@ -46,8 +48,10 @@ const verifyConfirmationToken = async (token) => {
     let payload = await jwt.verify(token, jwtSecrets.confirmationSecretKey);
     return payload["email"];
   } catch (err) {
-    if (err.name === "TokenExpiredError" || err.name === "JsonWebTokenError") {
-      err.isJWT = true;
+    if (err.name === "TokenExpiredError") {
+      err.isExpired = true;
+    } else if (err.name === "JsonWebTokenError") {
+      err.isInvalid = true;
     }
     throw err;
   }
@@ -69,8 +73,10 @@ const verifyForgotPassword = async (token) => {
     let payload = await jwt.verify(token, jwtSecrets.forgotPasswordSecretKey);
     return payload["email"];
   } catch (err) {
-    if (err.name === "TokenExpiredError" || err.name === "JsonWebTokenError") {
-      err.isJWT = true;
+    if (err.name === "TokenExpiredError") {
+      err.isExpired = true;
+    } else if (err.name === "JsonWebTokenError") {
+      err.isInvalid = true;
     }
     throw err;
   }

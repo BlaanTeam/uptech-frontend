@@ -54,6 +54,7 @@ app.use(function (req, res, next) {
 app.use(function (err, req, res, next) {
   const error = {
     msg: err.message,
+    code: err.code,
   };
 
   // return json response to client

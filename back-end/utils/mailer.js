@@ -29,7 +29,7 @@ const sendMail = (mailOptions) => {
   try {
     transporter.sendMail(
       {
-        from: "UpTech<abdo.sabani30@gmail.com>",
+        from: `UpTech<${process.env.MAIL_SMTP_SENDER}>`,
         to: mailOptions.to,
         subject: mailOptions.subject,
         html: mailOptions.filename
@@ -52,14 +52,14 @@ chooseTemplate = (template) => {
 };
 
 // this function will send  confirmation request to user mail
-const sendConfirmation = async (user, subject, template) => {
+const sendConfirmation = async (user, subject) => {
   try {
     let token = await signConfirmationToken(user.userMail);
     user.token_url = `${user.externalURL}/confirm_account/${token}`;
     sendMail({
       to: user.userMail,
       subject: subject,
-      filename: chooseTemplate(template),
+      filename: chooseTemplate("confirmAccount"),
       context: { user },
     });
   } catch (err) {
