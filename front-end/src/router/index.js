@@ -15,6 +15,15 @@ const routes = [
     }
   },
   {
+    path: "/feeds",
+    name: "Feeds",
+    // component: Home,
+    meta: {
+      authRequired: true,
+      title: "Feeds"
+    }
+  },
+  {
     path: "/about",
     name: "About",
     component: () => import("@/views/Home/About"),
@@ -42,12 +51,30 @@ const routes = [
     }
   },
   {
-    path: "/test",
-    name: "test",
-    // component: () => import("@/views/Auth/SignUp"),
+    path: "/confirm_account/:token",
+    name: "ConfirmAccount",
+    component: () => import("@/views/Auth/ConfirmAccount"),
     meta: {
-      authRequired: true,
-      title: "Dashboard"
+      authRequired: false,
+      title: "Confirm Account"
+    }
+  },
+  {
+    path: "/forgot_password",
+    name: "ForgotPassword",
+    component: () => import("@/views/Auth/ForgotPassword"),
+    meta: {
+      authRequired: false,
+      title: "Forgot Password"
+    }
+  },
+  {
+    path: "/reset_password/:token",
+    name: "ResetPassword",
+    component: () => import("@/views/Auth/ResetPassword"),
+    meta: {
+      authRequired: false,
+      title: "Reset Password"
     }
   },
   {
@@ -83,15 +110,14 @@ router.beforeEach((to, from, next) => {
         }
       });
     }
-  } else next();
-  // else {
-  //   if (store.getters.isLoggedIn) {
-  //     next({
-  //       name: "test"
-  //     });
-  //   } else {
-  //     next();
-  //   }
-  // }
+  } else {
+    if (store.getters.isLoggedIn) {
+      next({
+        name: "Feeds"
+      });
+    } else {
+      next();
+    }
+  }
 });
 export default router;
