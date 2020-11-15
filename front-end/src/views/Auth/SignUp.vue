@@ -9,19 +9,18 @@
         <SignupSvg width="400" />
       </v-col>
       <v-col class="px-10 align-self-start mt-10">
-        <v-form ref="form" v-model="valid" lazy-validation>
+        <v-form ref="signup">
           <v-text-field
             prepend-icon="mdi-account"
             class="my-6"
-            v-model="username"
             :counter="16"
-            :rules="usernameRules"
-            label="Username"
-            required
-            type="text"
             name="username"
+            autocomplete="off"
+            required
+            v-model="username"
+            :label="$t('forms.username')"
+            :rules="usernameRules"
           ></v-text-field>
-
           <v-text-field
             prepend-icon="mdi-email"
             class="my-6"
@@ -34,26 +33,48 @@
           ></v-text-field>
           <v-text-field
             prepend-icon="mdi-lock"
-            class="my-6"
+            class="mt-6"
             v-model="password"
-            :type="show1 ? 'text' : 'password'"
-            label="Password"
-            required
-            name="password"
             :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+            :type="show1 ? 'text' : 'password'"
+            name="password"
+            :label="$t('forms.password')"
+            :rules="passwordRules"
+            required
             @click:append="show1 = !show1"
+          ></v-text-field>
+          <v-text-field
+            prepend-icon="mdi-lock"
+            class="my-6"
+            :error="repeatPassword !== password"
+            v-model="repeatPassword"
+            :append-icon="show2 ? 'mdi-eye' : 'mdi-eye-off'"
+            :type="show2 ? 'text' : 'password'"
+            name="password"
+            :label="$t('repeat') + $t('forms.password')"
+            @click:append="show2 = !show2"
+            required
           ></v-text-field>
 
           <v-checkbox
             class="ml-2"
-            v-model="checkbox"
-            :rules="[v => !!v || 'You must agree to continue!']"
-            label="Do you agree ?"
+            v-model="agree"
+            name="agreement"
+            :rules="[v => !!v || $t('forms.errors.agree')]"
+            :label="$t('forms.agree')"
             required
           ></v-checkbox>
 
-          <v-btn color="#F9A826" dark class="ml-2 mt-6" elevation="0" rounded>
-            Continue
+          <v-btn
+            @click="handleSubmit"
+            color="#F9A826"
+            dark
+            class="ml-2 mt-6 px-10"
+            elevation="0"
+            rounded
+            :disabled="disabled"
+          >
+            {{ $t("btn.signup") }}
           </v-btn>
         </v-form>
       </v-col>
@@ -71,29 +92,59 @@ export default {
     SignupSvg
   },
   data: () => ({
-    valid: false,
-    username: "",
-    password: "",
     show1: false,
-    usernameRules: [
-      v => !!v || "Name is required",
-      v => (v && v.length <= 16) || "Name must be less than 10 characters"
-    ],
+    show2: false,
+    disabled: false,
+    // models
+    username: "",
     email: "",
-    emailRules: [
-      v => !!v || "E-mail is required",
-      v => /.+@.+\..+/.test(v) || "E-mail must be valid"
-    ],
-    select: null,
-    checkbox: false
+    password: "",
+    repeatPassword: "",
+    agree: false
   }),
+  computed: {
+    usernameRules() {
+      return [
+        v =>
+          !!v || this.$t("forms.username") + this.$t("forms.errors.required"),
+        v =>
+          this.$pattern.username.test(v) ||
+          this.$t("forms.errors.invalid") + this.$t("forms.username")
+      ];
+    },
+    emailRules() {
+      return [
+        v => !!v || this.$t("forms.email") + this.$t("forms.errors.required"),
+        v =>
+          this.$pattern.email.test(v) ||
+          this.$t("forms.errors.invalid") + this.$t("forms.email")
+      ];
+    },
+    passwordRules() {
+      return [
+        v =>
+          !!v || this.$t("forms.password") + this.$t("forms.errors.required"),
+        v =>
+          this.$pattern.password.test(v) ||
+          this.$t("forms.errors.invalid") + this.$t("forms.password")
+      ];
+    },
+    valid() {
+      return this.$refs.signup.validate();
+    }
+  },
 
   methods: {
-    validate() {
-      this.$refs.form.validate();
-    },
-    reset() {
-      this.$refs.form.reset();
+    handleSubmit() {
+      if (this.valid) {
+        console.log("============= data ================");
+        console.log("username: " + this.username);
+        console.log("email: " + this.email);
+        console.log("password: " + this.password);
+        console.log("agree: " + this.agree);
+
+        // this.$store.dispatch('login')
+      }
     }
   }
 };

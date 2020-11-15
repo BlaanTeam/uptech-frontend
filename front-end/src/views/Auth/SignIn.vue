@@ -17,30 +17,44 @@
       </v-avatar>
 
       <v-card-title class="display-1 justify-center">
-        Welcome Back
+        {{ $t("forms.welcome") }}
       </v-card-title>
 
-      <v-card-text class="">
-        <v-form>
+      <v-card-text>
+        <v-form ref="signin">
           <v-text-field
-            v-model="email"
-            label="E-mail"
-            hint="test"
+            name="username"
+            autocomplete="false"
+            v-model="username"
+            :label="$t('forms.username')"
+            :rules="usernameRules"
           ></v-text-field>
           <v-text-field
-            class="my-6"
+            class="mt-6"
             v-model="password"
-            :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
-            :type="show1 ? 'text' : 'password'"
+            :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
+            :type="show ? 'text' : 'password'"
             name="password"
-            label="Password"
-            @click:append="show1 = !show1"
+            :label="$t('forms.password')"
+            :rules="passwordRules"
+            @click:append="show = !show"
           ></v-text-field>
+          <v-checkbox
+            name="rememberMe"
+            v-model="rememberMe"
+            :label="$t('forms.rememberMe')"
+          ></v-checkbox>
         </v-form>
       </v-card-text>
-
-      <v-btn block class="py-6" color="primary" dark elevation="0">
-        Login
+      <v-btn
+        @click="handlesubmit()"
+        block
+        class="py-6"
+        color="primary"
+        dark
+        elevation="0"
+      >
+        {{ $t("btn.signin") }}
       </v-btn>
     </v-card>
   </v-container>
@@ -56,30 +70,52 @@ export default {
     CloudSvg
   },
   data: () => ({
-    valid: false,
-    show1: false,
+    show: false,
+
+    // models
+    username: "",
     password: "",
-    rules: {
-      required: value => !!value || "Required.",
-      min: v => v.length >= 8 || "At least 8 characters",
-      emailMatch: () => `The email and password you entered don't match`
-    },
-    email: "",
-    emailRules: [
-      v => !!v || "E-mail is required",
-      v =>
-        /^\w+([/.-]?\w+)*@\w+([/.-]?\w+)*(\.\w{2,3})+$/.test(v) ||
-        "E-mail must be valid"
-    ]
+    rememberMe: false
   }),
-  methods: {
-    submit() {
-      if (this.$refs.form.validate()) {
-        this.$refs.form.$el.submit();
-      }
+  computed: {
+    usernameRules() {
+      return [
+        v =>
+          !!v || this.$t("forms.username") + this.$t("forms.errors.required"),
+        v =>
+          this.$pattern.username.test(v) ||
+          this.$t("forms.errors.invalid") + this.$t("forms.username")
+      ];
     },
-    clear() {
-      this.$refs.form.reset();
+    passwordRules() {
+      return [
+        v =>
+          !!v || this.$t("forms.password") + this.$t("forms.errors.required"),
+        v =>
+          this.$pattern.password.test(v) ||
+          this.$t("forms.errors.invalid") + this.$t("forms.password")
+      ];
+    },
+    valid() {
+      return this.$refs.signin.validate();
+    }
+  },
+  methods: {
+    handlesubmit() {
+      if (this.valid) {
+        this.$store
+          .dispatch("signIn", {
+            username: this.username,
+            password: this.password,
+            rememberMe: this.this.rememberMe
+          })
+          .then(res => {
+            console.log(res);
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      }
     }
   }
 };

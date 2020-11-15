@@ -1,3 +1,25 @@
 {
-  "message": "hello i18n !!"
+  "repeat": "Repeat",
+  "forms": {
+    "welcome": "Welcome Back",
+    "username": "Username",
+    "password": "Password",
+    "email": "E-mail",
+    "forgotPassword": "Forgot my password",
+    "resetPassword": "Reset my password",
+    "rememberMe": "Remember me",
+    "agree": "Do you agree ?",
+
+    "errors": {
+      "invalid": "Invalid ",
+      "required": " required",
+      "agree": "You must agree to continue!"
+
+    }
+
+  },
+  "btn": {
+     "signin": "Log In",
+     "signup": "Sign Up"
+  }
 }

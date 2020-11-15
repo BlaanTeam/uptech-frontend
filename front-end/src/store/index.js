@@ -5,20 +5,40 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    dark: localStorage.getItem("dark") || false
+    accessToken: localStorage.getItem("access_token") || "",
+    user: localStorage.getItem("user") || {}
   },
   getters: {
-    isDark: state => !!state.dark
+    isLoggedIn: state =>
+      !!state.accessToken &&
+      !!state.accessToken.match(Vue.prototype.$pattern.jwtToken)
   },
   mutations: {
-    setDark(state) {
-      state.dark = !state.dark;
+    AUTH_SUCCESS: (state, payload) => {
+      localStorage.setItem("access_token", payload.accessToken);
+      localStorage.setItem("user", payload.user);
+      state.accessToken = payload.accessToken;
+      state.user = payload.user;
     }
   },
   actions: {
-    setDark({ commit }, { val }) {
-      localStorage.setItem("dark", val);
-      commit["setDark"];
+    signIn: (context, payload) => {
+      return new Promise((resolve, reject) => {
+        Vue.prototype.$http
+          .post("/auth/sign_in", payload)
+          .then(res => {
+            if (res.status === 200 && res.accessToken) {
+              context.commit("AUTH_SUCCESS", {
+                accessToken: res.data.accessToken,
+                user: res.data.user
+              });
+              resolve(res);
+            }
+          })
+          .catch(err => {
+            reject(err);
+          });
+      });
     }
   },
   modules: {}
