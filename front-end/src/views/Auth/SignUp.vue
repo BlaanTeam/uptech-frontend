@@ -61,13 +61,23 @@
             v-model="agree"
             name="agreement"
             :rules="[v => !!v || $t('forms.errors.agree')]"
-            :label="$t('forms.agree')"
             required
-          ></v-checkbox>
+          >
+            <template v-slot:label>
+              <div @click.stop="">
+                {{ $t("forms.agree") }}
+                <router-link to="/terms">{{ $t("forms.terms") }}</router-link>
+                {{ $t("and") }}
+                <router-link to="/conditions"
+                  >{{ $t("forms.conditions") }} ?
+                </router-link>
+              </div>
+            </template>
+          </v-checkbox>
 
           <v-btn
             @click="handleSubmit"
-            color="#F9A826"
+            color="primary"
             dark
             class="ml-2 mt-6 px-10"
             elevation="0"
@@ -75,6 +85,9 @@
             :disabled="disabled"
           >
             {{ $t("btn.signup") }}
+          </v-btn>
+          <v-btn to="sign_in" class="ml-6 mt-6 primary--text" text>
+            {{ $t("forms.already") }} ?
           </v-btn>
         </v-form>
       </v-col>
@@ -137,13 +150,42 @@ export default {
   methods: {
     handleSubmit() {
       if (this.valid) {
-        console.log("============= data ================");
-        console.log("username: " + this.username);
-        console.log("email: " + this.email);
-        console.log("password: " + this.password);
-        console.log("agree: " + this.agree);
-
-        // this.$store.dispatch('login')
+        let loader = this.$loading.show({ container: null, canCancel: false });
+        this.$store
+          .dispatch("signUp", {
+            username: this.username,
+            email: this.email,
+            password: this.password
+          })
+          .then(res => {
+            loader.hide();
+            if (res.status === 201 && res.data.code === 2062) {
+              this.$router.push({ name: "SignIn" });
+              this.$notify({
+                group: "success",
+                type: "success",
+                title: "Authentication Success",
+                text:
+                  "Regitered successfully ! check your email to confirm your account"
+              });
+            }
+          })
+          .catch(err => {
+            this.password = "";
+            this.repeatPassword = "";
+            loader.hide();
+            if (
+              err.response.status === 409 &&
+              err.response.data.error.code === 1092
+            ) {
+              this.$notify({
+                group: "errors",
+                type: "error",
+                title: "Authentication Error",
+                text: err.response.data.error.msg
+              });
+            }
+          });
       }
     }
   }
