@@ -1,4 +1,5 @@
 import Vue from "vue";
+import store from "../store";
 import VueRouter from "vue-router";
 import Home from "../views/Home/Home.vue";
 Vue.use(VueRouter);
@@ -9,6 +10,7 @@ const routes = [
     name: "Home",
     component: Home,
     meta: {
+      authRequired: false,
       title: "Home"
     }
   },
@@ -17,6 +19,7 @@ const routes = [
     name: "About",
     component: () => import("@/views/Home/About"),
     meta: {
+      authRequired: false,
       title: "About Us"
     }
   },
@@ -25,6 +28,7 @@ const routes = [
     name: "SignIn",
     component: () => import("@/views/Auth/SignIn"),
     meta: {
+      authRequired: false,
       title: "Sign In"
     }
   },
@@ -33,7 +37,17 @@ const routes = [
     name: "SignUp",
     component: () => import("@/views/Auth/SignUp"),
     meta: {
+      authRequired: false,
       title: "Sing Up"
+    }
+  },
+  {
+    path: "/test",
+    name: "test",
+    // component: () => import("@/views/Auth/SignUp"),
+    meta: {
+      authRequired: true,
+      title: "Dashboard"
     }
   },
   {
@@ -57,5 +71,27 @@ router.afterEach((to, from) => {
     document.title = "UpTech | " + (to.meta.title || "Welcome");
   });
 });
-
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.authRequired)) {
+    if (store.getters.isLoggedIn) {
+      next();
+    } else {
+      next({
+        name: "SignIn",
+        query: {
+          nextPath: to.path
+        }
+      });
+    }
+  } else next();
+  // else {
+  //   if (store.getters.isLoggedIn) {
+  //     next({
+  //       name: "test"
+  //     });
+  //   } else {
+  //     next();
+  //   }
+  // }
+});
 export default router;
