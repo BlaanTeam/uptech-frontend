@@ -1,6 +1,10 @@
 {
   "repeat": "Repeat",
+  "and": "and",
   "forms": {
+    "already": "Already signed up",
+    "terms": "terms",
+    "conditions": "conditions",
     "welcome": "Welcome Back",
     "username": "Username",
     "password": "Password",
@@ -8,7 +12,7 @@
     "forgotPassword": "Forgot my password",
     "resetPassword": "Reset my password",
     "rememberMe": "Remember me",
-    "agree": "Do you agree ?",
+    "agree": "Do you agree to the",
 
     "errors": {
       "invalid": "Invalid ",
