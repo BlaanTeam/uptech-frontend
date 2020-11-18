@@ -63,7 +63,19 @@ const userSchema = new Schema({
     type: Boolean,
     default: false,
   },
+  resetPasswordToken: {
+    type: String,
+  },
   reSendConfirmationTooManyRequest: {
+    timestamp: {
+      type: Date,
+    },
+    repeated: {
+      type: Number,
+      default: 0,
+    },
+  },
+  forgotPasswordTooManyRequest: {
     timestamp: {
       type: Date,
     },
@@ -142,6 +154,36 @@ userSchema.methods.reConfirmTooManyRequest = function () {
     this.reSendConfirmationTooManyRequest.repeated++;
     return true;
   }
+};
+// forgot password too many request
+userSchema.methods.forgotPassTooManyRequest = function () {
+  if (this.forgotPasswordTooManyRequest.timestamp) {
+    this.forgotPasswordTooManyRequest.repeated = 0;
+
+    if (
+      Date.now() - Date.parse(this.forgotPasswordTooManyRequest.timestamp) >
+      8.64e7
+    ) {
+      this.forgotPasswordTooManyRequest.timestamp = null;
+      this.forgotPasswordTooManyRequest.repeated++;
+      return true;
+    } else {
+      return false;
+    }
+  } else if (this.forgotPasswordTooManyRequest.repeated >= 4) {
+    this.forgotPasswordTooManyRequest.timestamp = Date.now();
+    return false;
+  } else {
+    this.forgotPasswordTooManyRequest.repeated++;
+    return true;
+  }
+};
+// check if reset password token already used
+userSchema.methods.checkIfAlreadyUsed = function (token) {
+  if (token === this.resetPasswordToken) {
+    return true;
+  }
+  return false;
 };
 
 module.exports = {

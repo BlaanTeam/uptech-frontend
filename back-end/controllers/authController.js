@@ -77,7 +77,7 @@ const confirmAccount = async (req, res, next) => {
     if (user.isConfirmed()) throw new createError("Unauthorized !", 1026, 401);
     user.confirmAccount();
     await user.save();
-    res.json({ confirmed: true });
+    res.json({ msg: "Account Confirmed Succesfully !", code: 2041 });
   } catch (err) {
     if (err.isJoi === true) err = new createError(err.message, 1049, 422);
     else if (err.isExpired === true)
@@ -96,9 +96,12 @@ const forgotPassword = async (req, res, next) => {
     let user = await User.findOne({ userMail: result.email });
     if (!user) throw new createError("The Email Is Not Exist !", 1030, 404);
     user.externalURL = req.externalURL;
+    let isRespect = user.forgotPassTooManyRequest();
+    user.save();
+    if (!isRespect) throw new createError("Too Many Requests !", 1032, 429);
     sendForgotPassword(user, "Reset Your Password");
     res.json({
-      msg: "Forgot Password Email Has Been Sent!",
+      msg: "Forgot Password, Email Has Been Sent!",
       code: 2013,
     });
   } catch (err) {
@@ -115,7 +118,11 @@ const resetPassword = async (req, res, next) => {
     let email = await verifyForgotPassword(result.token);
     let user = await User.findOne({ userMail: email });
     if (!user) throw new createError("Unauthorized !", 1030, 401);
+    else if (user.checkIfAlreadyUsed(result.token))
+      throw new createError("Unauthorized !", 1074, 401);
     user.resetPassword(result.password);
+    user.resetPasswordToken = result.token;
+    user.save();
     res.json({ msg: "The password has been update !", code: 2029 });
   } catch (err) {
     if (err.isJoi === true) err = new createError(err.message, 1049, 422);
@@ -141,7 +148,7 @@ const reSendConfirmation = async (req, res, next) => {
     sendConfirmation(user, "Confirm Your Account 😇");
     res.json({
       code: 2051,
-      msg: "An Email Has BeenSent !",
+      msg: "An Email Has Been Sent !",
     });
   } catch (err) {
     if (err.isJoi === true) err = new createError(err.message, 1049, 422);

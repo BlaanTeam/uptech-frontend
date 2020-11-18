@@ -1,4 +1,4 @@
-const defaultConfig = {
+const commonConfig = {
   app: {
     port: process.env.PORT || 3000,
   },
@@ -33,10 +33,10 @@ const defaultConfig = {
   },
 };
 
-const development = { ...defaultConfig };
+const development = { ...commonConfig };
 
 const production = {
-  ...defaultConfig,
+  ...commonConfig,
   db: {
     dbHost: process.env.DB_HOST_PRODUCTION,
     dbPort: process.env.DB_PORT_PRODUCTION,
