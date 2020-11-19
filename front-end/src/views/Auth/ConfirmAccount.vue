@@ -1,8 +1,10 @@
-<template> </template>
+<template>
+  <div></div>
+</template>
 
 <script>
 export default {
-  name: "Confirm Account",
+  name: "ConfirmAccount",
   computed: {
     isValidToken() {
       return (
