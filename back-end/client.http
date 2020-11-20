@@ -4,9 +4,10 @@
 # All API's errors and successes response
     # [200] - Login Success : {code:2032 ,accessToken:"xxx.xxx.xx" ,user: {xx:xxx,xx:xx}}
     # [201] - Registered Success : {code:2062}
-    # [200] - Forgot Password : {code:2013}
-    # [200] - Reset Password  : {code:2029}
-    # [200] - Resend Confirmation : {code:2051}
+    # [200] - Forgot Password Success : {code:2013}
+    # [200] - Reset Password Succes : {code:2029}
+    # [200] - Resend Confirmation Success : {code:2051}
+    # [200] - Confirm Account Success : {code:2041}
     # [404] - Account Not Exist : {code:1030 ,msg:"Account Not Exist and Not Registered Yet !"}
     # [401] - Account Not Confirmed : {code:1063 ,msg:"Account Not Confirmed Yet !"}
     # [401] - Authentication Failed : {code:1024 ,msg: "Invalid username/password !"}
@@ -14,6 +15,7 @@
     # [401] - Token Expired : {code:1072 ,msg:"Unautherized !"}
     # [401] - Token Invalid : {code:1079 ,msg:"Unautherized !"}
     # [401] - Token Missed :  {code:1075 ,msg:"Unautherized !"}
+    # [401] - Token Already Used :  {code:1074 ,msg:"Unautherized !"}
     # [429] - Too Many Request : {code:1032 ,msg:"Too Many Request"}
     # [400 | 422] - Bad Request : {code:1049,msg:"Special Message !"}
     # [403] - Don't Have Permission : {code:1003,msg:"Unauthorized !"}
@@ -25,7 +27,6 @@
 
 
 ### testing the not found error 
-
 GET {{baseURL}}/bad_endpoints
 
 ### sing-in endpoint
@@ -46,7 +47,7 @@ Content-Type: application/json
 }
 
 
-### sing-up endpoint
+### sign-up endpoint
 # endpoint : baseURL/auth/sign_up
 # method : POST
 # content-type : application/json
@@ -87,7 +88,7 @@ POST {{baseURL}}/auth/forgot_password
 Content-Type: application/json
 
 {
-    "email":"bepog86447@x1post.com"
+    "email":"abdo.sabani30@gmail.com"
 }
 
 ### reset-password endpoint
@@ -97,8 +98,7 @@ Content-Type: application/json
 # params :
     # token     -> required | string
     # password  -> required | string
-@reset_password_token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImJlcG9nODY0NDdAeDFwb3N0LmNvbSIsImlhdCI6MTYwNDk2MjQ1NiwiZXhwIjoxNjA0OTY0MjU2fQ.EtldkVcpBHU-l2qtoQ3XD5YY7zfYfgzaV-qY1PhqzeA"
-
+@reset_password_token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFiZG8uc2FiYW5pMzBAZ21haWwuY29tIiwiaWF0IjoxNjA1NzMxNjk4LCJleHAiOjE2MDU3MzM0OTh9.QezOTpwHXoad5uXxDque2o2DkCJP-hY-INCF-Naj_p8"
 POST {{baseURL}}/auth/reset_password
 Content-Type: application/json
 
