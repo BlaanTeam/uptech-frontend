@@ -51,8 +51,8 @@ export default {
   },
   methods: {
     handleSubmit() {
-      let loader = this.$loading.show({ container: null, canCancel: false });
       if (this.$refs.forgotPassword.validate()) {
+        let loader = this.$loading.show({ container: null, canCancel: false });
         this.$store
           .dispatch("forgotPassword", {
             email: this.email
