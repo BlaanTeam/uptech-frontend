@@ -82,6 +82,7 @@ const routes = [
     name: "NotFound",
     component: () => import("@/views/Errors/NotFound"),
     meta: {
+      global: true,
       title: "Not Found"
     }
   }
@@ -110,6 +111,8 @@ router.beforeEach((to, from, next) => {
         }
       });
     }
+  } else if (to.matched.some(record => record.meta.global)) {
+    next();
   } else {
     if (store.getters.isLoggedIn) {
       next({

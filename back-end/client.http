@@ -35,7 +35,7 @@ GET {{baseURL}}/bad_endpoints
 # params :
     # username -> required | string 
     # password -> required | string
-    # remember -> optional | boolean
+    # rememberMe -> optional | boolean
 POST {{baseURL}}/auth/sign_in
 Content-Type: application/json
 
@@ -46,7 +46,7 @@ Content-Type: application/json
 }
 
 
-### sing-up endpoint
+### sign-up endpoint
 # endpoint : baseURL/auth/sign_up
 # method : POST
 # content-type : application/json
