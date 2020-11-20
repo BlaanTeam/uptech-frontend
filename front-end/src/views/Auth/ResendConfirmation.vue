@@ -52,8 +52,8 @@ export default {
   },
   methods: {
     handleSubmit() {
-      let loader = this.$loading.show({ container: null, canCancel: false });
       if (this.$refs.resendConfirmation.validate()) {
+        let loader = this.$loading.show({ container: null, canCancel: false });
         this.$store
           .dispatch("resendConfirmation", {
             email: this.email
