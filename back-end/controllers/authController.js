@@ -114,16 +114,22 @@ const forgotPassword = async (req, res, next) => {
 
 const resetPassword = async (req, res, next) => {
   try {
+    console.log(req.query);
     let result = await resetPasswordSchema.validateAsync(req.body);
     let email = await verifyForgotPassword(result.token);
     let user = await User.findOne({ userMail: email });
     if (!user) throw new createError("Unauthorized !", 1030, 401);
     else if (user.checkIfAlreadyUsed(result.token))
       throw new createError("Unauthorized !", 1074, 401);
-    user.resetPassword(result.password);
-    user.resetPasswordToken = result.token;
-    user.save();
-    res.json({ msg: "The password has been update !", code: 2029 });
+    
+    if (req.query.check && req.query.check === "true") {
+      res.json({ success: true });
+    } else {
+      user.resetPassword(result.password);
+      user.resetPasswordToken = result.token;
+      user.save();
+      res.json({ msg: "The password has been update !", code: 2029 });
+    }
   } catch (err) {
     if (err.isJoi === true) err = new createError(err.message, 1049, 422);
     else if (err.isExpired === true)
