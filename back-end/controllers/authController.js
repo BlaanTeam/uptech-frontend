@@ -125,7 +125,7 @@ const resetPassword = async (req, res, next) => {
     if (req.query.check && req.query.check === "true") {
       res.json({ success: true });
     } else {
-      user.resetPassword(result.password);
+      await user.resetPassword(result.password);
       user.resetPasswordToken = result.token;
       user.save();
       res.json({ msg: "The password has been update !", code: 2029 });
