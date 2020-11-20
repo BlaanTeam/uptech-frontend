@@ -2,7 +2,7 @@
   <v-container fluid class="pa-10">
     <v-col cols="8" offset="3">
       <h1 class="display-3 my-10">{{ $t("find") }}</h1>
-      <v-form ref="forgotPassword">
+      <v-form ref="resendConfirmation">
         <v-col cols="8">
           <h3 class="mb-6">{{ $t("enter") }}</h3>
           <v-text-field
@@ -23,7 +23,8 @@
             dark
             elevation="0"
           >
-            {{ $t("search") }}
+            <!-- {{ $t("search") }} -->
+            Send
           </v-btn>
         </v-col>
       </v-form>
@@ -33,7 +34,7 @@
 
 <script>
 export default {
-  name: "ForgotPassword",
+  name: "RenesendConfirmation",
   data() {
     return {
       email: ""
@@ -52,14 +53,14 @@ export default {
   methods: {
     handleSubmit() {
       let loader = this.$loading.show({ container: null, canCancel: false });
-      if (this.$refs.forgotPassword.validate()) {
+      if (this.$refs.resendConfirmation.validate()) {
         this.$store
-          .dispatch("forgotPassword", {
+          .dispatch("resendConfirmation", {
             email: this.email
           })
           .then(res => {
             loader.hide();
-            if (res.status === 200 && res.data.code === 2013) {
+            if (res.status === 200 && res.data.code === 2051) {
               this.$notify({
                 group: "success",
                 type: "success",

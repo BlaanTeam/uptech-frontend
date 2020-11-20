@@ -34,13 +34,27 @@ export default {
           });
         })
         .catch(err => {
+          this.$router.push({ name: "SignIn" });
           if (err.response) {
-            this.$notify({
-              group: "errors",
-              type: "error",
-              title: "Token Error",
-              text: "Invalid or expired token"
-            });
+            if (
+              err.response.status === 401 &&
+              err.response.data.error.code === 1026
+            ) {
+              this.$notify({
+                group: "errors",
+                type: "warn",
+                title: "Account Error",
+                text: "this account already confirmed"
+              });
+            } else {
+              //1026
+              this.$notify({
+                group: "errors",
+                type: "error",
+                title: "Token Error",
+                text: "Invalid or expired token"
+              });
+            }
           }
         });
     } else {

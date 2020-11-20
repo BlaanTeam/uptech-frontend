@@ -69,6 +69,15 @@ const routes = [
     }
   },
   {
+    path: "/resend_confirmation",
+    name: "ResendConfirmation",
+    component: () => import("@/views/Auth/ResendConfirmation"),
+    meta: {
+      authRequired: false,
+      title: "Re-send Confirmation"
+    }
+  },
+  {
     path: "/reset_password/:token",
     name: "ResetPassword",
     component: () => import("@/views/Auth/ResetPassword"),

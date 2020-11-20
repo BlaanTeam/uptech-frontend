@@ -63,6 +63,42 @@ export default new Vuex.Store({
             reject(err);
           });
       });
+    },
+    forgotPassword: (context, payload) => {
+      return new Promise((resolve, reject) => {
+        Vue.prototype.$http
+          .post("/auth/forgot_password", payload)
+          .then(res => {
+            resolve(res);
+          })
+          .catch(err => {
+            reject(err);
+          });
+      });
+    },
+    resetPassword: (context, payload) => {
+      return new Promise((resolve, reject) => {
+        Vue.prototype.$http
+          .post("/auth/reset_password", payload)
+          .then(res => {
+            resolve(res);
+          })
+          .catch(err => {
+            reject(err);
+          });
+      });
+    },
+    resendConfirmation: (context, payload) => {
+      return new Promise((resolve, reject) => {
+        Vue.prototype.$http
+          .post("/auth/resend_confirmation", payload)
+          .then(res => {
+            resolve(res);
+          })
+          .catch(err => {
+            reject(err);
+          });
+      });
     }
   },
   modules: {}

@@ -1,6 +1,13 @@
 {
   "repeat": "Repeat",
   "and": "and",
+  "search": "search",
+  "find": "Find your account",
+  "reset": "Reset your password",
+  "enter": "Please enter your email or username",
+  "enterPassword": "Please enter your new password",
+  "change": "change",
+  "new": "new",
   "forms": {
     "already": "Already signed up",
     "terms": "terms",
