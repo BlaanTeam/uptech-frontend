@@ -108,6 +108,11 @@ export default {
       return this.$refs.signin.validate();
     }
   },
+  watch: {
+    "$i18n.locale"(newV, oldV) {
+      this.$refs.signin.validate();
+    }
+  },
   methods: {
     handlesubmit() {
       if (this.valid) {

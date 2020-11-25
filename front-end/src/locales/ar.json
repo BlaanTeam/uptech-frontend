@@ -1,0 +1,47 @@
+{
+  "langs": {
+    "en": "الإنجليزية‎",
+    "ar": "العربية‎"
+  },
+  "nav": {
+    "home": "الرئيسية",
+    "about": "معلومات عنا",
+    "support": "الدعم"
+  },
+  "titles": {
+    "home": "الرئيسية"
+  },
+  "name": "arabic",
+  "repeat": "3awd",
+  "and": "o",
+  "search": "9lab",
+  "find": "9llab 3la lcompte dyalk",
+  "reset": "3awd bddal lpassword",
+  "enter": "d5al l email dyalk hna",
+  "enterPassword": "dir chi password jdid",
+  "change": "change",
+  "new": "new",
+  "forms": {
+    "already": "Already signed up",
+    "terms": "terms",
+    "conditions": "conditions",
+    "welcome": "Welcome Back",
+    "username": "Username",
+    "password": "Password",
+    "email": "E-mail",
+    "forgotPassword": "Forgot my password",
+    "resetPassword": "Reset my password",
+    "rememberMe": "Remember me",
+    "agree": "Do you agree to the",
+
+    "errors": {
+      "invalid": "4alt ",
+      "required": " darouri",
+      "agree": "You must agree to continue!"
+    }
+  },
+  "btn": {
+    "signin": "Log In",
+    "signup": "Sign Up"
+  }
+}

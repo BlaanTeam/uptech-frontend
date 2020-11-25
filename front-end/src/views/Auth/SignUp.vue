@@ -146,6 +146,11 @@ export default {
       return this.$refs.signup.validate();
     }
   },
+  watch: {
+    "$i18n.locale"(newV, oldV) {
+      this.$refs.signup.validate();
+    }
+  },
 
   methods: {
     handleSubmit() {

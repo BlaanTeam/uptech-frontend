@@ -1,10 +1,98 @@
 {
+  "name": "English",
+  "shortcut": "en",
+  "langs": {
+    "en": "English",
+    "ar": "Arabic"
+  },
+  "globals": {
+    "search": "Search",
+    "errors": {
+      "wentWrong": "Opps, something went wrong",
+      "lostConnection": "You lost your connection !"
+    }
+  },
+  "nav": {
+    "home": "Home in en.json",
+    "about": "About",
+    "support": "Support"
+  },
+  "titles": {
+    "home": "Home"
+  },
+  "home": {
+    "section1": {
+      "h1": "Hi, We are glad to have you here "
+    }
+  },
+  "about": {},
+  "signin": {
+    "name": "Sign In",
+    "h1": "welcome back",
+    "form": {
+      "username": "Username",
+      "password": "Password",
+      "forgotPassword": "Forgot my password",
+      "rememberMe": "Remember me"
+    },
+    "errors": {
+      "prequired": "Password Required !",
+      "urequired": "Username Required !",
+      "invalid": "Invalid username or password !",
+      "notRegistredYet": "This account is not registred yet !",
+      "notConfirmed": "Account not confirmed yet please checkout you email !"
+    }
+  },
+  "signup": {
+    "name": "Sign Up",
+    "form": {
+      "username": "Username",
+      "password": "Password",
+      "repeatPassword": "Repeat Password",
+      "email": "E-mail",
+      "agree": "Do you agree to the",
+      "terms": "terms",
+      "conditions": "conditions",
+      "alreadySigned": "Already signed up ?"
+    },
+    "errors": {
+      "prequired": "Password Required !",
+      "urequired": "Username Required !",
+      "erequired": "Email Required !",
+      "emailAlreadyRegistred": "Email already registered try a different one !",
+      "usernameAlreadyRegistred": "Username already registered try a different one !",
+      "invalid": "Invalid username or password !"
+    },
+    "success": {
+      "registred": "Account registered successfully"
+    }
+  },
+  "forgotPassword": {
+    "h1": "Find your account",
+    "h2": "Please enter your email",
+    "errors": {
+      "erequired": "Email Required !",
+      "invalidEmail": "Sorry but we didn't find any account matching this email !"
+    }
+  },
+  "resetPassword": {
+    "h1": "Reset your password",
+    "forms": {
+      "password": "Password",
+      "repeatPassword": "Repeat Password"
+    },
+    "success": {
+      "passwordReset": "Congrats, The password updated successfully",
+      "invalidEmail": "Sorry, But we didn't find any account matching this email !"
+    }
+  },
+
   "repeat": "Repeat",
   "and": "and",
   "search": "search",
   "find": "Find your account",
   "reset": "Reset your password",
-  "enter": "Please enter your email or username",
+  "enter": "Please enter your email",
   "enterPassword": "Please enter your new password",
   "change": "change",
   "new": "new",
@@ -25,12 +113,10 @@
       "invalid": "Invalid ",
       "required": " required",
       "agree": "You must agree to continue!"
-
     }
-
   },
   "btn": {
-     "signin": "Log In",
-     "signup": "Sign Up"
+    "signin": "Log In",
+    "signup": "Sign Up"
   }
 }

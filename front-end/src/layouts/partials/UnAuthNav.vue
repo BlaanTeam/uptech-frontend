@@ -8,14 +8,25 @@
       <v-spacer></v-spacer>
       <!------------------ Links for computer devices -------------------->
       <div class="d-none d-sm-flex links ">
-        <router-link v-for="link in links" :key="link.name" :to="link.href">
+        <router-link to="/">
           <v-btn text>
-            {{ link.name }}
+            {{ $t("nav.home") }}
+          </v-btn>
+        </router-link>
+        <router-link to="/about">
+          <v-btn text>
+            {{ $t("nav.about") }}
+          </v-btn>
+        </router-link>
+        <router-link to="/support">
+          <v-btn text>
+            {{ $t("nav.support") }}
           </v-btn>
         </router-link>
       </div>
       <v-spacer></v-spacer>
       <DarkMode />
+      <Locale />
       <router-link class="login d-none d-sm-flex" :to="router">
         <v-btn color="primary" rounded elevation="0" dark>
           <v-icon left>mdi-login</v-icon>
@@ -53,9 +64,11 @@
 </template>
 <script defer>
 import DarkMode from "@/components/DarkMode";
+import Locale from "@/components/Locale.vue";
 export default {
   components: {
-    DarkMode
+    DarkMode,
+    Locale
   },
   data: () => ({
     // Links ----------------------
