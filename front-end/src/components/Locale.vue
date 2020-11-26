@@ -1,26 +1,16 @@
 <template>
   <v-menu offset-y>
     <template v-slot:activator="{ on, attrs }">
-      <v-btn class="mr-3 text-center" text v-bind="attrs" v-on="on">
+      <v-btn class="me-3 text-center" text v-bind="attrs" v-on="on">
         <v-icon>mdi-translate</v-icon>
         <v-icon small>mdi-chevron-down</v-icon>
       </v-btn>
     </template>
-    <v-list>
-      <v-list-item
-        dense
-        class="text-center py-0 "
-        link
-        @click="setLocale('en')"
-      >
+    <v-list class="lang" dense>
+      <v-list-item class="text-center" link @click="setLocale('en')">
         <v-list-item-title>{{ $t("langs.en") }}</v-list-item-title>
       </v-list-item>
-      <v-list-item
-        dense
-        class="text-center py-0 "
-        link
-        @click="setLocale('ar')"
-      >
+      <v-list-item dense class="text-center" link @click="setLocale('ar')">
         <v-list-item-title>{{ $t("langs.ar") }}</v-list-item-title>
       </v-list-item>
     </v-list>
@@ -30,11 +20,7 @@
 <script>
 export default {
   data: () => ({
-    locale: "en",
-    locales: [
-      { title: "English", shortcut: "en" },
-      { title: "Darija", shortcut: "ar" }
-    ]
+    locale: "en"
   }),
 
   methods: {
