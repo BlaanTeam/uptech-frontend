@@ -1,8 +1,11 @@
 import Vue from "vue";
+import i18n from "../plugins/i18n";
 import store from "../store";
 import VueRouter from "vue-router";
 import Home from "../views/Home/Home.vue";
 Vue.use(VueRouter);
+
+const t = (key, ...params) => i18n.t(key, params);
 
 const routes = [
   {
@@ -11,7 +14,7 @@ const routes = [
     component: Home,
     meta: {
       authRequired: false,
-      title: "Home"
+      title: "titles.home"
     }
   },
   {
@@ -20,7 +23,7 @@ const routes = [
     // component: Home,
     meta: {
       authRequired: true,
-      title: "Feeds"
+      title: "titles.feeds"
     }
   },
   {
@@ -29,7 +32,7 @@ const routes = [
     component: () => import("@/views/Home/About"),
     meta: {
       authRequired: false,
-      title: "About Us"
+      title: "titles.about"
     }
   },
   {
@@ -38,7 +41,7 @@ const routes = [
     component: () => import("@/views/Auth/SignIn"),
     meta: {
       authRequired: false,
-      title: "Sign In"
+      title: "titles.signin"
     }
   },
   {
@@ -47,7 +50,7 @@ const routes = [
     component: () => import("@/views/Auth/SignUp"),
     meta: {
       authRequired: false,
-      title: "Sing Up"
+      title: "titles.signup"
     }
   },
   {
@@ -56,7 +59,7 @@ const routes = [
     component: () => import("@/views/Auth/ConfirmAccount"),
     meta: {
       authRequired: false,
-      title: "Confirm Account"
+      title: "titles.confirmAccount"
     }
   },
   {
@@ -65,7 +68,7 @@ const routes = [
     component: () => import("@/views/Auth/ForgotPassword"),
     meta: {
       authRequired: false,
-      title: "Forgot Password"
+      title: "titles.forgotPassword"
     }
   },
   {
@@ -74,7 +77,7 @@ const routes = [
     component: () => import("@/views/Auth/ResendConfirmation"),
     meta: {
       authRequired: false,
-      title: "Re-send Confirmation"
+      title: "titles.resendConfirmation"
     }
   },
   {
@@ -83,7 +86,7 @@ const routes = [
     component: () => import("@/views/Auth/ResetPassword"),
     meta: {
       authRequired: false,
-      title: "Reset Password"
+      title: "titles.resetPassword"
     }
   },
   {
@@ -92,7 +95,7 @@ const routes = [
     component: () => import("@/views/Errors/NotFound"),
     meta: {
       global: true,
-      title: "Not Found"
+      title: "titles.notFound"
     }
   }
 ];
@@ -105,7 +108,7 @@ const router = new VueRouter({
 
 router.afterEach((to, from) => {
   Vue.nextTick(() => {
-    document.title = "UpTech | " + (to.meta.title || "Welcome");
+    document.title = `${t("appName")} | ${t(to.meta.title)}`;
   });
 });
 router.beforeEach((to, from, next) => {
