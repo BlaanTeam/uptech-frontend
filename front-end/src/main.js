@@ -5,7 +5,7 @@ import patterns from "./store/patterns";
 import store from "./store";
 import vuetify from "./plugins/vuetify";
 import "./plugins/axios";
-import i18n from "./i18n";
+import i18n from "./plugins/i18n";
 import Notifications from "vue-notification";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/vue-loading.css";
