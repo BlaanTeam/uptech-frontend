@@ -24,14 +24,15 @@ export default {
         })
         .then(res => {
           //Todo: change data
-          if (res.status === 200 && res.data.confirmed)
+          if (res.status === 200 && res.data.confirmed) {
             this.$router.push({ name: "SignIn" });
-          this.$notify({
-            group: "success",
-            type: "success",
-            title: "succeed",
-            text: "Confirmed successfully"
-          });
+            this.$notify({
+              group: "success",
+              type: "success",
+              title: this.$t("confirmAccount.success.name"),
+              text: this.$t("confirmAccount.success.confirmed")
+            });
+          }
         })
         .catch(err => {
           this.$router.push({ name: "SignIn" });
@@ -43,16 +44,16 @@ export default {
               this.$notify({
                 group: "errors",
                 type: "warn",
-                title: "Account Error",
-                text: "this account already confirmed"
+                title: this.$t("confirmAccount.errors.name"),
+                text: this.$t("confirmAccount.errors.invOrExp")
               });
             } else {
               //1026
               this.$notify({
                 group: "errors",
                 type: "error",
-                title: "Token Error",
-                text: "Invalid or expired token"
+                title: this.$t("confirmAccount.errors.name"),
+                text: this.$t("confirmAccount.errors.invOrExp")
               });
             }
           }
@@ -61,8 +62,8 @@ export default {
       this.$notify({
         group: "errors",
         type: "error",
-        title: "Token Error",
-        text: "Invalid or expired token"
+        title: this.$t("confirmAccount.errors.name"),
+        text: this.$t("confirmAccount.errors.invOrExp")
       });
     }
   }

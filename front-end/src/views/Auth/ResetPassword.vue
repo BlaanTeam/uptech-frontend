@@ -1,10 +1,10 @@
 <template>
   <v-container fluid class="pa-10">
     <v-col cols="8" offset="3">
-      <h1 class="display-3 my-10">{{ $t("reset") }}</h1>
+      <h1 class="display-3 my-10">{{ $t("resetPassword.h1") }}</h1>
       <v-form ref="resetPassword">
         <v-col cols="8">
-          <h3 class="mb-6">{{ $t("enterPassword") }}</h3>
+          <h3 class="mb-6">{{ $t("resetPassword.h2") }}</h3>
           <v-text-field
             prepend-icon="mdi-lock"
             class="mt-6"
@@ -12,7 +12,7 @@
             :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
             :type="show1 ? 'text' : 'password'"
             name="password"
-            :label="$t('forms.password')"
+            :label="$t('resetPassword.form.password')"
             :rules="passwordRules"
             required
             @click:append="show1 = !show1"
@@ -25,7 +25,7 @@
             :append-icon="show2 ? 'mdi-eye' : 'mdi-eye-off'"
             :type="show2 ? 'text' : 'password'"
             name="password"
-            :label="$t('repeat') + ' ' + $t('forms.password')"
+            :label="$t('resetPassword.repeatPassword')"
             @click:append="show2 = !show2"
             required
           ></v-text-field>
@@ -37,7 +37,7 @@
             dark
             elevation="0"
           >
-            {{ $t("change") }}
+            {{ $t("resetPassword.change") }}
           </v-btn>
         </v-col>
       </v-form>
@@ -59,12 +59,16 @@ export default {
   computed: {
     passwordRules() {
       return [
-        v =>
-          !!v || this.$t("forms.password") + this.$t("forms.errors.required"),
+        v => !!v || this.$t("resetPassword.errors.prequired"),
         v =>
           this.$pattern.password.test(v) ||
-          this.$t("forms.errors.invalid") + this.$t("forms.password")
+          this.$t("resetPassword.errors.invalidp")
       ];
+    }
+  },
+  watch: {
+    "$i18n.locale"(newV, oldV) {
+      this.$refs.resetPassword.validate();
     }
   },
   methods: {
@@ -82,8 +86,8 @@ export default {
               this.$notify({
                 group: "success",
                 type: "success",
-                title: "reset password",
-                text: res.data.msg
+                title: this.$t("resetPassword.success.name"),
+                text: this.$t("resetPassword.success.passwordReset")
               });
               this.$router.push({ name: "SignIn" });
             }

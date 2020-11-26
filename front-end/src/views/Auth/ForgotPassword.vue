@@ -1,10 +1,10 @@
 <template>
   <v-container fluid class="pa-10">
     <v-col cols="8" offset="3">
-      <h1 class="display-3 my-10">{{ $t("find") }}</h1>
+      <h1 class="display-3 my-10">{{ $t("forgotPassword.h1") }}</h1>
       <v-form ref="forgotPassword">
         <v-col cols="8">
-          <h3 class="mb-6">{{ $t("enter") }}</h3>
+          <h3 class="mb-6">{{ $t("forgotPassword.h2") }}</h3>
           <v-text-field
             dense
             outlined
@@ -23,7 +23,7 @@
             dark
             elevation="0"
           >
-            {{ $t("search") }}
+            {{ $t("forgotPassword.search") }}
           </v-btn>
         </v-col>
       </v-form>
@@ -42,11 +42,14 @@ export default {
   computed: {
     emailRules() {
       return [
-        v => !!v || this.$t("forms.email") + this.$t("forms.errors.required"),
-        v =>
-          this.$pattern.email.test(v) ||
-          this.$t("forms.errors.invalid") + this.$t("forms.email")
+        v => !!v || this.$t("signup.errors.erequired"),
+        v => this.$pattern.email.test(v) || this.$t("signup.errors.invalide")
       ];
+    }
+  },
+  watch: {
+    "$i18n.locale"(newV, oldV) {
+      this.$refs.forgotPassword.validate();
     }
   },
   methods: {
@@ -63,8 +66,8 @@ export default {
               this.$notify({
                 group: "success",
                 type: "success",
-                title: "forgot password",
-                text: res.data.msg
+                title: this.$t("forgotPassword.success.name"),
+                text: this.$t("forgotPassword.success.msgSent")
               });
             }
           })
@@ -78,8 +81,8 @@ export default {
                 this.$notify({
                   group: "errors",
                   type: "error",
-                  title: "Forgot password Error",
-                  text: err.response.data.error.msg
+                  title: this.$t("forgotPassword.errors.name"),
+                  text: this.$t("forgotPassword.errors.invalidEmail")
                 });
               } else if (
                 err.response.status === 429 &&
@@ -88,8 +91,8 @@ export default {
                 this.$notify({
                   group: "errors",
                   type: "error",
-                  title: "Forgot password Error",
-                  text: err.response.data.error.msg
+                  title: this.$t("forgotPassword.errors.name"),
+                  text: this.$t("forgotPassword.errors.tooManyReq")
                 });
               }
             }

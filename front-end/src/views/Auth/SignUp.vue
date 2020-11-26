@@ -18,7 +18,7 @@
             autocomplete="off"
             required
             v-model="username"
-            :label="$t('forms.username')"
+            :label="$t('signup.form.username')"
             :rules="usernameRules"
           ></v-text-field>
           <v-text-field
@@ -26,7 +26,7 @@
             class="my-6"
             v-model="email"
             :rules="emailRules"
-            label="E-mail"
+            :label="$t('signup.form.email')"
             required
             type="email"
             name="email"
@@ -38,7 +38,7 @@
             :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
             :type="show1 ? 'text' : 'password'"
             name="password"
-            :label="$t('forms.password')"
+            :label="$t('signup.form.password')"
             :rules="passwordRules"
             required
             @click:append="show1 = !show1"
@@ -51,7 +51,7 @@
             :append-icon="show2 ? 'mdi-eye' : 'mdi-eye-off'"
             :type="show2 ? 'text' : 'password'"
             name="password"
-            :label="$t('repeat') + $t('forms.password')"
+            :label="$t('signup.form.repeatPassword')"
             @click:append="show2 = !show2"
             required
           ></v-text-field>
@@ -60,16 +60,18 @@
             class="ml-2"
             v-model="agree"
             name="agreement"
-            :rules="[v => !!v || $t('forms.errors.agree')]"
+            :rules="[v => !!v || $t('signup.errors.agree')]"
             required
           >
             <template v-slot:label>
               <div @click.stop="">
-                {{ $t("forms.agree") }}
-                <router-link to="/terms">{{ $t("forms.terms") }}</router-link>
-                {{ $t("and") }}
-                <router-link to="/conditions"
-                  >{{ $t("forms.conditions") }} ?
+                {{ $t("signup.form.agree") }}
+                <router-link to="/terms">
+                  {{ $t("signup.form.terms") }}
+                </router-link>
+                {{ $t("signup.form.and") }}
+                <router-link to="/conditions">
+                  {{ $t("signup.form.conditions") }}
                 </router-link>
               </div>
             </template>
@@ -79,16 +81,20 @@
             @click="handleSubmit"
             color="primary"
             dark
-            class="ml-2 mt-6 px-10"
+            class="ml-2 my-4 px-10"
             elevation="0"
             rounded
             :disabled="disabled"
           >
-            {{ $t("btn.signup") }}
+            {{ $t("signup.name") }}
           </v-btn>
-          <v-btn to="sign_in" class="ml-6 mt-6 primary--text" text>
-            {{ $t("forms.already") }} ?
-          </v-btn>
+          <router-link
+            to="/sign_in"
+            class="ml-4 d-inline-flex primary--text"
+            text
+          >
+            {{ $t("signup.form.alreadySigned") }}
+          </router-link>
         </v-form>
       </v-col>
     </v-row>
@@ -118,28 +124,20 @@ export default {
   computed: {
     usernameRules() {
       return [
-        v =>
-          !!v || this.$t("forms.username") + this.$t("forms.errors.required"),
-        v =>
-          this.$pattern.username.test(v) ||
-          this.$t("forms.errors.invalid") + this.$t("forms.username")
+        v => !!v || this.$t("signup.errors.urequired"),
+        v => this.$pattern.username.test(v) || this.$t("signup.errors.invalidu")
       ];
     },
     emailRules() {
       return [
-        v => !!v || this.$t("forms.email") + this.$t("forms.errors.required"),
-        v =>
-          this.$pattern.email.test(v) ||
-          this.$t("forms.errors.invalid") + this.$t("forms.email")
+        v => !!v || this.$t("signup.errors.erequired"),
+        v => this.$pattern.email.test(v) || this.$t("signup.errors.invalide")
       ];
     },
     passwordRules() {
       return [
-        v =>
-          !!v || this.$t("forms.password") + this.$t("forms.errors.required"),
-        v =>
-          this.$pattern.password.test(v) ||
-          this.$t("forms.errors.invalid") + this.$t("forms.password")
+        v => !!v || this.$t("signup.errors.prequired"),
+        v => this.$pattern.password.test(v) || this.$t("signup.errors.invalidp")
       ];
     },
     valid() {
@@ -169,9 +167,8 @@ export default {
               this.$notify({
                 group: "success",
                 type: "success",
-                title: "Authentication Success",
-                text:
-                  "Regitered successfully ! check your email to confirm your account"
+                title: this.$t("signup.success.auth"),
+                text: this.$t("signup.success.registred")
               });
             }
           })
@@ -186,8 +183,8 @@ export default {
               this.$notify({
                 group: "errors",
                 type: "error",
-                title: "Authentication Error",
-                text: err.response.data.error.msg
+                title: this.$t("signup.errors.auth"),
+                text: this.$t("signup.errors.usernameAlreadyRegistred")
               });
             }
           });

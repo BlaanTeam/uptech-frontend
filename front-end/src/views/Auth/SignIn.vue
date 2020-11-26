@@ -17,7 +17,7 @@
       </v-avatar>
 
       <v-card-title class="display-1 justify-center">
-        {{ $t("forms.welcome") }}
+        {{ $t("signin.h1") }}
       </v-card-title>
 
       <v-card-text>
@@ -26,7 +26,7 @@
             name="username"
             autocomplete="false"
             v-model="username"
-            :label="$t('forms.username')"
+            :label="$t('signin.form.username')"
             :rules="usernameRules"
           ></v-text-field>
           <v-text-field
@@ -35,21 +35,21 @@
             :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
             :type="show ? 'text' : 'password'"
             name="password"
-            :label="$t('forms.password')"
+            :label="$t('signin.form.password')"
             :rules="passwordRules"
             @click:append="show = !show"
           ></v-text-field>
           <v-checkbox
             name="rememberMe"
             v-model="rememberMe"
-            :label="$t('forms.rememberMe')"
+            :label="$t('signin.form.rememberMe')"
           >
           </v-checkbox>
           <router-link class="my-2 d-block" to="forgot_password">
-            Forgot password ?
+            {{ $t("signin.form.forgotPassword") }}
           </router-link>
           <router-link class="my-2 d-block" block to="resend_confirmation">
-            Resend confirmation ?
+            {{ $t("signin.form.resendConfirmation") }}
           </router-link>
         </v-form>
       </v-card-text>
@@ -61,7 +61,7 @@
         dark
         elevation="0"
       >
-        {{ $t("btn.signin") }}
+        {{ $t("signin.name") }}
       </v-btn>
     </v-card>
   </v-container>
@@ -88,20 +88,14 @@ export default {
   computed: {
     usernameRules() {
       return [
-        v =>
-          !!v || this.$t("forms.username") + this.$t("forms.errors.required"),
-        v =>
-          this.$pattern.username.test(v) ||
-          this.$t("forms.errors.invalid") + this.$t("forms.username")
+        v => !!v || this.$t("signin.errors.urequired"),
+        v => this.$pattern.username.test(v) || this.$t("signin.errors.invalidu")
       ];
     },
     passwordRules() {
       return [
-        v =>
-          !!v || this.$t("forms.password") + this.$t("forms.errors.required"),
-        v =>
-          this.$pattern.password.test(v) ||
-          this.$t("forms.errors.invalid") + this.$t("forms.password")
+        v => !!v || this.$t("signin.errors.prequired"),
+        v => this.$pattern.password.test(v) || this.$t("signin.errors.invalidp")
       ];
     },
     valid() {
@@ -116,7 +110,10 @@ export default {
   methods: {
     handlesubmit() {
       if (this.valid) {
-        let loader = this.$loading.show({ container: null, canCancel: false });
+        let loader = this.$loading.show({
+          container: null,
+          canCancel: false
+        });
         this.$store
           .dispatch("signIn", {
             username: this.username,
@@ -140,8 +137,8 @@ export default {
                 this.$notify({
                   group: "errors",
                   type: "error",
-                  title: "authentication Error",
-                  text: err.response.data.error.msg
+                  title: this.$t("signin.errors.auth"),
+                  text: this.$t("signin.errors.notRegistredYet")
                 });
               } else if (
                 err.response.status === 401 &&
@@ -150,8 +147,8 @@ export default {
                 this.$notify({
                   group: "errors",
                   type: "error",
-                  title: "authentication Error",
-                  text: err.response.data.error.msg
+                  title: this.$t("signin.errors.auth"),
+                  text: this.$t("signin.errors.invalid")
                 });
               } else if (
                 err.response.status === 401 &&
@@ -160,15 +157,15 @@ export default {
                 this.$notify({
                   group: "errors",
                   type: "warn",
-                  title: "authentication Error",
-                  text: err.response.data.error.msg
+                  title: this.$t("signin.errors.auth"),
+                  text: this.$t("signin.errors.notConfirmed")
                 });
               } else {
                 this.$notify({
                   group: "errors",
                   type: "error",
                   title: "authentication Error",
-                  text: "Something went wrong"
+                  text: this.$t("globals.errors.wentWrong")
                 });
               }
             }
@@ -213,6 +210,7 @@ export default {
   #four {
     top: 20px;
     right: 0;
+    color: #f5c55e;
   }
 }
 </style>
