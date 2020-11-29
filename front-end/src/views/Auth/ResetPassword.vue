@@ -102,7 +102,6 @@ export default {
     }
   },
   created() {
-    // debugger;
     if (
       this.$route.params.token &&
       this.$route.params.token.match(this.$pattern.jwtToken)

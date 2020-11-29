@@ -151,6 +151,22 @@ export default {
   },
 
   methods: {
+    successNotification(text) {
+      this.$notify({
+        group: "success",
+        type: "success",
+        title: this.$t("signup.success.auth"),
+        text: text
+      });
+    },
+    errorNotification(text, type = "error") {
+      this.$notify({
+        group: "errors",
+        type: type,
+        title: this.$t("signup.errors.auth"),
+        text: text
+      });
+    },
     handleSubmit() {
       if (this.valid) {
         let loader = this.$loading.show({ container: null, canCancel: false });
@@ -164,28 +180,21 @@ export default {
             loader.hide();
             if (res.status === 201 && res.data.code === 2062) {
               this.$router.push({ name: "SignIn" });
-              this.$notify({
-                group: "success",
-                type: "success",
-                title: this.$t("signup.success.auth"),
-                text: this.$t("signup.success.registred")
-              });
+              this.successNotification(this.$t("signup.success.registred"));
             }
           })
-          .catch(err => {
+          .catch(({ response }) => {
             this.password = "";
             this.repeatPassword = "";
             loader.hide();
             if (
-              err.response.status === 409 &&
-              err.response.data.error.code === 1092
+              response?.status === 409 &&
+              response?.data?.error?.code === 1092
             ) {
-              this.$notify({
-                group: "errors",
-                type: "error",
-                title: this.$t("signup.errors.auth"),
-                text: this.$t("signup.errors.usernameAlreadyRegistred")
-              });
+              console.log("already signed up");
+              this.errorNotification(
+                this.$t("signup.errors.usernameAlreadyRegistred")
+              );
             }
           });
       }

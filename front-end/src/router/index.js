@@ -9,7 +9,8 @@ const t = (key, ...params) => i18n.t(key, params);
 
 const routes = [
   {
-    path: "/",
+    path: "/home",
+    alias: "/",
     name: "Home",
     component: Home,
     meta: {
@@ -90,7 +91,8 @@ const routes = [
     }
   },
   {
-    path: "*",
+    path: "/not_found",
+    alias: "*",
     name: "NotFound",
     component: () => import("@/views/Errors/NotFound"),
     meta: {
@@ -119,7 +121,7 @@ router.beforeEach((to, from, next) => {
       next({
         name: "SignIn",
         query: {
-          nextPath: to.path
+          nextPath: to.name
         }
       });
     }
