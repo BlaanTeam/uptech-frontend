@@ -53,6 +53,22 @@ export default {
     }
   },
   methods: {
+    successNotification(text) {
+      this.$notify({
+        group: "success",
+        type: "success",
+        title: this.$t("resendConfirmation.success.name"),
+        text: text
+      });
+    },
+    errorNotification(text, type = "error") {
+      this.$notify({
+        group: "errors",
+        type: type,
+        title: this.$t("resendConfirmation.errors.name"),
+        text: this.$t("signup.errors.usernameAlreadyRegistred")
+      });
+    },
     handleSubmit() {
       if (this.$refs.resendConfirmation.validate()) {
         let loader = this.$loading.show({ container: null, canCancel: false });
@@ -63,38 +79,27 @@ export default {
           .then(res => {
             loader.hide();
             if (res.status === 200 && res.data.code === 2051) {
-              this.$notify({
-                group: "success",
-                type: "success",
-                title: this.$t("resendConfirmation.success.name"),
-                text: this.$t("resendConfirmation.success.msgSent")
-              });
+              this.successNotification(
+                this.$t("resendConfirmation.success.msgSent")
+              );
             }
           })
-          .catch(err => {
+          .catch(({ response }) => {
             loader.hide();
-            if (err.response) {
-              if (
-                err.response.status === 404 &&
-                err.response.data.error.code === 1030
-              ) {
-                this.$notify({
-                  group: "errors",
-                  type: "error",
-                  title: this.$t("resendConfirmation.errors.name"),
-                  text: this.$t("resendConfirmation.errors.invalidEmail")
-                });
-              } else if (
-                err.response.status === 429 &&
-                err.response.data.error.code === 1032
-              ) {
-                this.$notify({
-                  group: "errors",
-                  type: "error",
-                  title: this.$t("resendConfirmation.errors.name"),
-                  text: this.$t("resendConfirmation.errors.tooManyReq")
-                });
-              }
+            if (
+              response?.status === 404 &&
+              response?.data?.error?.code === 1030
+            ) {
+              this.errorNotification(
+                this.$t("resendConfirmation.errors.invalidEmail")
+              );
+            } else if (
+              response?.status === 429 &&
+              response?.data?.error?.code === 1032
+            ) {
+              this.errorNotification(
+                this.$t("resendConfirmation.errors.tooManyReq")
+              );
             }
           });
       }

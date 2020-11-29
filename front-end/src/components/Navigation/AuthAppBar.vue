@@ -3,20 +3,22 @@
     <!-- <v-app-bar-nav-icon></v-app-bar-nav-icon> -->
     <v-toolbar-title>UpTech</v-toolbar-title>
     <v-spacer></v-spacer>
-    <v-tooltip left>
-      <template v-slot:activator="{ on }">
-        <v-btn icon v-on="on">
-          <v-icon>mdi-frequently-asked-questions</v-icon>
-        </v-btn>
-      </template>
-      <span>Frequently Qsked Questions</span>
-    </v-tooltip>
+    <v-btn text class="mr-2" @click="logout()">
+      <v-icon left>mdi-logout</v-icon>
+      logout
+    </v-btn>
   </v-app-bar>
 </template>
 
 <script>
 export default {
-  name: "AppBar"
+  name: "AppBar",
+  methods: {
+    logout() {
+      this.$store.dispatch("destroySession");
+      this.$router.push({ name: "SignIn" });
+    }
+  }
 };
 </script>
 <style scoped>

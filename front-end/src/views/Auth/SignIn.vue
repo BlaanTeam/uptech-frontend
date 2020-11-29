@@ -3,23 +3,49 @@
     <div class="sign-in__background">
       <WaveSvg :fillColor="$theme.currentTheme.secondarybg" />
     </div>
-    <CloudSvg
+    <!-- <CloudSvg
       v-for="(n, i) in ['one', 'two', 'three', 'four']"
       :key="i"
       :id="n"
       :fillColor="$theme.currentTheme.secondarybg"
-    />
+    /> -->
     <v-card class="mx-auto bg lighten-1" width="550">
-      <v-avatar class="d-block mx-auto primary" width="60px">
+      <v-avatar class=" pa-0 ma-0 d-block mx-auto primary" width="60px">
         <v-icon dark>
           mdi-account-circle
         </v-icon>
       </v-avatar>
-
-      <v-card-title class="display-1 justify-center">
+      <v-card-title class="pt-0 mt-0 mb-2 display-1 justify-center">
         {{ $t("signin.h1") }}
       </v-card-title>
-
+      <v-card-subtitle class="my-2 text-center">
+        <v-btn
+          class="me-2 py-1 text-none my-1"
+          color="secondarybg"
+          rounded
+          elevation="0"
+        >
+          <v-icon left color="#ff0000">mdi-google</v-icon>
+          {{ $t("signin.google") }}
+        </v-btn>
+        <v-btn
+          class="ms-2 py-1 text-none my-1"
+          color="secondarybg"
+          rounded
+          elevation="0"
+        >
+          <v-icon left color="blue">mdi-facebook</v-icon>
+          {{ $t("signin.facebook") }}
+        </v-btn>
+        <!-- <v-btn class="me-2 py-1 px-6" color="secondarybg" rounded elevation="0">
+          Log In with
+          <v-icon right color="primary" size="20">mdi-google</v-icon>
+        </v-btn>
+        <v-btn class="ms-2 py-1 px-6" color="secondarybg" rounded elevation="0">
+          Log In with
+          <v-icon right color="primary" size="22">mdi-facebook</v-icon>
+        </v-btn> -->
+      </v-card-subtitle>
       <v-card-text>
         <v-form ref="signin">
           <v-text-field
@@ -69,12 +95,11 @@
 
 <script>
 import WaveSvg from "@/components/svg/WaveSvg";
-import CloudSvg from "@/components/svg/CloudSvg";
+// import CloudSvg from "@/components/svg/CloudSvg";
 
 export default {
   components: {
-    WaveSvg,
-    CloudSvg
+    WaveSvg
   },
   data() {
     return {
@@ -108,6 +133,14 @@ export default {
     }
   },
   methods: {
+    errorNotification(text, type = "error") {
+      this.$notify({
+        group: "errors",
+        type: type,
+        title: this.$t("signin.errors.auth"),
+        text: text
+      });
+    },
     handlesubmit() {
       if (this.valid) {
         let loader = this.$loading.show({
@@ -123,51 +156,36 @@ export default {
           .then(res => {
             loader.hide();
             if (res.status === 200 && res.data.code === 2032) {
-              this.$router.push({ name: "Feeds" });
+              if (this.$route.query.nextPath) {
+                this.$router
+                  .push({ name: this.$route.query.nextPath })
+                  .then(null, err => {
+                    this.$router.push({ name: "NotFound" });
+                  });
+              } else this.$router.push({ name: "Feeds" });
             }
           })
-          .catch(err => {
+          .catch(({ response }) => {
             loader.hide();
             this.password = "";
-            if (err.response) {
-              if (
-                err.response.status === 404 &&
-                err.response.data.error.code === 1030
-              ) {
-                this.$notify({
-                  group: "errors",
-                  type: "error",
-                  title: this.$t("signin.errors.auth"),
-                  text: this.$t("signin.errors.notRegistredYet")
-                });
-              } else if (
-                err.response.status === 401 &&
-                err.response.data.error.code === 1024
-              ) {
-                this.$notify({
-                  group: "errors",
-                  type: "error",
-                  title: this.$t("signin.errors.auth"),
-                  text: this.$t("signin.errors.invalid")
-                });
-              } else if (
-                err.response.status === 401 &&
-                err.response.data.error.code === 1063
-              ) {
-                this.$notify({
-                  group: "errors",
-                  type: "warn",
-                  title: this.$t("signin.errors.auth"),
-                  text: this.$t("signin.errors.notConfirmed")
-                });
-              } else {
-                this.$notify({
-                  group: "errors",
-                  type: "error",
-                  title: "authentication Error",
-                  text: this.$t("globals.errors.wentWrong")
-                });
-              }
+            if (
+              response?.status === 404 &&
+              response?.data?.error?.code === 1030
+            ) {
+              this.errorNotification(this.$t("signin.errors.notRegistredYet"));
+            } else if (
+              response?.status === 401 &&
+              response?.data?.error?.code === 1024
+            ) {
+              this.errorNotification(this.$t("signin.errors.invalid"));
+            } else if (
+              response?.status === 401 &&
+              response?.data?.error?.code === 1063
+            ) {
+              this.errorNotification(
+                this.$t("signin.errors.notConfirmed"),
+                "warn"
+              );
             }
           });
       }

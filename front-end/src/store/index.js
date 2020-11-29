@@ -19,6 +19,12 @@ export default new Vuex.Store({
       localStorage.setItem("user", payload.user);
       state.accessToken = payload.accessToken;
       state.user = payload.user;
+    },
+    DESTROY_SESSION: state => {
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("user");
+      state.accessToken = "";
+      state.user = {};
     }
   },
   actions: {
@@ -99,7 +105,11 @@ export default new Vuex.Store({
             reject(err);
           });
       });
+    },
+    destroySession: context => {
+      context.commit("DESTROY_SESSION");
     }
   },
+
   modules: {}
 });

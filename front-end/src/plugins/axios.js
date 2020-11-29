@@ -1,5 +1,6 @@
 import Vue from "vue";
 import axios from "axios";
+import i18n from "./i18n";
 
 axios.defaults.baseURL = "http://localhost:5000/api/v1/";
 
@@ -23,8 +24,14 @@ axios.interceptors.response.use(
     return response;
   },
   function(error) {
-    // Any status codes that falls outside the range of 2xx cause this function to trigger
-    // Do something with response error
+    if (!error.response) {
+      Vue.prototype.$notify({
+        group: "errors",
+        type: "error",
+        title: i18n.t("globals.errors.connectionError"),
+        text: i18n.t("globals.errors.lostConnection")
+      });
+    }
     return Promise.reject(error);
   }
 );

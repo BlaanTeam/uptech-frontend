@@ -8,6 +8,7 @@
   "appName": "UpTech",
   "globals": {
     "errors": {
+      "connectionError": "Connection Error",
       "wentWrong": "Opps, something went wrong",
       "lostConnection": "You lost your connection !"
     }
@@ -43,6 +44,8 @@
   "signin": {
     "name": "Sign In",
     "h1": "welcome back",
+    "google": "Log in with Google",
+    "facebook": "Log in with Facebook",
     "form": {
       "username": "Username",
       "password": "Password",
