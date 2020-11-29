@@ -17,30 +17,51 @@
       </v-avatar>
 
       <v-card-title class="display-1 justify-center">
-        Welcome Back
+        {{ $t("signin.h1") }}
       </v-card-title>
 
-      <v-card-text class="">
-        <v-form>
+      <v-card-text>
+        <v-form ref="signin">
           <v-text-field
-            v-model="email"
-            label="E-mail"
-            hint="test"
+            name="username"
+            autocomplete="false"
+            v-model="username"
+            :label="$t('signin.form.username')"
+            :rules="usernameRules"
           ></v-text-field>
           <v-text-field
-            class="my-6"
+            class="mt-4"
             v-model="password"
-            :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
-            :type="show1 ? 'text' : 'password'"
+            :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
+            :type="show ? 'text' : 'password'"
             name="password"
-            label="Password"
-            @click:append="show1 = !show1"
+            :label="$t('signin.form.password')"
+            :rules="passwordRules"
+            @click:append="show = !show"
           ></v-text-field>
+          <v-checkbox
+            name="rememberMe"
+            v-model="rememberMe"
+            :label="$t('signin.form.rememberMe')"
+          >
+          </v-checkbox>
+          <router-link class="my-2 d-block" to="forgot_password">
+            {{ $t("signin.form.forgotPassword") }}
+          </router-link>
+          <router-link class="my-2 d-block" block to="resend_confirmation">
+            {{ $t("signin.form.resendConfirmation") }}
+          </router-link>
         </v-form>
       </v-card-text>
-
-      <v-btn block class="py-6" color="primary" dark elevation="0">
-        Login
+      <v-btn
+        @click="handlesubmit()"
+        block
+        class="py-6"
+        color="primary"
+        dark
+        elevation="0"
+      >
+        {{ $t("signin.name") }}
       </v-btn>
     </v-card>
   </v-container>
@@ -55,31 +76,101 @@ export default {
     WaveSvg,
     CloudSvg
   },
-  data: () => ({
-    valid: false,
-    show1: false,
-    password: "",
-    rules: {
-      required: value => !!value || "Required.",
-      min: v => v.length >= 8 || "At least 8 characters",
-      emailMatch: () => `The email and password you entered don't match`
+  data() {
+    return {
+      show: false,
+      // models
+      username: "",
+      password: "",
+      rememberMe: false
+    };
+  },
+  computed: {
+    usernameRules() {
+      return [
+        v => !!v || this.$t("signin.errors.urequired"),
+        v => this.$pattern.username.test(v) || this.$t("signin.errors.invalidu")
+      ];
     },
-    email: "",
-    emailRules: [
-      v => !!v || "E-mail is required",
-      v =>
-        /^\w+([/.-]?\w+)*@\w+([/.-]?\w+)*(\.\w{2,3})+$/.test(v) ||
-        "E-mail must be valid"
-    ]
-  }),
+    passwordRules() {
+      return [
+        v => !!v || this.$t("signin.errors.prequired"),
+        v => this.$pattern.password.test(v) || this.$t("signin.errors.invalidp")
+      ];
+    },
+    valid() {
+      return this.$refs.signin.validate();
+    }
+  },
+  watch: {
+    "$i18n.locale"(newV, oldV) {
+      this.$refs.signin.validate();
+    }
+  },
   methods: {
-    submit() {
-      if (this.$refs.form.validate()) {
-        this.$refs.form.$el.submit();
+    handlesubmit() {
+      if (this.valid) {
+        let loader = this.$loading.show({
+          container: null,
+          canCancel: false
+        });
+        this.$store
+          .dispatch("signIn", {
+            username: this.username,
+            password: this.password,
+            rememberMe: this.rememberMe
+          })
+          .then(res => {
+            loader.hide();
+            if (res.status === 200 && res.data.code === 2032) {
+              this.$router.push({ name: "Feeds" });
+            }
+          })
+          .catch(err => {
+            loader.hide();
+            this.password = "";
+            if (err.response) {
+              if (
+                err.response.status === 404 &&
+                err.response.data.error.code === 1030
+              ) {
+                this.$notify({
+                  group: "errors",
+                  type: "error",
+                  title: this.$t("signin.errors.auth"),
+                  text: this.$t("signin.errors.notRegistredYet")
+                });
+              } else if (
+                err.response.status === 401 &&
+                err.response.data.error.code === 1024
+              ) {
+                this.$notify({
+                  group: "errors",
+                  type: "error",
+                  title: this.$t("signin.errors.auth"),
+                  text: this.$t("signin.errors.invalid")
+                });
+              } else if (
+                err.response.status === 401 &&
+                err.response.data.error.code === 1063
+              ) {
+                this.$notify({
+                  group: "errors",
+                  type: "warn",
+                  title: this.$t("signin.errors.auth"),
+                  text: this.$t("signin.errors.notConfirmed")
+                });
+              } else {
+                this.$notify({
+                  group: "errors",
+                  type: "error",
+                  title: "authentication Error",
+                  text: this.$t("globals.errors.wentWrong")
+                });
+              }
+            }
+          });
       }
-    },
-    clear() {
-      this.$refs.form.reset();
     }
   }
 };
@@ -119,6 +210,7 @@ export default {
   #four {
     top: 20px;
     right: 0;
+    color: #f5c55e;
   }
 }
 </style>

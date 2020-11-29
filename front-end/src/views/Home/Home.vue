@@ -5,12 +5,12 @@
         <WaveSvg :fillColor="$theme.currentTheme.bg" />
       </div>
       <v-row class="first-section__header">
-        <v-col class="ml-10 align-self-center">
+        <v-col class="ms-10 align-self-center">
           <h1 class="first-section__title display-2 pb-2 ">
-            Lorem ipsum adipisicing
+            {{ $t("home.section1.h1") }}
           </h1>
           <h2 class="first-section__title display-1 pb-10">
-            amet consectetur adipisicing
+            {{ $t("home.section1.h2") }}
           </h2>
           <div>
             <v-btn
@@ -21,7 +21,7 @@
               color="primary"
               to="/sign_up"
             >
-              Create an account
+              {{ $t("home.section1.btn") }}
             </v-btn>
           </div>
         </v-col>
