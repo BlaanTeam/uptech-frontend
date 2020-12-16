@@ -15,10 +15,10 @@
           mdi-account-circle
         </v-icon>
       </v-avatar>
-      <v-card-title class="pt-0 mt-0 mb-2 display-1 justify-center">
+      <v-card-title class="pt-0 mt-3 mb-2 display-1 justify-center">
         {{ $t("signin.h1") }}
       </v-card-title>
-      <v-card-subtitle class="my-2 text-center">
+      <!-- <v-card-subtitle class="my-2 text-center">
         <v-btn
           class="me-2 py-1 text-none my-1"
           color="secondarybg"
@@ -37,15 +37,15 @@
           <v-icon left color="blue">mdi-facebook</v-icon>
           {{ $t("signin.facebook") }}
         </v-btn>
-        <!-- <v-btn class="me-2 py-1 px-6" color="secondarybg" rounded elevation="0">
+        <v-btn class="me-2 py-1 px-6" color="secondarybg" rounded elevation="0">
           Log In with
           <v-icon right color="primary" size="20">mdi-google</v-icon>
         </v-btn>
         <v-btn class="ms-2 py-1 px-6" color="secondarybg" rounded elevation="0">
           Log In with
           <v-icon right color="primary" size="22">mdi-facebook</v-icon>
-        </v-btn> -->
-      </v-card-subtitle>
+        </v-btn>
+      </v-card-subtitle> -->
       <v-card-text>
         <v-form ref="signin">
           <v-text-field
@@ -100,6 +100,7 @@ import WaveSvg from "@/components/svg/WaveSvg";
 export default {
   components: {
     WaveSvg
+    // CloudSvg
   },
   data() {
     return {
@@ -211,22 +212,22 @@ export default {
   #two,
   #three,
   #four {
-    position: absolute;
+    position: fixed;
   }
   #one {
-    top: 100px;
+    top: 10vw;
     left: -15%;
   }
   #two {
-    top: -5px;
+    top: -2vw;
     left: 20%;
   }
   #three {
-    top: -20px;
+    top: -5vw;
     left: 50%;
   }
   #four {
-    top: 20px;
+    top: 5vw;
     right: 0;
     color: #f5c55e;
   }

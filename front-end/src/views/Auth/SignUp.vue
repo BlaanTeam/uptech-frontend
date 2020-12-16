@@ -5,10 +5,10 @@
       class="background"
     />
     <v-row no-gutters class="sign-up__form align-center">
-      <v-col class="d-none d-sm-flex">
+      <v-col class="d-none d-md-flex">
         <SignupSvg width="400" />
       </v-col>
-      <v-col class="px-10 align-self-start mt-10">
+      <v-col class="px-2 align-self-start mt-4">
         <v-form ref="signup">
           <v-text-field
             prepend-icon="mdi-account"

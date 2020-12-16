@@ -243,4 +243,10 @@
 export default {};
 </script>
 
-<style></style>
+<style scoped>
+@media screen and (max-width: 700px) {
+  svg {
+    width: 200px;
+  }
+}
+</style>

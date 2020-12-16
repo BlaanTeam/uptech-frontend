@@ -1,15 +1,14 @@
 <template>
   <div class="home ma-0 pa-0">
-    <section class="first-section d-flex justify-center">
-      <div class="first-section__background">
-        <WaveSvg :fillColor="$theme.currentTheme.bg" />
-      </div>
+    <section class="first-section pa-4">
       <v-row class="first-section__header">
-        <v-col class="ms-10 align-self-center">
-          <h1 class="first-section__title display-2 pb-2 ">
+        <v-col class="ms-1 align-self-center">
+          <h1
+            class="first-section__title text-lg-h2 text-xl-h1 text--primary pb-2 font-weight-regular"
+          >
             {{ $t("home.section1.h1") }}
           </h1>
-          <h2 class="first-section__title display-1 pb-10">
+          <h2 class="first-section__title display-1 text--secondary pb-10">
             {{ $t("home.section1.h2") }}
           </h2>
           <div>
@@ -26,28 +25,26 @@
           </div>
         </v-col>
         <v-col class="align-self-end">
-          <SocialSvg width="550" height="420" />
+          <SocialSvg width="500" height="420" />
         </v-col>
       </v-row>
+      <div class="first-section__background">
+        <WaveSvg :fillColor="$theme.currentTheme.bg" />
+      </div>
     </section>
-    <Guest />
-    <Privacy />
+    <RealTimeChat />
   </div>
 </template>
 
 <script>
-import Guest from "@/components/HomeComponents/Guest";
-import Privacy from "@/components/HomeComponents/Privacy";
-// import svg images
+import RealTimeChat from "@/components/HomeComponents/RealTimeChat";
 import SocialSvg from "@/components/svg/SocialSvg";
 import WaveSvg from "@/components/svg/WaveSvg";
 
 export default {
   name: "Home",
   components: {
-    Guest,
-    Privacy,
-
+    RealTimeChat,
     // svg images
     SocialSvg,
     WaveSvg
@@ -70,6 +67,13 @@ export default {
       position: absolute;
       bottom: -100px;
       left: 0;
+    }
+  }
+}
+@media screen and (max-width: 700px) {
+  .home {
+    .first-section {
+      margin-top: 50px;
     }
   }
 }

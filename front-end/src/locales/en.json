@@ -38,6 +38,10 @@
       "h1": "Hey, Welcome to our open source social network",
       "h2": "Fell free to join us",
       "btn": "Create an account"
+    },
+    "section2": {
+      "h1": "Real time chat",
+      "text": "light and fast messaging app communicate and interact in real-time with you friends"
     }
   },
   "about": {},
