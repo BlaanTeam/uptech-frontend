@@ -14,7 +14,7 @@ const feedPosts = async (req, res, next) => {
     // TODO : add per page options
     // const perPage = 50
     // const page = Math.max(0,result.page)
-    let posts = await Post.find({ isPravite: false }, { __v: 0 })
+    let posts = await Post.find({ isPrivate: false }, { __v: 0 })
       .skip(result.offset)
       .limit(result.limit)
       .sort("-createdAt")
@@ -38,7 +38,7 @@ createPost = async (req, res, next) => {
     let newPost = new Post({
       postBody: result.postBody,
       postUser: req.currentUser._id,
-      isPravite: result.isPravite,
+      isPrivate: result.isPrivate,
     });
     await newPost.save();
     await newPost
@@ -114,7 +114,7 @@ const updatePost = async (req, res, next) => {
     }
     // update documments
     post.postBody = result_y.postBody;
-    post.isPravite = result_y.isPravite;
+    post.isPrivate = result_y.isPrivate;
     post.updatedAt = Date.now();
     await post.save();
     res.json(post);

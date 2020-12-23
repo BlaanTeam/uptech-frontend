@@ -84,7 +84,7 @@ const reSendConfirmationSchema = joi.object({
 
 const postSchema = joi.object({
   postBody: joi.string().min(2).max(5000).required().trim(),
-  isPravite: joi.boolean().required().default(false),
+  isPrivate: joi.boolean().required().default(false),
 });
 const postIdSchema = joi.object({
   postId: joi

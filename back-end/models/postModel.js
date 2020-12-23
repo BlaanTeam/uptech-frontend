@@ -22,7 +22,7 @@ const postSchema = new Schema({
     type: Date,
     required: false,
   },
-  isPravite: {
+  isPrivate: {
     type: Boolean,
     required: true,
     default: false,

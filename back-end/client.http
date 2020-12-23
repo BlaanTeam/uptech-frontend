@@ -128,14 +128,14 @@ Content-Type: application/json
 # content-type : application/json
 # params :
     # postBody      ->  required | string
-    # isPravite     ->  required | boolean
+    # isPrivate     ->  required | boolean
 POST {{baseURL}}/feed/posts
 x-auth-token : {{access_token}}
 Content-Type: application/json
 
 {
     "postBody":"Hello From Awbx",
-    "isPravite":true
+    "isPrivate":true
 }
 
 ### retrieve post
@@ -156,14 +156,14 @@ x-auth-token : {{access_token}}
 # content-type : application/json
 # params :
     # postBody      ->  required | string
-    # isPravite     ->  required | boolean
+    # isPrivate     ->  required | boolean
 PUT  {{baseURL}}/feed/posts/5fe272313568797331c44c4a
 x-auth-token : {{access_token}}
 Content-Type: application/json
 
 {
     "postBody":"Update Post To New Value",
-    "isPravite":true
+    "isPrivate":true
 
 }
 
