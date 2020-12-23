@@ -123,7 +123,7 @@ Content-Type: application/json
 }
 
 ### create post 
-# endpoint : baseURL/posts
+# endpoint : baseURL/feed/posts
 # method : POST
 # content-type : application/json
 # params :
@@ -134,24 +134,24 @@ x-auth-token : {{access_token}}
 Content-Type: application/json
 
 {
-    "postBody":"Hello From Awbx",
-    "isPrivate":true
+    "postBody":"Hello from http client",
+    "isPrivate":false
 }
 
 ### retrieve post
-# endpoint : baseURL/posts/<postId>
+# endpoint : baseURL/feed/posts/<postId>
 # method : GET
 GET {{baseURL}}/feed/posts/5fe272313568797331c44c4a
 x-auth-token : {{access_token}}
 
 ### delete post
-# endpoint : baseURL/posts/<postId>
+# endpoint : baseURL/feed/posts/<postId>
 # method : DELETE
 DELETE  {{baseURL}}/feed/posts/5fe272313568797331c44c4a
 x-auth-token : {{access_token}}
 
 ### update post
-# endpoint : baseURL/posts/<postId>
+# endpoint : baseURL/feed/posts/<postId>
 # method : PUT
 # content-type : application/json
 # params :
@@ -163,13 +163,15 @@ Content-Type: application/json
 
 {
     "postBody":"Update Post To New Value",
-    "isPrivate":true
+    "isPrivate":false
 
 }
 
 ### retrieve all feed posts
-# endpoint : baseURL/posts
+# endpoint : baseURL/feed/posts
 # method : GET
 # query :
-    # limit      ->  optional | number
-    # offset     ->  optional | number
+    # limit      ->  optional | number | default=50 | max=100
+    # offset     ->  optional | number | default=0
+GET {{baseURL}}/feed/posts
+x-auth-token: {{access_token}}
