@@ -81,6 +81,24 @@ const reSendConfirmationSchema = joi.object({
     .message("Please fill a valid email")
     .required(),
 });
+
+const postSchema = joi.object({
+  postBody: joi.string().min(2).max(5000).required().trim(),
+  isPravite: joi.boolean().required().default(false),
+});
+const postIdSchema = joi.object({
+  postId: joi
+    .string()
+    .required()
+    .pattern(pattern.objectId)
+    .message("Invalid Post Id !"),
+});
+
+const feedPostsSchema = joi.object({
+  offset: joi.number().optional().default(0),
+  limit: joi.number().max(100).optional().default(50),
+});
+
 module.exports = {
   signInSchema,
   signUpSchema,
@@ -88,4 +106,7 @@ module.exports = {
   forgotPasswordSchema,
   resetPasswordSchema,
   reSendConfirmationSchema,
+  postSchema,
+  postIdSchema,
+  feedPostsSchema,
 };

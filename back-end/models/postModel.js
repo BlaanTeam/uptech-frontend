@@ -9,14 +9,18 @@ const postSchema = new Schema({
     type: String,
     required: true,
   },
-  userId: {
+  postUser: {
     type: Schema.Types.ObjectId,
     ref: "users",
   },
-  createAt: {
+  createdAt: {
     type: Date,
     required: true,
-    default: Date.now(),
+    default: Date.now,
+  },
+  updatedAt: {
+    type: Date,
+    required: false,
   },
   isPravite: {
     type: Boolean,
@@ -34,7 +38,7 @@ const commentSchema = new Schema({
     required: true,
     trim: true,
   },
-  userId: { type: Schema.Types.ObjectId, ref: "users" },
+  user: { type: Schema.Types.ObjectId, ref: "users" },
   createAt: {
     type: Date,
     required: true,
@@ -42,7 +46,7 @@ const commentSchema = new Schema({
   },
 });
 const likeSchema = new Schema({
-  userId: { type: Schema.Types.ObjectId, ref: "users" },
+  user: { type: Schema.Types.ObjectId, ref: "users" },
 });
 const tagSchema = new Schema({
   tagName: {
@@ -50,11 +54,11 @@ const tagSchema = new Schema({
     required: true,
     trim: true,
   },
-  userId: { type: Schema.Types.ObjectId, ref: "users" },
+  user: { type: Schema.Types.ObjectId, ref: "users" },
 });
 
 module.exports = {
-  Post: Model("users", postSchema),
+  Post: Model("posts", postSchema),
   Comment: Model("comments", commentSchema),
   Like: Model("likes", likeSchema),
   Tag: Model("tags", tagSchema),

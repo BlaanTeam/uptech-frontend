@@ -8,6 +8,7 @@ const commonConfig = {
     email: /^([a-z0-9_\.\+-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/,
     bio: /^[^\n]{2,100}$/,
     jwtToken: /^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$/,
+    objectId: /^[a-fA-F0-9]{24}$/,
   },
   jwtSecrets: {
     accessTokenSecretKey: process.env.JWT_ACCESS_TOKEN_SECRET_KEY,

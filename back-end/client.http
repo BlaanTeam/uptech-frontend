@@ -19,13 +19,14 @@
     # [429] - Too Many Request : {code:1032 ,msg:"Too Many Request"}
     # [400 | 422] - Bad Request : {code:1049,msg:"Special Message !"}
     # [403] - Don't Have Permission : {code:1003,msg:"Unauthorized !"}
+    # [404] - Post Not Found {code:1021,msg:"Post Not Found"}
 
 
 # Initialize the variables
 
 @baseURL = http://localhost:5000/api/v1
 
-
+@access_token =eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3RpbmciLCJpYXQiOjE2MDg2NzU3NzYsImV4cCI6MTYwODc2MjE3Nn0.n6f0ooY1fqmEnxY96wA3MA_SKV-gpNVKnSlqUBm0feQ
 ### testing the not found error 
 GET {{baseURL}}/bad_endpoints
 
@@ -41,8 +42,8 @@ POST {{baseURL}}/auth/sign_in
 Content-Type: application/json
 
 {
-    "username":"oumdoussa11",
-    "password":"oumosuSSa1@",
+    "username":"testing",
+    "password":"tesTING3@",
     "rememberMe":false
 }
 
@@ -70,7 +71,7 @@ Content-Type: application/json
 # content-type : application/json
 # params :
     # token     -> required | string
-@confirm_account_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImJlcG9nODY0NDdAeDFwb3N0LmNvbSIsImlhdCI6MTYwNDk2MjMwMywiZXhwIjoxNjA1MDQ4NzAzfQ.wYMVdw3doIXipMxsqKl6EKYoI8oI5Z7VNmYCZQyvc5I"
+@confirm_account_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IndvdG9waWw5NTlAYXJhbmVsYWIuY29tIiwiaWF0IjoxNjA4Njc3MzE4LCJleHAiOjE2MDg3NjM3MTh9.Nujw5bGcSmg35VHeXkoexUlWmEt-P1uN0B33BzVbqLI"
 POST {{baseURL}}/auth/confirm_account
 Content-Type: application/json
 
@@ -98,7 +99,7 @@ Content-Type: application/json
 # params :
     # token     -> required | string
     # password  -> required | string
-@reset_password_token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFiZG8uc2FiYW5pMzBAZ21haWwuY29tIiwiaWF0IjoxNjA1NzMxNjk4LCJleHAiOjE2MDU3MzM0OTh9.QezOTpwHXoad5uXxDque2o2DkCJP-hY-INCF-Naj_p8"
+@reset_password_token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFiZG8uc2FiYW5pMzBAZ21haWwuY29tIiwiaWF0IjoxNjA4NTkwMTEzLCJleHAiOjE2MDg1OTE5MTN9.rnoDwQ6HQL0jgEZW_3zS7DWDzgsavkp7OX4rx3I42O8"
 POST {{baseURL}}/auth/reset_password
 Content-Type: application/json
 
@@ -120,3 +121,55 @@ Content-Type: application/json
 {
     "email":"abdo.sabani30@gmail.com"
 }
+
+### create post 
+# endpoint : baseURL/posts
+# method : POST
+# content-type : application/json
+# params :
+    # postBody      ->  required | string
+    # isPravite     ->  required | boolean
+POST {{baseURL}}/feed/posts
+x-auth-token : {{access_token}}
+Content-Type: application/json
+
+{
+    "postBody":"Hello From Awbx",
+    "isPravite":true
+}
+
+### retrieve post
+# endpoint : baseURL/posts/<postId>
+# method : GET
+GET {{baseURL}}/feed/posts/5fe272313568797331c44c4a
+x-auth-token : {{access_token}}
+
+### delete post
+# endpoint : baseURL/posts/<postId>
+# method : DELETE
+DELETE  {{baseURL}}/feed/posts/5fe272313568797331c44c4a
+x-auth-token : {{access_token}}
+
+### update post
+# endpoint : baseURL/posts/<postId>
+# method : PUT
+# content-type : application/json
+# params :
+    # postBody      ->  required | string
+    # isPravite     ->  required | boolean
+PUT  {{baseURL}}/feed/posts/5fe272313568797331c44c4a
+x-auth-token : {{access_token}}
+Content-Type: application/json
+
+{
+    "postBody":"Update Post To New Value",
+    "isPravite":true
+
+}
+
+### retrieve all feed posts
+# endpoint : baseURL/posts
+# method : GET
+# query :
+    # limit      ->  optional | number
+    # offset     ->  optional | number
