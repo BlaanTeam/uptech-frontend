@@ -19,13 +19,15 @@
     # [429] - Too Many Request : {code:1032 ,msg:"Too Many Request"}
     # [400 | 422] - Bad Request : {code:1049,msg:"Special Message !"}
     # [403] - Don't Have Permission : {code:1003,msg:"Unauthorized !"}
+    # [404] - Post Not Found {code:1021,msg:"Post Not Found"}
+    # [404] - Comment Not Found {code:1022,msg:"Comment Not Found !"}
 
 
 # Initialize the variables
 
 @baseURL = http://localhost:5000/api/v1
 
-
+@access_token =eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImF3YnhraW5nIiwiaWF0IjoxNjA4NzczMzk0LCJleHAiOjE2MDg4NTk3OTR9.YQu7Bsl4X2CKYsur7bNLTgoPN2uyXfAgyamNaaVqIuc
 ### testing the not found error 
 GET {{baseURL}}/bad_endpoints
 
@@ -41,8 +43,8 @@ POST {{baseURL}}/auth/sign_in
 Content-Type: application/json
 
 {
-    "username":"oumdoussa11",
-    "password":"oumosuSSa1@",
+    "username":"awbxking",
+    "password":"awbxKING30@",
     "rememberMe":false
 }
 
@@ -70,7 +72,7 @@ Content-Type: application/json
 # content-type : application/json
 # params :
     # token     -> required | string
-@confirm_account_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImJlcG9nODY0NDdAeDFwb3N0LmNvbSIsImlhdCI6MTYwNDk2MjMwMywiZXhwIjoxNjA1MDQ4NzAzfQ.wYMVdw3doIXipMxsqKl6EKYoI8oI5Z7VNmYCZQyvc5I"
+@confirm_account_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFiZG8uc2FiYW5pMzBAZ21haWwuY29tIiwiaWF0IjoxNjA4NzczMTc1LCJleHAiOjE2MDg4NTk1NzV9.o0cknJT3YPPjd2TrGMurrh3SXWX_EjuxKewcOnTupcY"
 POST {{baseURL}}/auth/confirm_account
 Content-Type: application/json
 
@@ -98,7 +100,7 @@ Content-Type: application/json
 # params :
     # token     -> required | string
     # password  -> required | string
-@reset_password_token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFiZG8uc2FiYW5pMzBAZ21haWwuY29tIiwiaWF0IjoxNjA1NzMxNjk4LCJleHAiOjE2MDU3MzM0OTh9.QezOTpwHXoad5uXxDque2o2DkCJP-hY-INCF-Naj_p8"
+@reset_password_token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFiZG8uc2FiYW5pMzBAZ21haWwuY29tIiwiaWF0IjoxNjA4NTkwMTEzLCJleHAiOjE2MDg1OTE5MTN9.rnoDwQ6HQL0jgEZW_3zS7DWDzgsavkp7OX4rx3I42O8"
 POST {{baseURL}}/auth/reset_password
 Content-Type: application/json
 
@@ -120,3 +122,110 @@ Content-Type: application/json
 {
     "email":"abdo.sabani30@gmail.com"
 }
+
+### create post 
+# endpoint : baseURL/feed/posts
+# method : POST
+# content-type : application/json
+# params :
+    # postBody      ->  required | string
+    # isPrivate     ->  required | boolean
+POST {{baseURL}}/feed/posts
+x-auth-token : {{access_token}}
+Content-Type: application/json
+
+{
+    "postBody":"Hello from http client",
+    "isPrivate":false
+}
+
+### retrieve post
+# endpoint : baseURL/feed/posts/<postId>
+# method : GET
+GET {{baseURL}}/feed/posts/5fe3b6e17837fa711c6b4c32
+x-auth-token : {{access_token}}
+
+### delete post
+# endpoint : baseURL/feed/posts/<postId>
+# method : DELETE
+DELETE  {{baseURL}}/feed/posts/5fe3970b1b43b63a5b353c27/
+x-auth-token : {{access_token}}
+
+### update post
+# endpoint : baseURL/feed/posts/<postId>
+# method : PUT
+# content-type : application/json
+# params :
+    # postBody      ->  required | string
+    # isPrivate     ->  required | boolean
+PUT  {{baseURL}}/feed/posts/5fe3ab56c6b08962acb47e86
+x-auth-token : {{access_token}}
+Content-Type: application/json
+
+{
+    "postBody":"Update Post To New Value",
+    "isPrivate":true
+
+}
+
+### retrieve all feed posts
+# endpoint : baseURL/feed/posts
+# method : GET
+# query :
+    # limit      ->  optional | number | default=50 | max=100
+    # offset     ->  optional | number | default=0
+GET {{baseURL}}/feed/posts?offset=0&limit=100
+x-auth-token: {{access_token}}
+
+### add comment to post 
+# endpoint : baseURL/feed/posts/<postId>/comments
+# method : POST
+# params :
+    # commentBody   -> required | string
+POST {{baseURL}}/feed/posts/5fe39e46de76724afb6f152e/comments
+x-auth-token:{{access_token}}
+Content-Type: application/json
+
+{
+    "commentBody": "Last Comment"
+}
+
+### get all post comments
+# endpoint : baseURL/feed/posts/<postId>/comments
+# method : GET
+# query :
+    # limit      ->  optional | number | default=50 | max=100
+    # offset     ->  optional | number | default=0
+GET {{baseURL}}/feed/posts/5fe3ab56c6b08962acb47e86/comments?
+x-auth-token:{{access_token}}
+
+### get comment
+# endpoint : baseURL/feed/posts/<postId>/comments/<commentId>
+# method : GET
+GET {{baseURL}}/feed/posts/5fe3abafc6b08962acb47e8e/comments/5fe3aeff14e0cc699101d936
+x-auth-token:{{access_token}}
+
+### update comment
+# endpoint : baseURL/feed/posts/<postId>/comments/<commentId>
+# method : PUT
+# params :
+    # commentBody
+PUT {{baseURL}}/feed/posts/5fe3abafc6b08962acb47e8e/comments/5fe3aeff14e0cc699101d936
+x-auth-token:{{access_token}}
+Content-Type: application/json
+
+{
+    "commentBody":"Updated !"
+}
+
+### delete comment
+# endpoint : baseURL/feed/posts/<postId>/comments/<commentId>
+# method : DELETE
+DELETE  {{baseURL}}/feed/posts/5fe3abafc6b08962acb47e8e/comments/5fe3aba9c6b08962acb47e8d
+x-auth-token:{{access_token}}
+
+### like post
+# endpoint : baseURL/feed/posts/<postId>/like
+# method : POST
+POST  {{baseURL}}/feed/posts/5fe3abafc6b08962acb47e8e/like
+x-auth-token:{{access_token}}

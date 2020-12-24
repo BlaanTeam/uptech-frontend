@@ -81,6 +81,44 @@ const reSendConfirmationSchema = joi.object({
     .message("Please fill a valid email")
     .required(),
 });
+
+const postSchema = joi.object({
+  postBody: joi.string().min(2).max(5000).required().trim(),
+  isPrivate: joi.boolean().required().default(false),
+});
+const postIdSchema = joi.object({
+  postId: joi
+    .string()
+    .required()
+    .pattern(pattern.objectId)
+    .message("Post Not Found!"),
+});
+
+const feedPostsSchema = joi.object({
+  offset: joi.number().optional().default(0),
+  limit: joi.number().greater(0).less(101).optional().default(50),
+});
+
+const commentSchema = joi.object({
+  commentBody: joi.string().required().trim(),
+});
+const getCommentsSchema = joi.object({
+  offset: joi.number().optional().default(0),
+  limit: joi.number().greater(0).less(101).optional().default(50),
+});
+const commentIdSchema = joi.object({
+  postId: joi
+    .string()
+    .required()
+    .pattern(pattern.objectId)
+    .message("Post Not Found!"),
+  commentId: joi
+    .string()
+    .required()
+    .pattern(pattern.objectId)
+    .message("Comment Not Found !"),
+});
+
 module.exports = {
   signInSchema,
   signUpSchema,
@@ -88,4 +126,10 @@ module.exports = {
   forgotPasswordSchema,
   resetPasswordSchema,
   reSendConfirmationSchema,
+  postSchema,
+  postIdSchema,
+  feedPostsSchema,
+  commentSchema,
+  getCommentsSchema,
+  commentIdSchema,
 };

@@ -59,7 +59,7 @@ const userSchema = new Schema({
     default: Date.now(),
     required: true,
   },
-  pravite: {
+  private: {
     type: Boolean,
     default: false,
   },

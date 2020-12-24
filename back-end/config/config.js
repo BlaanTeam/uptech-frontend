@@ -8,6 +8,7 @@ const commonConfig = {
     email: /^([a-z0-9_\.\+-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/,
     bio: /^[^\n]{2,100}$/,
     jwtToken: /^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$/,
+    objectId: /^[a-fA-F0-9]{24}$/,
   },
   jwtSecrets: {
     accessTokenSecretKey: process.env.JWT_ACCESS_TOKEN_SECRET_KEY,
@@ -25,7 +26,7 @@ const commonConfig = {
   mailSmtp: {
     host: process.env.MAIL_SMTP_HOST,
     port: process.env.MAIL_SMTP_PORT,
-    secure: true,
+    secure: process.env.USE_TLS === "true" ? true : false,
     auth: {
       user: process.env.MAIL_SMTP_USER,
       pass: process.env.MAIL_SMTP_PASS,

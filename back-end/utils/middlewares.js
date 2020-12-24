@@ -6,12 +6,14 @@ const { User } = require("../models/authModel");
 const protectRouter = (router) => {
   router.use(async (req, res, next) => {
     try {
-      if (!req.headers["x-auth-token"])
-        new createError("Unauthorized !", 1075, 401);
-
-      let accessToken = req.headers["x-auth-token"].trim();
+      if (!req.headers.hasOwnProperty("x-auth-token"))
+        throw new createError("Unauthorized !", 1075, 401);
+      let accessToken = req.headers["x-auth-token"]?.trim();
       let payload = await verifyAccessToken(accessToken);
-      let user = await User.findOne({ userName: payload.username });
+      let user = await User.findOne(
+        { userName: payload.username },
+        { userPass: 0 }
+      );
       if (!user) throw new createError("Unauthorized !", 1030, 401);
       req.currentUser = user;
       next();

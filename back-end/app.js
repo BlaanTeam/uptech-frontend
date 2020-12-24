@@ -15,6 +15,7 @@ const {
 
 // Include API's routes
 const authRouter = require("./routes/authRouter");
+const postRouter = require("./routes/postRouter");
 
 // Iniatialize server & app
 const app = express();
@@ -44,6 +45,7 @@ app.use(express.static(path.join(__dirname, "public")));
 // Iniatialize API's endpoints
 
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/feed", postRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
