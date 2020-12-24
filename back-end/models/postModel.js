@@ -63,6 +63,16 @@ const tagSchema = new Schema({
   postId: { type: Schema.Types.ObjectId, ref: "posts" },
 });
 
+postSchema.methods.isLikedByUser = async function (userId) {
+  let post = await this.populate({
+    path: "likes",
+    match: {
+      user: userId,
+    },
+  }).execPopulate();
+  return post.likes.length === 1 ? true : false;
+};
+
 module.exports = {
   Post: Model("posts", postSchema),
   Comment: Model("comments", commentSchema),

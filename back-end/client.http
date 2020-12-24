@@ -158,13 +158,13 @@ x-auth-token : {{access_token}}
 # params :
     # postBody      ->  required | string
     # isPrivate     ->  required | boolean
-PUT  {{baseURL}}/feed/posts/5fe3abafc6b08962acb47e8e
+PUT  {{baseURL}}/feed/posts/5fe3ab56c6b08962acb47e86
 x-auth-token : {{access_token}}
 Content-Type: application/json
 
 {
     "postBody":"Update Post To New Value",
-    "isPrivate":false
+    "isPrivate":true
 
 }
 
@@ -222,4 +222,10 @@ Content-Type: application/json
 # endpoint : baseURL/feed/posts/<postId>/comments/<commentId>
 # method : DELETE
 DELETE  {{baseURL}}/feed/posts/5fe3abafc6b08962acb47e8e/comments/5fe3aba9c6b08962acb47e8d
+x-auth-token:{{access_token}}
+
+### like post
+# endpoint : baseURL/feed/posts/<postId>/like
+# method : POST
+POST  {{baseURL}}/feed/posts/5fe3abafc6b08962acb47e8e/like
 x-auth-token:{{access_token}}

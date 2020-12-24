@@ -197,6 +197,8 @@ const updatePost = async (req, res, next) => {
   }
 };
 
+// This function will handle getting comments process
+
 const getComments = async (req, res, next) => {
   try {
     let result_x = await postIdSchema.validateAsync(req.params);
@@ -235,6 +237,8 @@ const getComments = async (req, res, next) => {
     next(err);
   }
 };
+
+// This function will handle adding comment process
 
 const addComment = async (req, res, next) => {
   try {
@@ -276,6 +280,8 @@ const addComment = async (req, res, next) => {
     next(err);
   }
 };
+
+// This function will handle getting comment process
 
 const getComment = async (req, res, next) => {
   try {
@@ -322,6 +328,8 @@ const getComment = async (req, res, next) => {
     next(err);
   }
 };
+
+// This function will handle updating comment process
 
 const updateComment = async (req, res, next) => {
   try {
@@ -372,6 +380,9 @@ const updateComment = async (req, res, next) => {
     next(err);
   }
 };
+
+// This function will handle deleting comment process
+
 const deleteComment = async (req, res, next) => {
   try {
     let result = await commentIdSchema.validateAsync(req.params);
@@ -411,7 +422,7 @@ const deleteComment = async (req, res, next) => {
     else if (comment.postId._id.toString() !== post._id.toString()) {
       throw new createError("You don't have permission !", 1003, 403);
     }
-    deletedPost = await Post.findOneAndUpdate(
+    let deletedComment = await Post.findOneAndUpdate(
       { _id: result.postId },
       { $pull: { comments: result.commentId } },
       { new: true }
@@ -420,6 +431,61 @@ const deleteComment = async (req, res, next) => {
 
     res.status(204);
     res.json(post);
+  } catch (err) {
+    if (err.isJoi === true) {
+      err.status = 400;
+    }
+    next(err);
+  }
+};
+
+// This function will handle liking post process
+
+const likePost = async (req, res, next) => {
+  try {
+    let result = await postIdSchema.validateAsync(req.params);
+    let post = await Post.findOne(
+      { _id: result.postId },
+      { likes: 1, isPrivate: 1 }
+    ).populate({
+      path: "postUser",
+      select: "userName profile",
+    });
+    if (!post) throw new createError("Post Not Found !", 1021, 404);
+    else if (
+      post.isPrivate === true &&
+      post.postUser._id.toString() !== req.currentUser._id.toString()
+    ) {
+      throw new createError("You don't have permission !", 1003, 403);
+    }
+    let isLikingPost = await post.isLikedByUser(req.currentUser._id);
+
+    if (isLikingPost === true) {
+      let like = await Like.findOne({
+        user: req.currentUser._id,
+        postId: post._id,
+      });
+
+      let deletedLike = await Post.findOneAndUpdate(
+        {
+          _id: post._id,
+        },
+        { $pull: { likes: like._id } },
+        { new: true }
+      );
+      await like.remove();
+    } else {
+      let like = new Like({
+        user: req.currentUser._id,
+        postId: post._id,
+      });
+      await like.save();
+      post.likes.push(like._id);
+      await post.save();
+    }
+    res.json({
+      status: "ok",
+    });
   } catch (err) {
     if (err.isJoi === true) {
       err.status = 400;
@@ -439,4 +505,5 @@ module.exports = {
   getComment,
   updateComment,
   deleteComment,
+  likePost,
 };
