@@ -91,12 +91,32 @@ const postIdSchema = joi.object({
     .string()
     .required()
     .pattern(pattern.objectId)
-    .message("Invalid Post Id !"),
+    .message("Post Not Found!"),
 });
 
 const feedPostsSchema = joi.object({
   offset: joi.number().optional().default(0),
-  limit: joi.number().max(100).optional().default(50),
+  limit: joi.number().greater(0).less(101).optional().default(50),
+});
+
+const commentSchema = joi.object({
+  commentBody: joi.string().required().trim(),
+});
+const getCommentsSchema = joi.object({
+  offset: joi.number().optional().default(0),
+  limit: joi.number().greater(0).less(101).optional().default(50),
+});
+const commentIdSchema = joi.object({
+  postId: joi
+    .string()
+    .required()
+    .pattern(pattern.objectId)
+    .message("Post Not Found!"),
+  commentId: joi
+    .string()
+    .required()
+    .pattern(pattern.objectId)
+    .message("Comment Not Found !"),
 });
 
 module.exports = {
@@ -109,4 +129,7 @@ module.exports = {
   postSchema,
   postIdSchema,
   feedPostsSchema,
+  commentSchema,
+  getCommentsSchema,
+  commentIdSchema,
 };

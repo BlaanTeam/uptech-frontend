@@ -38,15 +38,20 @@ const commentSchema = new Schema({
     required: true,
     trim: true,
   },
-  user: { type: Schema.Types.ObjectId, ref: "users" },
-  createAt: {
+  commentUser: { type: Schema.Types.ObjectId, ref: "users" },
+  postId: { type: Schema.Types.ObjectId, ref: "posts" },
+  createdAt: {
     type: Date,
     required: true,
-    default: Date.now(),
+    default: Date.now,
+  },
+  updatedAt: {
+    type: Date,
   },
 });
 const likeSchema = new Schema({
   user: { type: Schema.Types.ObjectId, ref: "users" },
+  postId: { type: Schema.Types.ObjectId, ref: "posts" },
 });
 const tagSchema = new Schema({
   tagName: {
@@ -55,6 +60,7 @@ const tagSchema = new Schema({
     trim: true,
   },
   user: { type: Schema.Types.ObjectId, ref: "users" },
+  postId: { type: Schema.Types.ObjectId, ref: "posts" },
 });
 
 module.exports = {

@@ -9,7 +9,11 @@ const dbURI = `mongodb${
   !isDev ? "+srv" : ""
 }://${dbUser}:${dbPass}@${dbHost}/${dbName}?authSource=admin&retryWrites=true&w=majority`;
 
-mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(dbURI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useFindAndModify: false,
+});
 
 const db = mongoose.connection;
 
