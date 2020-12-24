@@ -26,7 +26,7 @@ const commonConfig = {
   mailSmtp: {
     host: process.env.MAIL_SMTP_HOST,
     port: process.env.MAIL_SMTP_PORT,
-    secure: true,
+    secure: process.env.USE_TLS === "true" ? true : false,
     auth: {
       user: process.env.MAIL_SMTP_USER,
       pass: process.env.MAIL_SMTP_PASS,
