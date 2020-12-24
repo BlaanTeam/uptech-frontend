@@ -21,7 +21,7 @@ const routes = [
   {
     path: "/feeds",
     name: "Feeds",
-    // component: Home,
+    component: () => import("@/views/Auth/Feeds"),
     meta: {
       authRequired: true,
       title: "titles.feeds"
