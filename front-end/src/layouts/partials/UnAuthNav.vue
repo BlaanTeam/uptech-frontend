@@ -31,8 +31,8 @@
       <Locale />
       <router-link class="login d-none d-sm-flex" :to="router">
         <v-btn color="primary" rounded elevation="0" dark>
-          <v-icon left>mdi-login</v-icon>
-          {{ auth }}
+          <v-icon left size="20">mdi-{{ auth.icon }}</v-icon>
+          {{ auth.name }}
         </v-btn>
       </router-link>
       <!---------------- button for mobile devices ------------------------>
@@ -44,7 +44,7 @@
     <v-navigation-drawer
       :right="$vuetify.rtl === true"
       v-model="drawer"
-      absolute
+      fixed
       temporary
     >
       <v-list nav dense>
@@ -75,7 +75,7 @@
           </v-list-item>
           <v-list-item to="/sign_up">
             <v-list-item-icon>
-              <v-icon>mdi-login</v-icon>
+              <v-icon>mdi-account-plus</v-icon>
             </v-list-item-icon>
             <v-list-item-title>{{ $t("nav.signup") }}</v-list-item-title>
           </v-list-item>
@@ -100,8 +100,8 @@ export default {
   computed: {
     auth() {
       return this.$route.name === "SignIn"
-        ? this.$t("nav.signup")
-        : this.$t("nav.signin");
+        ? { name: this.$t("nav.signup"), icon: "account-plus" }
+        : { name: this.$t("nav.signin"), icon: "login" };
     },
     router() {
       return this.$route.name === "SignIn" ? "/sign_up" : "/sign_in";

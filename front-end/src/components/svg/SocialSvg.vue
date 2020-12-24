@@ -316,4 +316,10 @@ export default {
     transform: translateY(0);
   }
 }
+@media screen and (max-width: 700px) {
+  #socialSvg {
+    width: 82vw;
+    margin-left: 5vw;
+  }
+}
 </style>

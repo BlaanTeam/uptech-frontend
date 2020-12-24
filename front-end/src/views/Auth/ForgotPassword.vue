@@ -1,10 +1,10 @@
 <template>
-  <v-container fluid class="pa-10">
-    <v-col cols="8" offset="3">
-      <h1 class="display-3 my-10">{{ $t("forgotPassword.h1") }}</h1>
-      <v-form ref="forgotPassword">
-        <v-col cols="8">
-          <h3 class="mb-6">{{ $t("forgotPassword.h2") }}</h3>
+  <v-container fluid class="pa-0">
+    <v-card class="mx-auto bg mt-8 py-8" max-width="600">
+      <h1 class="display-3 my-10 ms-4">{{ $t("forgotPassword.h1") }}</h1>
+      <v-card-text>
+        <h3 class="mb-3">{{ $t("forgotPassword.h2") }}</h3>
+        <v-form ref="forgotPassword">
           <v-text-field
             dense
             outlined
@@ -25,9 +25,9 @@
           >
             {{ $t("forgotPassword.search") }}
           </v-btn>
-        </v-col>
-      </v-form>
-    </v-col>
+        </v-form>
+      </v-card-text>
+    </v-card>
   </v-container>
 </template>
 
@@ -108,4 +108,8 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+.v-text-field {
+  max-width: 420px;
+}
+</style>

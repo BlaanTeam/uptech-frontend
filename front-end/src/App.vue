@@ -45,4 +45,7 @@ export default {
 a {
   text-decoration: none;
 }
+main {
+  min-height: 100vh;
+}
 </style>
