@@ -44,8 +44,12 @@ export default {
 <style lang="scss">
 a {
   text-decoration: none;
+  color: white;
 }
 main {
   min-height: 100vh;
+}
+.v-application a {
+  color: inherit !important;
 }
 </style>
