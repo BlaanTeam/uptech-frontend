@@ -1,74 +1,40 @@
 <template>
-  <v-navigation-drawer
-    v-model="drawer"
-    :mini-variant.sync="mini"
-    permanent
-    width="180"
-    app
-  >
-    <v-layout
-      align-center
-      justify-space-between
-      column
-      fill-height
-      @mouseleave.stop="mini = true"
-    >
-      <div>
-        <v-list-item class="px-2">
-          <v-app-bar-nav-icon @click="mini = !mini"></v-app-bar-nav-icon>
-          <v-list-item-title class="pa-4">Up Tech</v-list-item-title>
-        </v-list-item>
+  <v-navigation-drawer v-model="drawer" permanent app width="220px" class="bg">
+    <v-list-item class="px-2" :inactive="true">
+      <!-- <v-app-bar-nav-icon @click="mini = !mini"></v-app-bar-nav-icon> -->
+      <v-list-item :inactive="true">
+        <v-list-item-avatar>
+          <v-img src="@/assets/images/avatar.svg"></v-img>
+        </v-list-item-avatar>
 
-        <v-list nav dense>
-          <v-list-item-group>
-            <div v-for="(item, index) in navItemsTop" :key="index">
-              <v-tooltip right>
-                <template v-slot:activator="{ on }">
-                  <v-list-item
-                    v-on="on"
-                    :exact="item.href === '/'"
-                    :to="item.href"
-                    link
-                  >
-                    <v-list-item-action>
-                      <v-icon>{{ item.icon }}</v-icon>
-                    </v-list-item-action>
-                    <v-list-item-content>
-                      <v-list-item-title>{{ item.title }}</v-list-item-title>
-                    </v-list-item-content>
-                  </v-list-item>
-                </template>
-                <span>{{ item.title }}</span>
-              </v-tooltip>
-            </div>
-          </v-list-item-group>
-        </v-list>
-      </div>
-      <v-list nav dense>
-        <v-list-item-group>
-          <div v-for="(item, index) in navItemsBottom" :key="index">
-            <v-tooltip right>
-              <template v-slot:activator="{ on }">
-                <v-list-item
-                  v-on="on"
-                  :exact="item.href === '/'"
-                  :to="item.href"
-                  tag="button"
-                >
-                  <v-list-item-action>
-                    <v-icon>{{ item.icon }}</v-icon>
-                  </v-list-item-action>
-                  <v-list-item-content>
-                    <v-list-item-title>{{ item.title }}</v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-              </template>
-              <span>{{ item.title }}</span>
-            </v-tooltip>
-          </div>
-        </v-list-item-group>
-      </v-list>
-    </v-layout>
+        <v-list-item-title>{{ username() }}</v-list-item-title>
+      </v-list-item>
+    </v-list-item>
+
+    <v-list nav dense>
+      <v-list-item-group>
+        <v-list-item
+          v-for="item in items"
+          :key="item.title"
+          :to="item.href"
+          link
+        >
+          <v-list-item-icon>
+            <v-icon>{{ item.icon }}</v-icon>
+          </v-list-item-icon>
+
+          <v-list-item-content>
+            <v-list-item-title>{{ item.title }}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list-item-group>
+    </v-list>
+    <template v-slot:append>
+      <v-btn to="/settings" class="ms-6 mb-6 px-8 bg" elevation="0">
+        <v-icon size="20" left>mdi-cog</v-icon>
+        Settings
+      </v-btn>
+    </template>
   </v-navigation-drawer>
 </template>
 <script>
@@ -76,26 +42,22 @@ export default {
   data() {
     return {
       drawer: true,
-      mini: true,
-      navItemsTop: [
-        { title: "Home", icon: "mdi-home", href: "/" },
-        {
-          title: "About Us",
-          icon: "mdi-account-group-outline",
-          href: "/about"
-        },
-        { title: "Sign In", icon: "mdi-login", href: "/sign_in" },
-        { title: "Sign Up", icon: "mdi-plus-box-multiple", href: "/sign_up" }
+      group: "",
+      items: [
+        { title: "Feeds", icon: "mdi-home", href: "/feeds" },
+        { title: "My Account", icon: "mdi-account", href: "account" },
+        { title: "Users", icon: "mdi-account-group-outline", href: "/users" }
       ],
-      navItemsBottom: [
-        { title: "Settings", icon: "mdi-cog", href: "/settings" }
-      ]
+      mini: true,
+      user: {
+        logedIn: () => false,
+        username: "oumoussa"
+      }
     };
   },
   methods: {
-    sayHello() {
-      console.log("Hello");
-      return 1;
+    username() {
+      return this.user.logedIn() ? this.user.username : "Avatar";
     }
   }
 };
@@ -107,23 +69,6 @@ export default {
     background: #f3d551;
     &__border {
       display: none;
-    }
-
-    .v-list {
-      .v-list-item--active {
-        // text-align: center;
-        // border-radius: 14px;
-        // background: #ffffff;
-      }
-    }
-  }
-}
-.theme--dark {
-  .v-navigation-drawer {
-    .v-list {
-      .v-list-item--active {
-        color: #f3d551;
-      }
     }
   }
 }
