@@ -26,6 +26,7 @@ export default {
   methods: {
     setLocale(locale) {
       this.$i18n.locale = locale;
+      this.$timeago.locale = locale;
       localStorage.setItem("locale", locale);
       if (locale === "ar") {
         this.$vuetify.rtl = true;
