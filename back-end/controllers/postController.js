@@ -26,7 +26,17 @@ const feedPosts = async (req, res, next) => {
           foreignField: "postId",
           // let: { post_id: "_id" },
           // pipeline: [{ $match: { $expr: { $eq: ["$$post_id", "$postId"] } } }],
-          as: "comment_count",
+          as: "commentCount",
+        },
+      },
+      {
+        $lookup: {
+          from: "likes",
+          localField: "_id",
+          foreignField: "postId",
+          // let: { post_id: "_id" },
+          // pipeline: [{ $match: { $expr: { $eq: ["$$post_id", "$postId"] } } }],
+          as: "likesCount",
         },
       },
       {
@@ -45,7 +55,8 @@ const feedPosts = async (req, res, next) => {
       { $unwind: "$postUser" },
       {
         $addFields: {
-          totalComments: { $size: "$comment_count" },
+          totalComments: { $size: "$commentCount" },
+          totalLikes: { $size: "$likesCount" },
         },
       },
       {
@@ -54,7 +65,8 @@ const feedPosts = async (req, res, next) => {
           likes: 0,
           tags: 0,
           __v: 0,
-          comment_count: 0,
+          commentCount: 0,
+          likesCount: 0,
           userInfo: 0,
           "postUser.userPass": 0,
           "postUser.reSendConfirmationTooManyRequest": 0,
