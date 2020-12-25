@@ -17,7 +17,7 @@
           <router-link to="profile/5543541">
             <h3 class="pa-0 ma-0">Dave doe</h3>
           </router-link>
-          <h4 class="caption pa-0 ma-0">december 12 2019</h4>
+          <h4 class="caption pa-0 ma-0"><timeago :datetime="1608866829878" :auto-update="60" /></h4>
         </div>
         <v-spacer></v-spacer>
         <v-menu offset-y left transition="slide-y-transition">
