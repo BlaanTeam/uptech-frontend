@@ -10,6 +10,27 @@ import Notifications from "vue-notification";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/vue-loading.css";
 
+const originalSetItem = localStorage.setItem;
+
+localStorage.setItem = function(key, value) {
+  const event = new Event("itemInserted");
+
+  event.value = value;
+  event.key = key;
+
+  document.dispatchEvent(event);
+
+  originalSetItem.apply(this, arguments);
+};
+
+const localStorageSetHandler = async function(e) {
+  if (e.key == "access_token") {
+    await store.dispatch("updateToken", { accessToken: e.value });
+  }
+};
+
+document.addEventListener("itemInserted", localStorageSetHandler, false);
+
 Vue.use(Notifications);
 Vue.use(Loading);
 
