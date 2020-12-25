@@ -20,7 +20,7 @@
 <script>
 export default {
   data: () => ({
-    locale: "en"
+    locale: "en",
   }),
 
   methods: {
@@ -30,16 +30,9 @@ export default {
       localStorage.setItem("locale", locale);
       if (locale === "ar") {
         this.$vuetify.rtl = true;
-      } else this.$vuetify.rtl = false;
+      }
       // TODO: auto reload after locale changing
-    }
+    },
   },
-  beforeCreate() {
-    this.locale = localStorage.getItem("locale");
-    if (this.locale === "ar") {
-      this.$vuetify.rtl = true;
-    }
-    this.$i18n.locale = this.locale;
-  }
 };
 </script>

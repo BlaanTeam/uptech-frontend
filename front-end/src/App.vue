@@ -27,10 +27,21 @@ import UnAuthLayout from "./layouts/UnAuthLayout";
 import AuthLayout from "@/layouts/AuthLayout";
 
 export default {
+  data: () => ({
+    locale: "en"
+  }),
   name: "App",
   components: {
     UnAuthLayout,
     AuthLayout
+  },
+    beforeCreate() {
+    this.locale = localStorage.getItem("locale");
+    if (this.locale === "ar") {
+      this.$vuetify.rtl = true;
+    }
+    this.$i18n.locale = this.locale;
+    this.$timeago.locale = this.locale;
   },
   watch: {
     "$i18n.locale"(newV, oldV) {

@@ -50,7 +50,9 @@ new Vue({
   watch: {
     isLoggedIn(newVal, oldVal) {
       if (newVal === false) {
-        if (this.$route.name !== "SignIn") {
+        if (this.$route.name === "Feeds") {
+          this.$router.push({ name: "Home" });
+        } else if (this.$route.name !== "SignIn") {
           this.$router.push({ name: "Home" });
           this.$notify({
             group: "errors",
