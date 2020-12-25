@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import router from "../router/index";
 
 Vue.use(Vuex);
 
@@ -11,7 +12,8 @@ export default new Vuex.Store({
   getters: {
     isLoggedIn: state =>
       !!state.accessToken &&
-      !!state.accessToken.match(Vue.prototype.$pattern.jwtToken)
+      !!state.accessToken.match(Vue.prototype.$pattern.jwtToken),
+    getToken: state => state.accessToken
   },
   mutations: {
     AUTH_SUCCESS: (state, payload) => {
@@ -25,6 +27,9 @@ export default new Vuex.Store({
       localStorage.removeItem("user");
       state.accessToken = "";
       state.user = {};
+    },
+    UPDATE_TOKEN: (state, payload) => {
+      state.accessToken = payload.accessToken;
     }
   },
   actions: {
@@ -108,6 +113,10 @@ export default new Vuex.Store({
     },
     destroySession: context => {
       context.commit("DESTROY_SESSION");
+      router.push({ name: "SignIn" });
+    },
+    updateToken: (context, payload) => {
+      context.commit("UPDATE_TOKEN", payload.accessToken);
     }
   },
 

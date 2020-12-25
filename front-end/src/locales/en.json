@@ -10,7 +10,9 @@
     "errors": {
       "connectionError": "Connection Error",
       "wentWrong": "Opps, something went wrong",
-      "lostConnection": "You lost your connection !"
+      "lostConnection": "You lost your connection !",
+      "authError": "Authorization Error",
+      "authorizationError": "Please before doing anything, you should sign in!"
     }
   },
   "nav": {
