@@ -16,7 +16,6 @@ export default {
   methods: {
     logout() {
       this.$store.dispatch("destroySession");
-      this.$router.push({ name: "SignIn" });
     }
   }
 };
