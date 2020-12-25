@@ -39,9 +39,31 @@ Vue.prototype.$pattern = patterns;
 Vue.config.productionTip = false;
 
 new Vue({
+  computed: {
+    isLoggedIn: _ => store.getters.isLoggedIn
+  },
   router,
   store,
   vuetify,
   i18n,
+  watch: {
+    isLoggedIn(newVal, oldVal) {
+      if (newVal === false) {
+        if (this.$route.name !== "SignIn") {
+          this.$router.push({ name: "Home" });
+          this.$notify({
+            group: "errors",
+            type: "error",
+            title: this.$t("globals.errors.authError"),
+            text: this.$t("globals.errors.authorizationError")
+          });
+        }
+      } else {
+        if (this.$route.name !== "SignIn") {
+          this.$router.push({ name: "Feeds" });
+        }
+      }
+    }
+  },
   render: h => h(App)
 }).$mount("#app");

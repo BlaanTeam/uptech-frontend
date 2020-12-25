@@ -28,8 +28,8 @@ export default new Vuex.Store({
       state.accessToken = "";
       state.user = {};
     },
-    UPDATE_TOKEN: (state, payload) => {
-      state.accessToken = payload.accessToken;
+    UPDATE_TOKEN: (state, accessToken) => {
+      state.accessToken = accessToken;
     }
   },
   actions: {
