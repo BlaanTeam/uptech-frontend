@@ -24,7 +24,7 @@
           :append-icon="show2 ? 'mdi-eye' : 'mdi-eye-off'"
           :type="show2 ? 'text' : 'password'"
           name="password"
-          :label="$t('resetPassword.repeatPassword')"
+          :label="$t('resetPassword.form.repeatPassword')"
           @click:append="show2 = !show2"
           required
         ></v-text-field>

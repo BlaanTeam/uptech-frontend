@@ -31,7 +31,8 @@
     "notFound": "Not Found",
     "resetPassword": "Reset Passord",
     "forgotPassword": "Forgot Password",
-    "resendConfirmation": "Resend Confirmation"
+    "resendConfirmation": "Resend Confirmation",
+    "feeds": "Feeds"
   },
 
   "home": {

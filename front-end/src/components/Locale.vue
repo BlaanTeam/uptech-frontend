@@ -20,7 +20,7 @@
 <script>
 export default {
   data: () => ({
-    locale: "en",
+    locale: "en"
   }),
 
   methods: {
@@ -34,7 +34,7 @@ export default {
         this.$vuetify.rtl = false;
       }
       // TODO: auto reload after locale changing
-    },
-  },
+    }
+  }
 };
 </script>

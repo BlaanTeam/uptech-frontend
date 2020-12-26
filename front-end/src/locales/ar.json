@@ -32,7 +32,8 @@
     "notFound": "غير موجود‎",
     "resetPassword": "إعادة تعيين كلمة المرور",
     "forgotPassword": "هل نسيت كلمة المرور؟",
-    "resendConfirmation": "أعد إرسال التأكيد"
+    "resendConfirmation": "أعد إرسال التأكيد",
+    "feeds": "المشاركات"
   },
 
   "home": {
