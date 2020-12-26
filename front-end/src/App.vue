@@ -28,17 +28,19 @@ import AuthLayout from "@/layouts/AuthLayout";
 
 export default {
   data: () => ({
-    locale: "en"
+    locale: "en",
   }),
   name: "App",
   components: {
     UnAuthLayout,
-    AuthLayout
+    AuthLayout,
   },
-    beforeCreate() {
+  beforeCreate() {
     this.locale = localStorage.getItem("locale");
     if (this.locale === "ar") {
       this.$vuetify.rtl = true;
+    } else {
+      this.$vuetify.rtl = false;
     }
     this.$i18n.locale = this.locale;
     this.$timeago.locale = this.locale;
@@ -48,8 +50,8 @@ export default {
       document.title = `${this.$t("appName")} | ${this.$t(
         this.$route.meta.title
       )}`;
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="scss">

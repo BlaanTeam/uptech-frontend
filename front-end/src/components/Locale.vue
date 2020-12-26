@@ -30,6 +30,8 @@ export default {
       localStorage.setItem("locale", locale);
       if (locale === "ar") {
         this.$vuetify.rtl = true;
+      } else {
+        this.$vuetify.rtl = false;
       }
       // TODO: auto reload after locale changing
     },
