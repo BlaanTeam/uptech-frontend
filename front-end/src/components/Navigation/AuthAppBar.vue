@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar app height="50%" bg>
+  <v-app-bar width="700px" app class="secondarybg" height="52px" flat>
     <!-- <v-app-bar-nav-icon></v-app-bar-nav-icon> -->
     <v-toolbar-title>UpTech</v-toolbar-title>
     <v-spacer></v-spacer>
@@ -20,8 +20,17 @@ export default {
   }
 };
 </script>
-<style scoped>
-.theme--light.v-app-bar.v-toolbar.v-sheet {
-  background-color: #fff;
+<style scoped lang="scss">
+.theme--light {
+  .v-app-bar.v-toolbar.v-sheet {
+    background-color: #fff;
+  }
+  .v-app-bar {
+    border-bottom: 1px solid #adadad !important;
+  }
+}
+
+.theme--dark .v-app-bar {
+  border-bottom: 1px solid #4b4b4b !important;
 }
 </style>
