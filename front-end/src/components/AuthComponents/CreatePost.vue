@@ -57,6 +57,7 @@ export default {
         });
         if (res.status === 201) {
           //TODO notify user
+          this.postBody = "";
         }
       } catch (err) {
         console.log(err);

@@ -85,7 +85,7 @@
       <v-expand-transition>
         <div v-show="post.commentExpand" class="my-1">
           <div class="d-inline-block float-left ms-2">
-            <v-avatar width="20" height="20" color="green" class="mt-3">
+            <v-avatar width="20" color="green" class="mt-3">
               <span class="white--text headline">me</span>
             </v-avatar>
           </div>
@@ -97,8 +97,8 @@
               auto-grow
               rows="1"
               row-height="10"
-              v-model="comment"
-              @keypress.enter="addComment(post._id, index)"
+              v-model="post.comment"
+              @keypress.enter="addComment(post, index)"
             ></v-textarea>
           </div>
         </div>
@@ -122,9 +122,7 @@ export default {
       required: true
     }
   },
-  data: () => ({
-    comment: ""
-  }),
+  data: () => ({}),
   methods: {
     postText(text, id) {
       if (text.length > 600)
@@ -139,13 +137,14 @@ export default {
         this.$set(post, "commentExpand", true);
       else post.commentExpand = !post.commentExpand;
     },
-    async addComment(id, index) {
+    async addComment(post, index) {
       try {
         const res = await this.$store.dispatch("addComment", {
-          comment: this.comment,
+          comment: post.comment,
           index: index,
-          id: id
+          id: post._id
         });
+        post.comment = "";
       } catch (err) {
         console.log(err);
       }
