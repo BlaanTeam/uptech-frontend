@@ -1,5 +1,11 @@
 <template>
-  <v-navigation-drawer v-model="drawer" permanent app width="220px" class="bg">
+  <v-navigation-drawer
+    v-model="drawer"
+    permanent
+    app
+    width="220px"
+    class="secondarybg"
+  >
     <v-list-item class="px-2" :inactive="true">
       <!-- <v-app-bar-nav-icon @click="mini = !mini"></v-app-bar-nav-icon> -->
       <v-list-item :inactive="true">
@@ -30,7 +36,7 @@
       </v-list-item-group>
     </v-list>
     <template v-slot:append>
-      <v-btn to="/settings" class="ms-6 mb-6 px-8 bg" elevation="0">
+      <v-btn to="/settings" class="ms-6 mb-6 px-8 secondarybg" elevation="0">
         <v-icon size="20" left>mdi-cog</v-icon>
         Settings
       </v-btn>
@@ -70,6 +76,10 @@ export default {
     &__border {
       display: none;
     }
+  }
+  .v-navigation-drawer__border {
+    display: block !important;
+    background: #adadad !important;
   }
 }
 </style>
