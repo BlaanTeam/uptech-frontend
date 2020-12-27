@@ -119,6 +119,38 @@ const commentIdSchema = joi.object({
     .message("Comment Not Found !"),
 });
 
+const profileIdSchema = joi.object({
+  userId: joi
+    .string()
+    .required()
+    .pattern(pattern.objectId)
+    .message("Profile Not Found!"),
+});
+
+const profileSchema = joi.object({
+  userPass: joi
+    .string()
+    .pattern(pattern.password)
+    .message("Please fill a valid password")
+    .optional(),
+  isPrivate: joi.boolean().optional(),
+  profile: joi.object({
+    firstName: joi.string().optional().trim(),
+    lastName: joi.string().optional().trim(),
+    picture: joi
+      .string()
+      .pattern(pattern.url)
+      .message("Please fill a valid profile picture link")
+      .optional(),
+    bio: joi
+      .string()
+      .pattern(pattern.bio)
+      .message("Please fill a valid bio")
+      .optional()
+      .trim(),
+  }),
+});
+
 module.exports = {
   signInSchema,
   signUpSchema,
@@ -132,4 +164,6 @@ module.exports = {
   commentSchema,
   getCommentsSchema,
   commentIdSchema,
+  profileIdSchema,
+  profileSchema,
 };

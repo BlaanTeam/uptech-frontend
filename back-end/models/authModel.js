@@ -29,7 +29,7 @@ const userSchema = new Schema({
     match: [pattern.password, "Please fill a valid password"],
   },
   profile: {
-    image: {
+    picture: {
       type: String,
       match: [pattern.url, "Please fill a valid image url"],
     },
@@ -59,7 +59,7 @@ const userSchema = new Schema({
     default: Date.now(),
     required: true,
   },
-  private: {
+  isPrivate: {
     type: Boolean,
     default: false,
   },

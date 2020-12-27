@@ -27,7 +27,7 @@
 
 @baseURL = http://localhost:5000/api/v1
 
-@access_token =eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImF3YnhraW5nIiwiaWF0IjoxNjA4NzczMzk0LCJleHAiOjE2MDg4NTk3OTR9.YQu7Bsl4X2CKYsur7bNLTgoPN2uyXfAgyamNaaVqIuc
+@access_token =eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3RpbmciLCJpYXQiOjE2MDg5MzA3NjIsImV4cCI6MTYwOTQ0OTE2Mn0.BuwgK5_sNmkYEfXIdcVNa1byFnvogk78dFNTlGcuUIE
 ### testing the not found error 
 GET {{baseURL}}/bad_endpoints
 
@@ -43,9 +43,9 @@ POST {{baseURL}}/auth/sign_in
 Content-Type: application/json
 
 {
-    "username":"awbxking",
-    "password":"awbxKING30@",
-    "rememberMe":false
+    "username":"testing",
+    "password":"kingKing!@1",
+    "rememberMe":true
 }
 
 
@@ -61,8 +61,8 @@ POST {{baseURL}}/auth/sign_up
 Content-Type: application/json
 
 {
-    "username":"awbxking",
-    "email":"abdo.sabani30@gmail.com",
+    "username":"testing",
+    "email":"abdo@gmail.com",
     "password":"awbxKING30@"
 }
 
@@ -72,7 +72,7 @@ Content-Type: application/json
 # content-type : application/json
 # params :
     # token     -> required | string
-@confirm_account_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFiZG8uc2FiYW5pMzBAZ21haWwuY29tIiwiaWF0IjoxNjA4NzczMTc1LCJleHAiOjE2MDg4NTk1NzV9.o0cknJT3YPPjd2TrGMurrh3SXWX_EjuxKewcOnTupcY"
+@confirm_account_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFiZG9AZ21haWwuY29tIiwiaWF0IjoxNjA4OTMwNzIyLCJleHAiOjE2MDkwMTcxMjJ9.nhtLTZbGv9J8pnLCCwbj27F-530QVoil7_JMgU4-Hyk"
 POST {{baseURL}}/auth/confirm_account
 Content-Type: application/json
 
@@ -180,6 +180,7 @@ x-auth-token: {{access_token}}
 ### add comment to post 
 # endpoint : baseURL/feed/posts/<postId>/comments
 # method : POST
+# content-type: application/json
 # params :
     # commentBody   -> required | string
 POST {{baseURL}}/feed/posts/5fe39e46de76724afb6f152e/comments
@@ -208,8 +209,9 @@ x-auth-token:{{access_token}}
 ### update comment
 # endpoint : baseURL/feed/posts/<postId>/comments/<commentId>
 # method : PUT
+# content-type: application/json
 # params :
-    # commentBody
+    # commentBody -> required | string
 PUT {{baseURL}}/feed/posts/5fe3abafc6b08962acb47e8e/comments/5fe3aeff14e0cc699101d936
 x-auth-token:{{access_token}}
 Content-Type: application/json
@@ -229,3 +231,35 @@ x-auth-token:{{access_token}}
 # method : POST
 POST  {{baseURL}}/feed/posts/5fe3abafc6b08962acb47e8e/like
 x-auth-token:{{access_token}}
+
+### get profile
+# endpoint : baseURL/user/profiles/<userId>
+# method : GET
+GET  {{baseURL}}/user/profiles/5fbd12eb72d5341db492dd78
+x-auth-token:{{access_token}}
+
+### get my  profile
+# endpoint : baseURL/user/profiles
+# method : GET
+GET  {{baseURL}}/user/profiles
+x-auth-token:{{access_token}}
+
+### update profile
+# endpoint : baseURL/user/profiles/<userId>
+# method : PUT
+# content-type :application/json
+# params :
+    # userPass          -> optional | string
+    # isPrivate         -> optional | boolean
+    # profile.picture   -> optional | string
+    # profile.firstName -> optional | string
+    # profile.lastName  -> optional | string
+    # profile.bio       -> optional | string
+PUT  {{baseURL}}/user/profiles
+x-auth-token:{{access_token}}
+Content-Type: application/json
+
+{
+    "isPrivate":false,
+    "userPass":"kingKing!@1"
+}

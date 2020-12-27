@@ -9,6 +9,7 @@ const commonConfig = {
     bio: /^[^\n]{2,100}$/,
     jwtToken: /^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$/,
     objectId: /^[a-fA-F0-9]{24}$/,
+    url: /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#()?&//=]*)/,
   },
   jwtSecrets: {
     accessTokenSecretKey: process.env.JWT_ACCESS_TOKEN_SECRET_KEY,

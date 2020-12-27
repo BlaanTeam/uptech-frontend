@@ -16,7 +16,7 @@ const {
 // Include API's routes
 const authRouter = require("./routes/authRouter");
 const postRouter = require("./routes/postRouter");
-
+const profileRouter = require("./routes/profileRouter");
 // Iniatialize server & app
 const app = express();
 app.set("port", port);
@@ -46,6 +46,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/feed", postRouter);
+app.use("/api/v1/user", profileRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
