@@ -1,56 +1,67 @@
 <template>
-  <div>
+  <div class="posts">
     <v-card
-      v-for="i in [1, 2, 3, 4]"
-      :key="i"
-      width="700"
-      class="mx-auto secondarybg mb-2"
+      v-for="(post, index) in posts"
+      :key="index"
+      class="mb-2 secondarybg"
     >
       <v-card-title class="ma-0">
-        <router-link to="profile/5543541">
-          <v-avatar width="40" color="red">
-            <span class="white--text headline">av</span>
-          </v-avatar>
-        </router-link>
-
+        <PopoverProfile>
+          <router-link to="profile/5543541">
+            <v-avatar width="40" color="red">
+              <span class="white--text headline">av</span>
+            </v-avatar>
+          </router-link>
+        </PopoverProfile>
         <div class="ms-4 post__info">
           <router-link to="profile/5543541">
-            <h3 class="pa-0 ma-0">Dave doe</h3>
+            <PopoverProfile>
+              <h3 class="pa-0 ma-0">John doe</h3>
+            </PopoverProfile>
           </router-link>
-          <h4 class="caption pa-0 ma-0"><timeago :datetime="1608866829878" :auto-update="60" /></h4>
+          <h4 class="caption pa-0 ma-0">
+            <timeago :datetime="post.createdAt" :auto-update="60" />
+          </h4>
         </div>
         <v-spacer></v-spacer>
-        <v-menu offset-y left transition="slide-y-transition">
+        <v-menu nudge-right="25" offset-y left transition="slide-y-transition">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
               v-bind="attrs"
               v-on="on"
-              icon
-              class="options secondarybg"
+              class="secondarybg"
               elevation="0"
+              icon
             >
               <v-icon size="40">mdi-dots-horizontal</v-icon>
             </v-btn>
           </template>
           <v-list class="text-center">
-            <v-list-item v-for="(item, index) in items" :key="index">
-              <v-list-item-title>{{ item.title }}</v-list-item-title>
+            <v-list-item>
+              <v-list-item-title>Copy link</v-list-item-title>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-title>Save</v-list-item-title>
+            </v-list-item>
+
+            <PostEdit :post="post" :index="index" />
+            <v-list-item>
+              <v-list-item-title
+                @click="deletePost(post._id, index)"
+                class="red--text"
+              >
+                Delete
+              </v-list-item-title>
             </v-list-item>
           </v-list>
         </v-menu>
       </v-card-title>
 
-      <router-link to="/post/36545471">
-        <v-card-text class="px-6 mt-0 pt-0">
-          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Molestiae
-          explicabo provident magnam consequuntur in quidem ducimus aut fuga
-          saepe tempora dolor aspernatur, vel veniam, tenetur porro facere
-          maiores quisquam repudiandae? Lorem, ipsum dolor sit amet consectetur
-          adipisicing elit. Minus eaque nam cupiditate aliquam accusamus
-          pariatur voluptates corrupti culpa sunt, tempora a laudantium non
-          praesentium porro quisquam maxime earum autem ratione.
-        </v-card-text>
-      </router-link>
+      <v-card-text
+        v-html="postText(post.postBody, post._id)"
+        class="body-2 px-6 mt-0 pt-0"
+      >
+      </v-card-text>
 
       <v-divider></v-divider>
       <v-card-actions class="px-4">
@@ -61,8 +72,8 @@
           </v-btn>
         </div>
         <div class="ml-10">
-          10
-          <v-btn icon>
+          {{ post.totalComments }}
+          <v-btn @click="commentExpand(post)" icon>
             <v-icon>mdi-comment</v-icon>
           </v-btn>
         </div>
@@ -71,26 +82,100 @@
           <v-icon>mdi-share-variant</v-icon>
         </v-btn>
       </v-card-actions>
+      <v-expand-transition>
+        <div v-show="post.commentExpand" class="my-1">
+          <div class="d-inline-block float-left ms-2">
+            <v-avatar width="20" height="20" color="green" class="mt-3">
+              <span class="white--text headline">me</span>
+            </v-avatar>
+          </div>
+          <div class="d-block mx-4 ms-14 px-4 py-1">
+            <v-textarea
+              autofocus
+              placeholder="What you do think"
+              label=""
+              auto-grow
+              rows="1"
+              row-height="10"
+              v-model="comment"
+              @keypress.enter="addComment(post._id, index)"
+            ></v-textarea>
+          </div>
+        </div>
+      </v-expand-transition>
     </v-card>
   </div>
 </template>
 
 <script>
+import PostEdit from "./PostEdit";
+import PopoverProfile from "./PopoverProfile";
+
 export default {
+  components: {
+    PostEdit,
+    PopoverProfile
+  },
+  props: {
+    posts: {
+      type: Array,
+      required: true
+    }
+  },
   data: () => ({
-    items: [
-      { title: "Edit" },
-      { title: "Copy link" },
-      { title: "Save" },
-      { title: "Delete" }
-    ]
-  })
+    comment: ""
+  }),
+  methods: {
+    postText(text, id) {
+      if (text.length > 600)
+        return (
+          text.slice(0, 600) +
+          `...&nbsp<a id="read-more" href="#/post/${id}">read&nbspmore</a>`
+        );
+      return text;
+    },
+    commentExpand(post) {
+      if (post.commentExpand === undefined)
+        this.$set(post, "commentExpand", true);
+      else post.commentExpand = !post.commentExpand;
+    },
+    async addComment(id, index) {
+      try {
+        const res = await this.$store.dispatch("addComment", {
+          comment: this.comment,
+          index: index,
+          id: id
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    async deletePost(id, index) {
+      try {
+        const res = await this.$store.dispatch("deletePost", {
+          id: id,
+          index: index
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  }
 };
 </script>
 
-<style>
-.feeds {
-  width: 720px;
-  margin: 20px 10px 60px 30px;
+<style lang="scss">
+.posts {
+  position: relative;
+  .theme--light {
+    #read-more {
+      color: #240497 !important;
+    }
+  }
+  .theme--dark {
+    #read-more {
+      color: #f5b01b !important;
+    }
+  }
 }
 </style>
