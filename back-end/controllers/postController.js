@@ -111,6 +111,9 @@ addPost = async (req, res, next) => {
     res.status(201);
     res.json(newPost);
   } catch (err) {
+    if (err.isJoi === true) {
+      err.status = 400;
+    }
     next(err);
   }
 };
