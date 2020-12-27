@@ -13,7 +13,9 @@
 
     <AuthLayout v-else :style="background">
       <v-main>
-        <router-view :key="$route.fullPath"></router-view>
+        <keep-alive>
+          <router-view :key="$route.fullPath"></router-view>
+        </keep-alive>
       </v-main>
     </AuthLayout>
   </div>
