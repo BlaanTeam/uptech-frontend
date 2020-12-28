@@ -116,13 +116,13 @@ export default {
           .catch(err => reject(err));
       });
     },
-    addLike(context, payload) {
+    toggleLike(context, payload) {
       return new Promise((resolve, reject) => {
         Vue.prototype.$http
           .post(`/feed/posts/${payload.id}/like`)
           .then(res => {
             if (res.status === 200) {
-              if (payload.like)
+              if (payload.liked)
                 context.commit("INCREASE_LIKE_SIZE", {
                   index: payload.index
                 });
