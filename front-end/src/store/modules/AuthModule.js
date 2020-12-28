@@ -4,18 +4,19 @@ import router from "../../router/index";
 export default {
   state: {
     accessToken: localStorage.getItem("access_token") || "",
-    user: localStorage.getItem("user") || {}
+    user: JSON.parse(localStorage.getItem("user")) || {}
   },
   getters: {
     isLoggedIn: state =>
       !!state.accessToken &&
       !!state.accessToken.match(Vue.prototype.$pattern.jwtToken),
-    getToken: state => state.accessToken
+    getToken: state => state.accessToken,
+    getUserId: state => state.user._id
   },
   mutations: {
     AUTH_SUCCESS: (state, payload) => {
       localStorage.setItem("access_token", payload.accessToken);
-      localStorage.setItem("user", payload.user);
+      localStorage.setItem("user", JSON.stringify(payload.user));
       state.accessToken = payload.accessToken;
       state.user = payload.user;
     },
@@ -38,7 +39,7 @@ export default {
             if (res.status === 200 && res.data.code === 2032) {
               context.commit("AUTH_SUCCESS", {
                 accessToken: res.data.accessToken,
-                user: {}
+                user: res.data.user
               });
               resolve(res);
             }
