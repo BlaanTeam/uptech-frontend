@@ -48,7 +48,11 @@ const signUp = async (req, res, next) => {
 const signIn = async (req, res, next) => {
   try {
     let result = await signInSchema.validateAsync(req.body);
-    let user = await User.findOne({ userName: result.username });
+    let user = await User.findOne({ userName: result.username },{
+      reSendConfirmationTooManyRequest:0,
+      forgotPasswordTooManyRequest:0,
+      __v:0
+    });
     if (!user)
       throw new createError("This account not registered yet !", 1030, 404);
     let isMatched = await user.isValidPassword(result.password);
@@ -59,7 +63,9 @@ const signIn = async (req, res, next) => {
       throw new createError("This account not confirmed yet !", 1063, 401);
 
     let accessToken = await signAccessToken(user.userName, result.rememberMe);
-    res.json({ accessToken, code: 2032 });
+    resp = {user:{...user._doc},accessToken:accessToken,code:2032}
+    delete resp.user.userPass;
+    res.json(resp);
   } catch (err) {
     if (err.isJoi === true) err = new createError(err.message, 1049, 422);
     next(err);
