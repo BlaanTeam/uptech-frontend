@@ -54,13 +54,50 @@ const feedPosts = async (req, res, next) => {
       },
       { $unwind: "$postUser" },
       {
+        $lookup: {
+          from: "likes",
+          // localField: "_id",
+          // foreignField: "postId",
+          let: { postId: "$_id", userId: req.currentUser._id },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    {
+                      $eq: ["$postId", "$$postId"],
+                    },
+                    {
+                      $eq: ["$user", "$$userId"],
+                    },
+                  ],
+                },
+              },
+            },
+            { $project: { userName: 1, profile: 1 } },
+          ],
+          as: "liked",
+        },
+      },
+
+      {
         $addFields: {
           totalComments: { $size: "$commentCount" },
           totalLikes: { $size: "$likesCount" },
+          isLiked: {
+            $cond: {
+              if: {
+                $eq: [{ $size: "$liked" }, 1],
+              },
+              then: true,
+              else: false,
+            },
+          },
         },
       },
       {
         $project: {
+          liked: 0,
           comments: 0,
           likes: 0,
           tags: 0,
