@@ -78,16 +78,20 @@
       <v-row class="text-center py-0">
         <v-col class="pa-2">
           <div>
-            12
+            {{ post.totalLikes }}
             <v-btn
               class="ml-2 px-4 py-0 caption"
               elevation="0"
               color="secondarybg"
+              @click="toggleLike"
             >
-              <v-icon left size="20" class="mb-1">
+              <v-icon left size="20" class="mb-1" color="primary" v-if="liked">
                 mdi-arrow-up-thick
               </v-icon>
-              Up
+              <v-icon left size="20" class="mb-1" v-else>
+                mdi-arrow-up-thick
+              </v-icon>
+              {{ !liked ? "Like" : "Unlike" }}
             </v-btn>
           </div>
         </v-col>
@@ -163,11 +167,13 @@ export default {
     post: Object,
     index: Number
   },
-  data: () => ({
+  data: props => ({
     comment: "",
     commentExpanded: false,
-    readActivated: false
+    readActivated: false,
+    liked: props.post.isLiked
   }),
+
   computed: {
     postBody() {
       if (this.post.postBody.length > 400 && !this.readActivated) {
@@ -189,6 +195,18 @@ export default {
           id: post._id
         });
         this.comment = "";
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    async toggleLike() {
+      try {
+        this.liked = !this.liked;
+        const res = await this.$store.dispatch("toggleLike", {
+          liked: this.liked,
+          index: this.index,
+          id: this.post._id
+        });
       } catch (err) {
         console.log(err);
       }
