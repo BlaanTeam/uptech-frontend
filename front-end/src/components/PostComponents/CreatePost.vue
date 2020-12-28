@@ -18,22 +18,25 @@
     </v-card-subtitle>
     <v-divider></v-divider>
     <v-card-actions class="px-4">
-      <v-menu class="mr-auto bg" offset-y left transition="slide-y-transition">
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn icon v-bind="attrs" v-on="on" elevation="0" class="ms-4 me-2">
-            <v-icon size="20" left>mdi-earth</v-icon>
-          </v-btn>
-        </template>
-        <v-list class="text-center" width="40px">
-          <v-list-item v-for="(item, index) in items" :key="index">
-            <v-list-item-title>mdi-{{ item.title }}</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
-      <v-btn icon elevation="0" class="mx-1">
-        <v-icon size="20" left>mdi-emoji</v-icon>
+      <v-btn
+        icon
+        elevation="0"
+        class="ms-4 me-2 options"
+        @click="isPrivate = !isPrivate"
+      >
+        <v-icon v-if="!isPrivate" size="20" color="#04c0b0">mdi-earth</v-icon>
+        <v-icon v-else size="20" color="#05bd58">mdi-lock</v-icon>
       </v-btn>
-      <v-btn @click="createPost" class="ms-auto primary" elevation="0">
+
+      <v-btn icon elevation="0" class="mx-1">
+        <v-icon size="20" color="primary">mdi-emoticon-outline</v-icon>
+      </v-btn>
+      <v-btn
+        :disabled="postBody.length < 2"
+        @click="createPost"
+        class="ms-auto primary"
+        elevation="0"
+      >
         Post
         <v-icon right>mdi-send</v-icon>
       </v-btn>
@@ -44,7 +47,6 @@
 <script>
 export default {
   data: () => ({
-    items: [{ title: "lock" }],
     postBody: "",
     isPrivate: false
   }),
@@ -56,7 +58,7 @@ export default {
           isPrivate: this.isPrivate
         });
         if (res.status === 201) {
-          //TODO notify user
+          console.log("Post Created");
           this.postBody = "";
         }
       } catch (err) {
@@ -74,6 +76,12 @@ export default {
   }
   // .v-input__slot::after {
   //   content: unset !important;
-  // }
+  //
+  .options {
+    position: relative !important;
+  }
+  .menu-list {
+    position: absolute !important;
+  }
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar width="700px" app class="secondarybg" height="52px" flat>
+  <v-app-bar app class="secondarybg" height="52px" flat>
     <!-- <v-app-bar-nav-icon></v-app-bar-nav-icon> -->
     <v-toolbar-title>UpTech</v-toolbar-title>
     <v-spacer></v-spacer>
