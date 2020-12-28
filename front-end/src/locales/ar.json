@@ -33,7 +33,9 @@
     "resetPassword": "إعادة تعيين كلمة المرور",
     "forgotPassword": "هل نسيت كلمة المرور؟",
     "resendConfirmation": "أعد إرسال التأكيد",
-    "feeds": "المشاركات"
+    "feeds": "المشاركات",
+    "myProfile": "ملفي الشخصي",
+    "viewProfile": "ملف {userName}"
   },
 
   "home": {

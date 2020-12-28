@@ -32,7 +32,9 @@
     "resetPassword": "Reset Passord",
     "forgotPassword": "Forgot Password",
     "resendConfirmation": "Resend Confirmation",
-    "feeds": "Feeds"
+    "feeds": "Feeds",
+    "myProfile": "My Profile",
+    "viewProfile": " Profile of {userName}"
   },
 
   "home": {

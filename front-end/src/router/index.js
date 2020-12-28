@@ -5,7 +5,7 @@ import VueRouter from "vue-router";
 import Home from "../views/Home/Home.vue";
 Vue.use(VueRouter);
 
-const t = (key, ...params) => i18n.t(key, params);
+const t = (key, params) => i18n.t(key, { ...params });
 
 const routes = [
   {
@@ -16,15 +16,6 @@ const routes = [
     meta: {
       authRequired: false,
       title: "titles.home"
-    }
-  },
-  {
-    path: "/feeds",
-    name: "Feeds",
-    component: () => import("@/views/Feeds/Posts"),
-    meta: {
-      authRequired: true,
-      title: "titles.feeds"
     }
   },
   {
@@ -91,6 +82,44 @@ const routes = [
     }
   },
   {
+    path: "/feeds",
+    name: "Feeds",
+    component: () => import("@/views/Feeds/Posts"),
+    meta: {
+      authRequired: true,
+      title: "titles.feeds"
+    }
+  },
+  {
+    path: "/profile/",
+    component: () => import("@/views/Profile/Main"),
+    meta: {
+      authRequired: true
+    },
+    children: [
+      {
+        path: "",
+        name: "MyProfile",
+        component: () => import("@/views/Profile/MyProfile"),
+        meta: {
+          authRequired: true,
+          title: "titles.myProfile"
+        }
+      },
+      {
+        path: ":userId",
+        name: "ViewProfile",
+        component: () => import("@/views/Profile/ViewProfile"),
+        meta: {
+          authRequired: true,
+          title: "titles.viewProfile",
+          userName: "Unknown"
+        },
+        props: true
+      }
+    ]
+  },
+  {
     path: "/not_found",
     alias: "*",
     name: "NotFound",
@@ -110,7 +139,7 @@ const router = new VueRouter({
 
 router.afterEach((to, from) => {
   Vue.nextTick(() => {
-    document.title = `${t("appName")} | ${t(to.meta.title)}`;
+    document.title = `${t("appName")} | ${t(to.meta.title, { ...to.meta })}`;
   });
 });
 router.beforeEach((to, from, next) => {

@@ -2,16 +2,26 @@
   <v-card class="mb-2 secondarybg" :id="'card' + index">
     <v-card-title :class="'ma-0 card-title' + index">
       <PopoverProfile>
-        <router-link to="profile/5543541">
+        <router-link
+          :to="{
+            name: 'ViewProfile',
+            params: { userId: post.postUser._id }
+          }"
+        >
           <v-avatar width="40" color="red">
             <span class="white--text headline">av</span>
           </v-avatar>
         </router-link>
       </PopoverProfile>
       <div class="ms-4 post__info">
-        <router-link to="profile/5543541">
+        <router-link
+          :to="{
+            name: 'ViewProfile',
+            params: { userId: post.postUser._id }
+          }"
+        >
           <PopoverProfile>
-            <h3 dense class="pa-0 ma-0">John doe</h3>
+            <h3 dense class="pa-0 ma-0">{{ post.postUser.userName }}</h3>
           </PopoverProfile>
         </router-link>
         <h4 dense class="caption pa-0 ma-0">
