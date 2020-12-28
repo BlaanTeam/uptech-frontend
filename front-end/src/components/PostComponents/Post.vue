@@ -44,12 +44,20 @@
           <v-list-item dense>
             <v-list-item-title>Save</v-list-item-title>
           </v-list-item>
-          <EditPost :post="post" :index="index">
+          <EditPost
+            :post="post"
+            :index="index"
+            v-if="post.postUser._id === userId"
+          >
             <v-list-item dense>
               <v-list-item-title>Edit</v-list-item-title>
             </v-list-item>
           </EditPost>
-          <DeletePost :post="post" :index="index">
+          <DeletePost
+            :post="post"
+            :index="index"
+            v-if="post.postUser._id === userId"
+          >
             <v-list-item dense>
               <v-list-item-title class="red--text">
                 Delete
@@ -175,6 +183,9 @@ export default {
   }),
 
   computed: {
+    userId() {
+      return this.$store.getters.getUserId;
+    },
     postBody() {
       if (this.post.postBody.length > 400 && !this.readActivated) {
         return this.post.postBody.slice(0, 400) + "...";
