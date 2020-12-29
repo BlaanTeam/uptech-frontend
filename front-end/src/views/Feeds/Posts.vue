@@ -4,7 +4,7 @@
     <div class="posts">
       <Post
         v-for="(post, index) in posts"
-        :key="index"
+        :key="post._id"
         :post="post"
         :index="index"
       />
@@ -41,7 +41,6 @@ export default {
   overflow-y: auto;
 }
 .posts {
-  transition: all 0.4s;
   .theme--light {
     #read-more {
       color: #240497 !important;
