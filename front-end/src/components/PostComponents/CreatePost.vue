@@ -78,8 +78,7 @@ export default {
   data: () => ({
     postBody: "",
     isPrivate: false,
-    displayEmojis: false,
-    select: false,
+    selected: false,
     selectionStart: null
   }),
   computed: {
@@ -90,27 +89,25 @@ export default {
   methods: {
     clearTextArea() {
       this.postBody = "";
-      return;
     },
     selectEmoji(emoji) {
       let el = this.$refs.CreateTextArea.$refs.input;
 
-      if (this.select) this.selectionStart = el.selectionStart;
-      else if (!this.select && !this.selectionStart)
+      if (this.selected) this.selectionStart = el.selectionStart;
+      else if (!this.selected && this.selectionStart === null)
         this.selectionStart = el.selectionStart;
 
       this.postBody =
         this.postBody.substring(0, el.selectionStart) +
-        this.postBody.substring(el.selectionEnd, this.postBody.length);
+        this.postBody.substring(el.selectionEnd);
 
       let before = this.postBody.substring(0, this.selectionStart);
-      let after = this.postBody.substring(
-        this.selectionStart,
-        this.postBody.length
-      );
+      let after = this.postBody.substring(this.selectionStart);
 
       this.postBody = before + emoji.data + after;
-      this.select = false;
+      this.selectionStart += 2;
+
+      this.selected = false;
     },
     async createPost() {
       if (this.postBody.trim().length < 2) return;
@@ -131,7 +128,7 @@ export default {
   mounted() {
     let el = this.$refs.CreateTextArea.$refs.input;
     el.onclick = () => {
-      this.select = true;
+      this.selected = true;
     };
   }
 };
