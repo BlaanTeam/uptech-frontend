@@ -1,5 +1,5 @@
 <template>
-  <v-card class="mb-2 secondarybg" :id="'card' + index">
+  <v-card class="mb-2 secondarybg" :id="'card' + post._id">
     <v-card-title :class="'ma-0 card-title' + index">
       <v-row no-gutters>
         <v-col lg="1" md="1" sm="2" class="pa-0 ma-0 ms-2">
@@ -54,11 +54,19 @@
                 <v-icon size="40">mdi-dots-horizontal</v-icon>
               </v-btn>
             </template>
-            <v-list-item-group class="text-center secondarybg">
-              <v-list-item dense>
-                <v-list-item-title>Copy link</v-list-item-title>
+            <v-list-item-group class="secondarybg">
+              <router-link to="/post">
+                <v-list-item dense>
+                  <v-icon left small>mdi-eye</v-icon>
+                  <v-list-item-title>view</v-list-item-title>
+                </v-list-item>
+              </router-link>
+              <v-list-item dense @click="copyPostLink">
+                <v-icon left small>mdi-content-copy</v-icon>
+                <v-list-item-title>Copy</v-list-item-title>
               </v-list-item>
               <v-list-item dense>
+                <v-icon left small>mdi-content-save</v-icon>
                 <v-list-item-title>Save</v-list-item-title>
               </v-list-item>
               <EditPost
@@ -67,6 +75,7 @@
                 v-if="post.postUser._id === userId"
               >
                 <v-list-item dense>
+                  <v-icon left small>mdi-square-edit-outline</v-icon>
                   <v-list-item-title>Edit</v-list-item-title>
                 </v-list-item>
               </EditPost>
@@ -75,7 +84,8 @@
                 :index="index"
                 v-if="post.postUser._id === userId"
               >
-                <v-list-item dense>
+                <v-list-item dense class="text-start">
+                  <v-icon left color="red" small>mdi-delete</v-icon>
                   <v-list-item-title class="red--text">
                     Delete
                   </v-list-item-title>
@@ -87,7 +97,7 @@
       </v-row>
     </v-card-title>
 
-    <div class="headline ps-6 py-2">
+    <div class="headline ps-6 pe-1 py-2">
       {{ postBody }}
       <a
         id="read-more"
@@ -144,43 +154,14 @@
         </v-col>
       </v-row>
     </v-card-actions>
-    <v-expand-transition>
-      <v-row v-show="commentExpanded" class="my-1 ms-10">
-        <v-col cols="1" class=" pa-0 ma-0">
-          <v-avatar width="20" color="green" class="mt-3">
-            <span class="white--text headline">me</span>
-          </v-avatar>
-        </v-col>
-        <v-col cols="8" class="pa-0 ma-0 ms-2">
-          <div>
-            <v-textarea
-              autofocus
-              placeholder="What you do think"
-              label=""
-              rows="1"
-              row-height="10"
-              v-model="comment"
-              auto-grow
-            ></v-textarea>
-          </div>
-        </v-col>
-        <v-col cols="2" class="ma-0 pa-0 align-self-center ms-4">
-          <v-btn
-            @click="addComment(post, index)"
-            class="pa-0 px-2"
-            elevation="0"
-            color="primary"
-          >
-            <v-icon>mdi-send</v-icon>
-          </v-btn>
-        </v-col>
-      </v-row>
-    </v-expand-transition>
+    <AddComment :display="commentExpanded" :post="post" :index="index" />
   </v-card>
 </template>
 
 <script>
 import EditPost from "./EditPost";
+import AddComment from "./AddComment";
+
 import PopoverProfile from "./PopoverProfile";
 import DeletePost from "./DeletePost";
 
@@ -188,7 +169,8 @@ export default {
   components: {
     EditPost,
     PopoverProfile,
-    DeletePost
+    DeletePost,
+    AddComment
   },
   props: {
     post: Object,
@@ -219,19 +201,6 @@ export default {
     }
   },
   methods: {
-    async addComment(post, index) {
-      if (!this.comment.trim()) return (this.comment = "");
-      try {
-        const res = await this.$store.dispatch("addComment", {
-          comment: this.comment,
-          index: index,
-          id: post._id
-        });
-        this.comment = "";
-      } catch (err) {
-        console.log(err);
-      }
-    },
     async toggleLike() {
       try {
         const res = await this.$store.dispatch("toggleLike", {
@@ -245,6 +214,15 @@ export default {
       } catch (err) {
         console.log(err);
       }
+    },
+    copyPostLink() {
+      let link = `${location.origin}/#/posts/${this.post._id}`;
+      navigator.clipboard
+        .writeText(link)
+        .then(() => {
+          this.snackbar = true;
+        })
+        .catch(console.log);
     }
   }
 };
