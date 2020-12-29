@@ -1,6 +1,6 @@
 <template>
   <div class="edit-post">
-    <v-dialog v-model="dialog" width="600" persistent>
+    <v-dialog v-model="dialog" width="600" persistent eager>
       <template v-slot:activator="{ on, attrs }">
         <span v-bind="attrs" v-on="on">
           <slot></slot>
@@ -16,16 +16,17 @@
                 </span>
               </v-avatar>
             </v-col>
-            <v-col class="pa-0 ma-0" height="100px">
+            <v-col class="pa-0 ma-0 pe-4" height="100px">
               <v-textarea
                 ref="EditTextArea"
                 autofocus
+                append-outer-icon="mdi-close"
+                @click:append-outer="clearTextArea"
                 placeholder="What's on your mind"
                 label=""
                 auto-grow
-                rows="1"
-                max-rows="10"
-                row-height="10"
+                :rows="parseInt(postBody.length / 30)"
+                height="auto"
                 counter="5000"
                 v-model="postBody"
               ></v-textarea>
@@ -129,7 +130,9 @@ export default {
   data: props => ({
     dialog: false,
     postBody: props.post.postBody,
-    isPrivate: false
+    isPrivate: false,
+    selected: false,
+    selectionStart: null
   }),
   computed: {
     togglePrivatePublic() {
@@ -137,13 +140,27 @@ export default {
     }
   },
   methods: {
+    clearTextArea() {
+      this.postBody = "";
+    },
     selectEmoji(emoji) {
-      let cursorPosition = this.$refs.EditTextArea.$refs.input.selectionStart;
-      this.$refs.EditTextArea.$refs.input.focus();
-      console.log(cursorPosition);
-      let before = this.postBody.substring(0, cursorPosition);
-      let after = this.postBody.substring(cursorPosition, this.postBody.length);
+      let el = this.$refs.EditTextArea.$refs.input;
+
+      if (this.selected) this.selectionStart = el.selectionStart;
+      else if (!this.selected && this.selectionStart === null)
+        this.selectionStart = el.selectionStart;
+
+      this.postBody =
+        this.postBody.substring(0, el.selectionStart) +
+        this.postBody.substring(el.selectionEnd);
+
+      let before = this.postBody.substring(0, this.selectionStart);
+      let after = this.postBody.substring(this.selectionStart);
+
       this.postBody = before + emoji.data + after;
+      this.selectionStart += 2;
+
+      this.selected = false;
     },
     async editPost() {
       if (this.postBody.trim() === "" || this.postBody.length < 2) return;
@@ -153,7 +170,9 @@ export default {
           postBody: this.postBody,
           isPrivate: this.isPrivate,
           id: this.post._id,
-          index: this.index
+          index: this.index,
+          totalLikes: this.post.totalLikes,
+          totalComments: this.post.totalComments
         });
         this.post.postBody = this.postBody;
         console.log("Post Edited successfully");
@@ -161,6 +180,12 @@ export default {
         console.log(err);
       }
     }
+  },
+  mounted() {
+    let el = this.$refs.EditTextArea.$refs.input;
+    el.onclick = () => {
+      this.selected = true;
+    };
   }
 };
 </script>
@@ -174,11 +199,11 @@ export default {
     max-height: 400px;
     overflow-y: auto;
   }
-  .v-text-field__slot {
-    padding: 0 20px 0 0;
-    textarea {
-      word-break: keep-all !important;
-    }
-  }
+  // .v-text-field__slot {
+  //   // padding: 0 20px 0 0;
+  //   textarea {
+  //     word-break: keep-all !important;
+  //   }
+  // }
 }
 </style>
