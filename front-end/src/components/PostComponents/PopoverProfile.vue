@@ -1,19 +1,20 @@
 <template>
-  <div class="text-center">
+  <div>
     <v-menu
       v-model="menu"
       :close-on-content-click="false"
       :nudge-width="200"
       offset-x
       open-on-hover
+      :attach="'#profile__popover' + index"
     >
       <template v-slot:activator="{ on, attrs }">
-        <span v-bind="attrs" v-on="on">
+        <span :id="'profile__popover' + index" v-bind="attrs" v-on="on">
           <slot></slot>
         </span>
       </template>
 
-      <v-card>
+      <v-card class="text-center">
         <v-list class="secondarybg">
           <v-list-item>
             <v-list-item-avatar>
@@ -38,6 +39,7 @@
 
 <script>
 export default {
+  props: ["index"],
   data: () => ({
     fav: true,
     menu: false,
