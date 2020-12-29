@@ -18,17 +18,16 @@ export default {
       state.posts.unshift(payload);
     },
     EDIT_POST(state, payload) {
-      state.posts[payload.index] = payload.data;
+      state.posts[payload.index] = payload;
     },
     DELETE_POST(state, payload) {
-      let el = document.querySelector("#card" + payload.index);
+      let el = document.querySelector("#card" + payload.id);
       el.setAttribute("data-delete", "true");
-      el.style.transition = "all 0.4s ease-in-out";
+      el.style.transition = "all 0.5s ease-in-out";
       setTimeout(() => {
-        el.style.transition = null;
-        el.removeAttribute("data-delete");
+        el.remove();
         state.posts.splice(payload.index, 1);
-      }, 400);
+      }, 500);
     },
     INCREASE_COMMENT_SIZE(state, payload) {
       state.posts[payload.index].totalComments += 1;
@@ -80,8 +79,7 @@ export default {
           .then(res => {
             if (res.status === 200) {
               context.commit("EDIT_POST", {
-                index: payload.index,
-                data: res.data
+                data: { ...res.data, ...payload }
               });
               resolve(res);
             }
@@ -95,9 +93,7 @@ export default {
           .delete(`/feed/posts/${payload.id}`)
           .then(res => {
             if (res.status === 204) {
-              context.commit("DELETE_POST", {
-                index: payload.index
-              });
+              context.commit("DELETE_POST", payload);
 
               resolve(res);
             }
