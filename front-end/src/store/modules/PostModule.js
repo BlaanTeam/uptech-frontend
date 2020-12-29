@@ -21,7 +21,14 @@ export default {
       state.posts[payload.index] = payload.data;
     },
     DELETE_POST(state, payload) {
-      state.posts.splice(payload.index, 1);
+      let el = document.querySelector("#card" + payload.index);
+      el.setAttribute("data-delete", "true");
+      el.style.transition = "all 0.4s ease-in-out";
+      setTimeout(() => {
+        el.style.transition = null;
+        el.removeAttribute("data-delete");
+        state.posts.splice(payload.index, 1);
+      }, 400);
     },
     INCREASE_COMMENT_SIZE(state, payload) {
       state.posts[payload.index].totalComments += 1;
