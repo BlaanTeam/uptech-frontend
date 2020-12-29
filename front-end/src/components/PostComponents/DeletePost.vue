@@ -53,23 +53,12 @@ export default {
   methods: {
     deletePost(id, index) {
       this.dialog = false;
-
-      let el = document.querySelector("#card" + index);
-      el.setAttribute("data-delete", "true");
-      el.style.transition = "all 0.4s ease-in-out";
-
-      setTimeout(() => {
-        this.$store
-          .dispatch("deletePost", {
-            id: id,
-            index: index
-          })
-          .then(() => {
-            el.style.transition = null;
-            el.removeAttribute("data-delete");
-          })
-          .catch(err => console.log(err));
-      }, 400);
+      this.$store
+        .dispatch("deletePost", {
+          id: id,
+          index: index
+        })
+        .catch(err => console.log(err));
     }
   }
 };
