@@ -158,15 +158,112 @@ addPost = async (req, res, next) => {
 
 const getPost = async (req, res, next) => {
   try {
+    let commentsLimit = 10;
+    let likesLimit = 10;
     let result = await postIdSchema.validateAsync(req.params);
-    let post = await Post.findOne(
-      { _id: result.postId },
-      { __v: 0, comments: 0, likes: 0, tags: 0 }
-    ).populate({
-      path: "postUser",
-      select: "userName profile",
-    });
-
+    console.log(typeof result.postId);
+    let post = await Post.aggregate([
+      {
+        $match: {
+          _id: result.postId,
+        },
+      },
+      {
+        $addFields: {
+          totalComments: { $size: "$comments" },
+          totalLikes: { $size: "$likes" },
+        },
+      },
+      {
+        $project: {
+          comments: 0,
+          likes: 0,
+          tags: 0,
+          __v: 0,
+        },
+      },
+      {
+        $lookup: {
+          from: "comments",
+          let: { postId: "$_id" },
+          pipeline: [
+            { $match: { $expr: { $eq: ["$postId", "$$postId"] } } },
+            { $project: { __v: 0 } },
+            {
+              $lookup: {
+                from: "users",
+                let: { userId: "$commentUser" },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: { $eq: ["$_id", "$$userId"] },
+                    },
+                  },
+                  {
+                    $project: {
+                      userName: 1,
+                      profile: 1,
+                    },
+                  },
+                ],
+                as: "commentUser",
+              },
+            },
+            { $unwind: "$commentUser" },
+            { $sort: { createdAt: -1 } },
+            { $limit: commentsLimit },
+          ],
+          as: "comments",
+        },
+      },
+      {
+        $lookup: {
+          from: "likes",
+          let: { postId: "$_id" },
+          pipeline: [
+            { $match: { $expr: { $eq: ["$postId", "$$postId"] } } },
+            { $project: { __v: 0 } },
+            {
+              $lookup: {
+                from: "users",
+                let: { userId: "$user" },
+                pipeline: [
+                  { $match: { $expr: { $eq: ["$_id", "$$userId"] } } },
+                  {
+                    $project: {
+                      userName: 1,
+                      profile: 1,
+                    },
+                  },
+                ],
+                as: "user",
+              },
+            },
+            { $unwind: "$user" },
+            { $limit: likesLimit },
+          ],
+          as: "likes",
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          let: { userId: "$postUser" },
+          pipeline: [
+            { $match: { $expr: { $eq: ["$_id", "$$userId"] } } },
+            {
+              $project: {
+                userName: 1,
+                profile: 1,
+              },
+            },
+          ],
+          as: "postUser",
+        },
+      },
+      { $unwind: "$postUser" },
+    ]);
+    post = post[0];
     if (!post) throw new createError("Post Not Found", 1021, 404);
     else if (
       post.isPrivate === true &&
