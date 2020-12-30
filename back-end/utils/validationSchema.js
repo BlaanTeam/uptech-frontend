@@ -1,4 +1,5 @@
 const joi = require("joi");
+const mongoose = require("mongoose");
 const { pattern } = require("../config/config");
 
 // this function will check the req.body and if all params validate will return them else will throw an error with missing
@@ -89,9 +90,15 @@ const postSchema = joi.object({
 const postIdSchema = joi.object({
   postId: joi
     .string()
-    .required()
-    .pattern(pattern.objectId)
-    .message("Post Not Found!"),
+    .custom((value, helper) => {
+      try {
+        let result = mongoose.Types.ObjectId(value);
+        return result;
+      } catch (err) {
+        return helper.message("Post Not Found!");
+      }
+    })
+    .required(),
 });
 
 const feedPostsSchema = joi.object({
@@ -109,22 +116,40 @@ const getCommentsSchema = joi.object({
 const commentIdSchema = joi.object({
   postId: joi
     .string()
-    .required()
-    .pattern(pattern.objectId)
-    .message("Post Not Found!"),
+    .custom((value, helper) => {
+      try {
+        let result = mongoose.Types.ObjectId(value);
+        return result;
+      } catch (err) {
+        return helper.message("Post Not Found!");
+      }
+    })
+    .required(),
   commentId: joi
     .string()
-    .required()
-    .pattern(pattern.objectId)
-    .message("Comment Not Found !"),
+    .custom((value, helper) => {
+      try {
+        let result = mongoose.Types.ObjectId(value);
+        return result;
+      } catch (err) {
+        return helper.message("Comment Not Found!");
+      }
+    })
+    .required(),
 });
 
 const profileIdSchema = joi.object({
   userId: joi
     .string()
-    .required()
-    .pattern(pattern.objectId)
-    .message("Profile Not Found!"),
+    .custom((value, helper) => {
+      try {
+        let result = mongoose.Types.ObjectId(value);
+        return result;
+      } catch (err) {
+        return helper.message("Profile Not Found!");
+      }
+    })
+    .required(),
 });
 
 const profileSchema = joi.object({
