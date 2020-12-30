@@ -55,7 +55,9 @@
               </v-btn>
             </template>
             <v-list-item-group class="secondarybg">
-              <router-link to="/post">
+              <router-link
+                :to="{ name: 'ViewPost', params: { postId: post._id } }"
+              >
                 <v-list-item dense>
                   <v-icon left small>mdi-eye</v-icon>
                   <v-list-item-title>view</v-list-item-title>

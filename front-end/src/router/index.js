@@ -91,6 +91,15 @@ const routes = [
     }
   },
   {
+    path: "/post/:postId",
+    name: "ViewPost",
+    component: () => import("@/views/Posts/ViewPost"),
+    meta: {
+      authRequired: true,
+      title: "titles.viewPost"
+    }
+  },
+  {
     path: "/profile/",
     component: () => import("@/views/Profile/Main"),
     meta: {
