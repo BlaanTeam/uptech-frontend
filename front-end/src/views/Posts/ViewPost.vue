@@ -6,7 +6,13 @@
 
 <script>
 export default {
-  name: "ViewPost"
+  name: "ViewPost",
+  beforeCreate() {
+    this.$http
+      .get(`/feed/posts/${this.$route.params.postId}`)
+      .then(console.log)
+      .catch(console.log);
+  }
 };
 </script>
 
