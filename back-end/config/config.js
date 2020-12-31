@@ -33,6 +33,10 @@ const commonConfig = {
       pass: process.env.MAIL_SMTP_PASS,
     },
   },
+  redisConfig: {
+    host: process.env.REDIS_HOST,
+    port: parseInt(process.env.REDIS_PORT) | 6379,
+  },
 };
 
 const development = { ...commonConfig };

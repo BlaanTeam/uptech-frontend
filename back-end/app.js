@@ -6,6 +6,7 @@ const logger = require("morgan");
 const cors = require("cors");
 
 require("dotenv").config(); // Include .env variables
+require("./utils/redis");
 require("./config/db"); // Iniatialize db
 const {
   app: { port },

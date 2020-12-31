@@ -1,25 +1,19 @@
 const io = require("socket.io")();
+const { protectSocketIo } = require("../utils/middlewares");
 
-
-io.use((socket,next)=> {
-
-    console.log(socket.handshake);
-    next();
-})
+// check if the access token is passed in headers
+io.use(protectSocketIo);
 
 io.on("connection", (socket) => {
   console.log("SocketIO Client Connected !");
-  socket.on('user',(data)=>{
-     socket.emit('user',data)
-  })
-  socket.on('disconnect',() => {
-      console.log("SocketIO Client Disconnected !")
-  })
+  socket.on("disconnect", () => {
+    console.log("SocketIO Client Disconnected !");
+    console.log(socket.id);
+  });
 });
 
-
-io.on('error',(error) => {
-    console.error(error);
-})
+io.on("error", (error) => {
+  console.error(error);
+});
 
 module.exports = io;

@@ -169,9 +169,40 @@ const getPost = async (req, res, next) => {
         },
       },
       {
+        $lookup: {
+          from: "likes",
+          let: { userId: req.currentUser._id, postId: result.postId },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    {
+                      $eq: ["$postId", "$$postId"],
+                    },
+                    {
+                      $eq: ["$user", "$$userId"],
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+          as: "liked",
+        },
+      },
+      // { $unwind: "$liked" },
+      {
         $addFields: {
           totalComments: { $size: "$comments" },
           totalLikes: { $size: "$likes" },
+          liked: {
+            $cond: {
+              if: { $eq: [{ $size: "$liked" }, 1] },
+              then: true,
+              else: false,
+            },
+          },
         },
       },
       {
@@ -182,6 +213,7 @@ const getPost = async (req, res, next) => {
           __v: 0,
         },
       },
+
       {
         $lookup: {
           from: "comments",
