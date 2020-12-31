@@ -1,10 +1,11 @@
 <template>
   <v-navigation-drawer
+    :right="$vuetify.rtl === true"
     v-model="drawer"
     permanent
     app
     width="220px"
-    class="secondarybg"
+    class="auth-secondarybg"
   >
     <v-list-item class="px-2" :inactive="true">
       <!-- <v-app-bar-nav-icon @click="mini = !mini"></v-app-bar-nav-icon> -->
@@ -35,14 +36,20 @@
         </v-list-item>
       </v-list-item-group>
     </v-list>
+
     <template v-slot:append>
-      <v-btn to="/settings" class="ms-6 mb-6 px-8 secondarybg" elevation="0">
+      <v-btn
+        to="/settings"
+        class="ms-6 mb-6 px-8 auth-secondarybg"
+        elevation="0"
+      >
         <v-icon size="20" left>mdi-cog</v-icon>
         Settings
       </v-btn>
     </template>
   </v-navigation-drawer>
 </template>
+
 <script>
 export default {
   data() {
