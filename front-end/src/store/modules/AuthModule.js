@@ -109,9 +109,12 @@ export default {
           });
       });
     },
-    destroySession: context => {
-      context.commit("DESTROY_SESSION");
+    destroySession: async context => {
+      await context.commit("DESTROY_SESSION");
       router.push({ name: "SignIn" });
+    },
+    handleNotFound() {
+      router.push({ name: "NotFound" });
     },
     updateToken: (context, payload) => {
       context.commit("UPDATE_TOKEN", payload.accessToken);
