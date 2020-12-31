@@ -5,15 +5,15 @@
     <notifications :duration="10000" position="bottom left" group="success">
     </notifications>
 
-    <UnAuthLayout v-if="!$store.getters.isLoggedIn" :style="background">
+    <UnAuthLayout v-if="!$store.getters.isLoggedIn" :style="unAuthBackground">
       <v-main>
         <router-view></router-view>
       </v-main>
     </UnAuthLayout>
 
-    <AuthLayout v-else :style="background">
+    <AuthLayout v-else :style="authBackground">
       <v-main>
-        <keep-alive>
+        <keep-alive :max="5">
           <router-view :key="$route.fullPath"></router-view>
         </keep-alive>
       </v-main>
@@ -34,33 +34,19 @@ export default {
     UnAuthLayout,
     AuthLayout
   },
-  beforeCreate() {
-    this.locale = localStorage.getItem("locale");
-    if (this.locale === "ar") {
-      this.$vuetify.rtl = true;
-    } else {
-      this.$vuetify.rtl = false;
-    }
-    this.$i18n.locale = this.locale;
-    this.$timeago.locale = this.locale;
-  },
   computed: {
-    background() {
+    unAuthBackground() {
       return { background: this.$vuetify.theme.currentTheme.bg };
+    },
+    authBackground() {
+      return { background: this.$vuetify.theme.currentTheme["auth-bg"] };
     }
   },
   watch: {
-    "$i18n.locale"(newV, oldV) {
+    "$i18n.locale"() {
       document.title = `${this.$t("appName")} | ${this.$t(
         this.$route.meta.title
       )}`;
-    },
-    "$store.getters.isLoggedIn"(newV, oldV) {
-      if (this.$vuetify.theme.isDark === false) {
-        let bg = this.$vuetify.theme.currentTheme.bg;
-        this.$vuetify.theme.currentTheme.bg = this.$vuetify.theme.currentTheme.secondarybg;
-        this.$vuetify.theme.currentTheme.secondarybg = bg;
-      }
     }
   }
 };
