@@ -143,7 +143,7 @@ export default {
           totalLikes: this.post.totalLikes,
           totalComments: this.post.totalComments
         });
-        this.post.postBody.value = this.postBody.value;
+        this.post.postBody = this.postBody.value; // fix TypeError
         console.log("Post Edited successfully");
       } catch (err) {
         console.log(err);
