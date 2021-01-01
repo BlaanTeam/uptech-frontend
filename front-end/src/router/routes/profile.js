@@ -18,7 +18,7 @@ export default [
       {
         path: ":userId",
         name: "ViewProfile",
-        component: () => import("@/views/Templates/ProfileTemplate"),
+        component: () => import("@/views/Profile/ViewProfile"),
         meta: {
           authRequired: true,
           title: "titles.viewProfile",
