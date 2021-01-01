@@ -12,7 +12,7 @@ export default [
   {
     path: "/post/:postId",
     name: "ViewPost",
-    component: () => import("@/views/Templates/PostTemplate"),
+    component: () => import("@/views/Posts/ViewPost"),
     meta: {
       authRequired: true,
       title: "titles.viewPost"
