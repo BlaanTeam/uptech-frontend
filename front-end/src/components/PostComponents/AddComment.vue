@@ -13,42 +13,23 @@
         <v-row no-gutters>
           <v-col>
             <v-textarea
-              ref="addCommentTextArea"
+              id="addCommentTextArea"
               autofocus
               placeholder="What you do think"
               label=""
               rows="1"
               row-height="10"
-              v-model="comment"
+              v-model="comment.value"
               auto-grow
             ></v-textarea>
           </v-col>
           <v-col cols="1" class="align-self-center">
-            <v-menu
-              :close-on-content-click="false"
-              offset-y
+            <Emojis
               left
               :attach="'.add-comment' + post._id"
-              transition="slide-y-transition"
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  v-bind="attrs"
-                  v-on="on"
-                  icon
-                  class="mx-1 float-right"
-                  color="white"
-                >
-                  😀
-                </v-btn>
-              </template>
-
-              <VEmojiPicker
-                :dark="$vuetify.theme.isDark"
-                @select="selectEmoji"
-                width="400px"
-              />
-            </v-menu>
+              :inputModel="comment"
+              element="addCommentTextArea"
+            />
           </v-col>
         </v-row>
       </v-col>
@@ -66,43 +47,24 @@
   </v-expand-transition>
 </template>
 
+//
 <script>
+import Emojis from "@/components/Emojis";
 export default {
+  components: { Emojis },
   props: {
     post: Object,
     display: Boolean
   },
   data: () => ({
-    comment: "",
-    selectionStart: null,
-    selected: false
+    comment: { value: "" }
   }),
   methods: {
-    selectEmoji(emoji) {
-      let el = this.$refs.addCommentTextArea.$refs.input;
-
-      if (this.selected) this.selectionStart = el.selectionStart;
-      else if (!this.selected && this.selectionStart === null)
-        this.selectionStart = el.selectionStart;
-
-      this.comment =
-        this.comment.substring(0, el.selectionStart) +
-        this.comment.substring(el.selectionEnd);
-
-      let before = this.comment.substring(0, this.selectionStart);
-      let after = this.comment.substring(this.selectionStart);
-
-      this.comment = before + emoji.data + after;
-      this.selectionStart += 2;
-
-      this.selected = false;
-    },
-
     async addComment() {
-      if (!this.comment.trim()) return (this.comment = "");
+      if (!this.comment.value.trim()) return (this.comment.value = "");
 
       const api = `/feed/posts/${this.post._id}/comments`;
-      const data = { commentBody: this.comment };
+      const data = { commentBody: this.comment.value };
       try {
         const res = await this.$http.post(api, data);
 
@@ -111,19 +73,13 @@ export default {
           this.post.totalComments++;
           if (!this.post.comments) this.post.comments = [];
           this.post.comments.push(res.data.comment);
-          this.comment = "";
+          this.comment.value = "";
         }
       } catch (err) {
         console.log("Something went wrong from:AddComment");
         console.log(err);
       }
     }
-  },
-  mounted() {
-    let el = this.$refs.addCommentTextArea.$refs.input;
-    el.onclick = () => {
-      this.selected = true;
-    };
   }
 };
 </script>
