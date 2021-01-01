@@ -538,6 +538,11 @@ const updateComment = async (req, res, next) => {
     if (!comment) throw new createError("Comment Not Found !", 1022, 404);
     else if (comment.postId._id.toString() !== post._id.toString()) {
       throw new createError("You don't have permission !", 1003, 403);
+    } else if (
+      req.currentUser._id.toString() !== post.postUser._id.toString() &&
+      req.currentUser._id.toString() !== comment.commentUser._id.toString()
+    ) {
+      throw new createError("You don't have permission !", 1003, 403);
     }
     comment.commentBody = result_y.commentBody;
     comment.updatedAt = Date.now();
