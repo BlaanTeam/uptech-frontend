@@ -161,7 +161,6 @@ const getPost = async (req, res, next) => {
     let commentsLimit = 10;
     let likesLimit = 10;
     let result = await postIdSchema.validateAsync(req.params);
-    console.log(typeof result.postId);
     let post = await Post.aggregate([
       {
         $match: {
@@ -406,9 +405,6 @@ const getComments = async (req, res, next) => {
       post.isPrivate === true &&
       post.postUser.toString() !== req.currentUser._id.toString()
     ) {
-      console.log(post.isPrivate);
-      console.log(post.postUser);
-      console.log(req.currentUser._id);
       throw new createError("You don't have permission !", 1003, 403);
     }
     res.json(post);
@@ -478,10 +474,6 @@ const getComment = async (req, res, next) => {
       path: "postUser",
       select: "_id",
     });
-    console.log(
-      post.postUser._id.toString() !== req.currentUser._id.toString()
-    );
-    console.log(post.isPrivate === true);
     if (!post) throw new createError("Post Not Found !", 1021, 404);
     else if (
       post.isPrivate === true &&
@@ -527,10 +519,6 @@ const updateComment = async (req, res, next) => {
       path: "postUser",
       select: "_id",
     });
-    console.log(
-      post.postUser._id.toString() !== req.currentUser._id.toString()
-    );
-    console.log(post.isPrivate === true);
     if (!post) throw new createError("Post Not Found !", 1021, 404);
     else if (
       post.isPrivate === true &&
@@ -582,7 +570,7 @@ const deleteComment = async (req, res, next) => {
       })
       .populate({
         path: "postUser",
-        select: "_id",
+        select: "_id userName",
       });
     if (!post) throw new createError("Post Not Found !", 1021, 404);
     else if (
@@ -602,6 +590,11 @@ const deleteComment = async (req, res, next) => {
       });
     if (!comment) throw new createError("Comment Not Found !", 1022, 404);
     else if (comment.postId._id.toString() !== post._id.toString()) {
+      throw new createError("You don't have permission !", 1003, 403);
+    } else if (
+      req.currentUser._id.toString() !== post.postUser._id.toString() &&
+      req.currentUser._id.toString() !== comment.commentUser._id.toString()
+    ) {
       throw new createError("You don't have permission !", 1003, 403);
     }
     let deletedComment = await Post.findOneAndUpdate(
