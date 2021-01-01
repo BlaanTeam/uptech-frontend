@@ -196,7 +196,7 @@ const getPost = async (req, res, next) => {
         $addFields: {
           totalComments: { $size: "$comments" },
           totalLikes: { $size: "$likes" },
-          liked: {
+          isLiked: {
             $cond: {
               if: { $eq: [{ $size: "$liked" }, 1] },
               then: true,
@@ -207,6 +207,7 @@ const getPost = async (req, res, next) => {
       },
       {
         $project: {
+          liked: 0,
           comments: 0,
           likes: 0,
           tags: 0,

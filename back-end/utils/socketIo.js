@@ -1,5 +1,12 @@
-const io = require("socket.io")();
+const io = require("socket.io")(null, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "OPTIONS", "DELETE"],
+    allowedHeaders: ["x-auth-token"],
+  },
+});
 const { protectSocketIo } = require("../utils/middlewares");
+const client = require("./redis");
 
 // check if the access token is passed in headers
 io.use(protectSocketIo);
