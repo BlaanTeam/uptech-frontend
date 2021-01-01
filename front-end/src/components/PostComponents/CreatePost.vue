@@ -1,5 +1,5 @@
 <template>
-  <v-card class="create__post my-10 secondarybg">
+  <v-card class="create__post my-10 auth-secondarybg">
     <v-card-title class="ma-0 d-inline-block float-left">
       <v-avatar width="40" color="green">
         <span class="white--text caption">
@@ -9,16 +9,16 @@
     </v-card-title>
     <v-card-subtitle class="ms-10 ps-4 pt-3 d-block">
       <v-textarea
-        ref="CreateTextArea"
+        id="CreateTextArea"
         placeholder="What's on your mind"
         label=""
         auto-grow
         rows="1"
-        :append-outer-icon="postBody.length > 1 ? 'mdi-close' : ''"
+        :append-outer-icon="postBody.value.length > 1 ? 'mdi-close' : ''"
         @click:append-outer="clearTextArea"
         row-height="10"
         counter="5000"
-        v-model="postBody"
+        v-model="postBody.value"
       ></v-textarea>
     </v-card-subtitle>
     <v-divider></v-divider>
@@ -42,26 +42,13 @@
         <span>{{ togglePrivatePublic }}</span>
       </v-tooltip>
 
-      <v-menu
-        :close-on-content-click="false"
-        offset-y
+      <Emojis
         attach=".create__post"
-        transition="slide-y-transition"
-      >
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn v-bind="attrs" v-on="on" icon class="mx-1" color="white">
-            😀
-          </v-btn>
-        </template>
-
-        <VEmojiPicker
-          :dark="$vuetify.theme.isDark"
-          @select="selectEmoji"
-          width="400px"
-        />
-      </v-menu>
+        :inputModel="postBody"
+        element="CreateTextArea"
+      />
       <v-btn
-        :disabled="postBody && postBody.length < 2"
+        :disabled="postBody.value && postBody.value.length < 2"
         @click="createPost"
         class="ms-auto primary"
         elevation="0"
@@ -74,12 +61,12 @@
 </template>
 
 <script>
+import Emojis from "@/components/Emojis";
 export default {
+  components: { Emojis },
   data: () => ({
-    postBody: "",
-    isPrivate: false,
-    selected: false,
-    selectionStart: null
+    postBody: { value: "" },
+    isPrivate: false
   }),
   computed: {
     togglePrivatePublic() {
@@ -88,48 +75,23 @@ export default {
   },
   methods: {
     clearTextArea() {
-      this.postBody = "";
-    },
-    selectEmoji(emoji) {
-      let el = this.$refs.CreateTextArea.$refs.input;
-
-      if (this.selected) this.selectionStart = el.selectionStart;
-      else if (!this.selected && this.selectionStart === null)
-        this.selectionStart = el.selectionStart;
-
-      this.postBody =
-        this.postBody.substring(0, el.selectionStart) +
-        this.postBody.substring(el.selectionEnd);
-
-      let before = this.postBody.substring(0, this.selectionStart);
-      let after = this.postBody.substring(this.selectionStart);
-
-      this.postBody = before + emoji.data + after;
-      this.selectionStart += 2;
-
-      this.selected = false;
+      this.postBody.value = "";
     },
     async createPost() {
-      if (this.postBody.trim().length < 2) return;
+      if (this.postBody.value.trim().length < 2) return;
       try {
         const res = await this.$store.dispatch("createPost", {
-          postBody: this.postBody,
+          postBody: this.postBody.value,
           isPrivate: this.isPrivate
         });
         if (res.status === 201) {
           console.log("Post Created");
-          this.postBody = "";
+          this.postBody.value = "";
         }
       } catch (err) {
         console.log(err);
       }
     }
-  },
-  mounted() {
-    let el = this.$refs.CreateTextArea.$refs.input;
-    el.onclick = () => {
-      this.selected = true;
-    };
   }
 };
 </script>
