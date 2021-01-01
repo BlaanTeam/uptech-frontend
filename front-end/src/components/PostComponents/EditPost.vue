@@ -6,7 +6,7 @@
           <slot></slot>
         </span>
       </template>
-      <v-card elevation="4" class="secondarybg pe-4 edit-post-dialog">
+      <v-card elevation="4" class="auth-secondarybg pe-4 edit-post-dialog">
         <v-card-title>
           <v-row>
             <v-col cols="2" class="pa-0 ma-0 text-center">
@@ -25,10 +25,10 @@
                 placeholder="What's on your mind"
                 label=""
                 auto-grow
-                :rows="parseInt(postBody.length / 30)"
+                :rows="parseInt(postBody.value.length / 30)"
                 height="auto"
                 counter="5000"
-                v-model="postBody"
+                v-model="postBody.value"
               ></v-textarea>
             </v-col>
           </v-row>
@@ -55,26 +55,13 @@
             <span>{{ togglePrivatePublic }}</span>
           </v-tooltip>
 
-          <v-menu
-            :close-on-content-click="false"
-            right
-            transition="slide-y-transition"
+          <Emojis
+            :inputModel="postBody"
+            element="CreateTextArea"
             nudge-left="320"
-            nudge-top="280"
-          >
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn
-                v-bind="attrs"
-                v-on="on"
-                icon
-                elevation="0"
-                class="mx-1 emoji-btn"
-              >
-                😀
-              </v-btn>
-            </template>
-            <VEmojiPicker :dark="$vuetify.theme.isDark" @select="selectEmoji" />
-          </v-menu>
+            nudge-top="360"
+            right
+          />
 
           <DeletePost class="ms-auto" :post="post" :index="index">
             <v-btn
@@ -99,7 +86,7 @@
             Cancel
           </v-btn>
           <v-btn
-            :disabled="postBody === post.postBody"
+            :disabled="btnDisabler"
             elevation="0"
             dark
             color="primary"
@@ -115,83 +102,59 @@
 </template>
 <script>
 import DeletePost from "./DeletePost";
+import Emojis from "@/components/Emojis";
+
 export default {
-  components: { DeletePost },
+  components: { DeletePost, Emojis },
   props: {
-    post: {
-      type: Object,
-      required: true
-    },
-    index: {
-      type: Number,
-      required: true
-    }
+    post: { type: Object, required: true },
+    index: { type: Number, required: true }
   },
   data: props => ({
     dialog: false,
-    postBody: props.post.postBody,
-    isPrivate: false,
-    selected: false,
-    selectionStart: null
+    postBody: { value: props.post.postBody },
+    isPrivate: false
   }),
   computed: {
     togglePrivatePublic() {
       return this.isPrivate ? "private" : "public";
+    },
+    btnDisabler() {
+      return (
+        this.postBody === this.post.postBody &&
+        this.isPrivate === this.post.isPrivate
+      );
     }
   },
   methods: {
     clearTextArea() {
-      this.postBody = "";
-    },
-    selectEmoji(emoji) {
-      let el = this.$refs.EditTextArea.$refs.input;
-
-      if (this.selected) this.selectionStart = el.selectionStart;
-      else if (!this.selected && this.selectionStart === null)
-        this.selectionStart = el.selectionStart;
-
-      this.postBody =
-        this.postBody.substring(0, el.selectionStart) +
-        this.postBody.substring(el.selectionEnd);
-
-      let before = this.postBody.substring(0, this.selectionStart);
-      let after = this.postBody.substring(this.selectionStart);
-
-      this.postBody = before + emoji.data + after;
-      this.selectionStart += 2;
-
-      this.selected = false;
+      this.postBody.value = "";
     },
     async editPost() {
-      if (this.postBody.trim() === "" || this.postBody.length < 2) return;
+      if (this.postBody.value.trim() === "" || this.postBody.value.length < 2)
+        return;
       this.dialog = false;
       try {
         const res = await this.$store.dispatch("editPost", {
-          postBody: this.postBody,
+          postBody: this.postBody.value,
           isPrivate: this.isPrivate,
           id: this.post._id,
           index: this.index,
           totalLikes: this.post.totalLikes,
           totalComments: this.post.totalComments
         });
-        this.post.postBody = this.postBody;
+        this.post.postBody.value = this.postBody.value;
         console.log("Post Edited successfully");
       } catch (err) {
         console.log(err);
       }
     }
-  },
-  mounted() {
-    let el = this.$refs.EditTextArea.$refs.input;
-    el.onclick = () => {
-      this.selected = true;
-    };
   }
 };
 </script>
 <style lang="scss">
 .container-emoji {
-  height: 180px !important;
+  height: 240px !important;
 }
 
 .edit-post-dialog {
@@ -199,11 +162,10 @@ export default {
     max-height: 400px;
     overflow-y: auto;
   }
-  // .v-text-field__slot {
-  //   // padding: 0 20px 0 0;
-  //   textarea {
-  //     word-break: keep-all !important;
-  //   }
-  // }
+  .v-text-field__slot {
+    textarea {
+      word-break: keep-all !important;
+    }
+  }
 }
 </style>

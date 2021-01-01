@@ -1,8 +1,10 @@
 <template>
-  <v-app-bar app class="secondarybg" height="52px" flat>
+  <v-app-bar app class="auth-secondarybg" height="52px" flat>
     <!-- <v-app-bar-nav-icon></v-app-bar-nav-icon> -->
     <v-toolbar-title>UpTech</v-toolbar-title>
     <v-spacer></v-spacer>
+    <DarkMode />
+    <Locale />
     <v-btn text class="mr-2" @click="logout()">
       <v-icon left>mdi-logout</v-icon>
       logout
@@ -11,7 +13,11 @@
 </template>
 
 <script>
+import DarkMode from "@/components/DarkMode";
+import Locale from "@/components/Locale";
 export default {
+  components: { DarkMode, Locale },
+
   name: "AppBar",
   methods: {
     logout() {

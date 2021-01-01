@@ -10,6 +10,8 @@ export default new Vuetify({
       light: {
         bg: "#ffffff",
         secondarybg: "#dfdddd",
+        "auth-bg": "#dfdddd",
+        "auth-secondarybg": "#ffffff",
         primary: "#f0a709",
         secondary: "#b0bec5",
         accent: "#8c9eff",
@@ -27,6 +29,9 @@ export default new Vuetify({
         secondarybg: "#27282B", // linear.app style
         // secondarybg: "#1D1E4F", // geeksblabla style
         // secondarybg: "#202E3A", // twitter style
+
+        "auth-bg": "#1F2023",
+        "auth-secondarybg": "#27282B",
 
         primary: "#f0a709",
         secondary: "#b0bec5",

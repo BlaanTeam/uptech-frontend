@@ -49,6 +49,9 @@ axios.interceptors.response.use(
         text: i18n.t("globals.errors.lostConnection")
       });
     } else {
+      if (error.response.status === 404) {
+        store.dispatch("handleNotFound");
+      }
       if (
         error.response.data.error.code === 1079 ||
         error.response.data.error.code === 1072 ||

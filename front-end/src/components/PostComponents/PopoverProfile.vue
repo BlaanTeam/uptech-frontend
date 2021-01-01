@@ -15,7 +15,7 @@
       </template>
 
       <v-card class="text-center">
-        <v-list class="secondarybg">
+        <v-list class="auth-secondarybg">
           <v-list-item>
             <v-list-item-avatar>
               <img src="@/assets/images/avatar.svg" alt="avatar" width="30" />
@@ -27,7 +27,7 @@
             </v-list-item-content>
           </v-list-item>
         </v-list>
-        <v-list class="secondarybg">
+        <v-list class="auth-secondarybg">
           <v-list-item>
             <v-list-item-title>Some other info</v-list-item-title>
           </v-list-item>

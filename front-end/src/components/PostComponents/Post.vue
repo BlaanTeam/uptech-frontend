@@ -1,5 +1,5 @@
 <template>
-  <v-card class="mb-2 secondarybg" :id="'card' + post._id">
+  <v-card class="mb-2 py-0 auth-secondarybg" :id="'card' + post._id">
     <v-card-title :class="'ma-0 card-title' + index">
       <v-row no-gutters>
         <v-col lg="1" md="1" sm="2" class="pa-0 ma-0 ms-2">
@@ -47,14 +47,14 @@
               <v-btn
                 v-bind="attrs"
                 v-on="on"
-                class="secondarybg"
+                class="auth-secondarybg"
                 elevation="0"
                 icon
               >
                 <v-icon size="40">mdi-dots-horizontal</v-icon>
               </v-btn>
             </template>
-            <v-list-item-group class="secondarybg">
+            <v-list-item-group class="auth-secondarybg">
               <router-link
                 :to="{ name: 'ViewPost', params: { postId: post._id } }"
               >
@@ -99,12 +99,12 @@
       </v-row>
     </v-card-title>
 
-    <div class="headline ps-6 pe-1 py-2">
+    <div class="headline ps-6 pe-2 py-2">
       {{ postBody }}
       <a
         id="read-more"
         text
-        v-if="post.postBody.length > 400"
+        v-if="post.postBody.length > 300"
         @click="readActivated = !readActivated"
         class="mx-auto"
         v-html="toggleMoreLess"
@@ -116,23 +116,7 @@
     <v-card-actions class="px-4 py-0">
       <v-row class="text-center py-0">
         <v-col class="pa-2">
-          <div>
-            {{ post.totalLikes }}
-            <v-btn
-              class="ml-2 px-4 py-0 caption"
-              elevation="0"
-              color="secondarybg"
-              @click="toggleLike"
-            >
-              <v-icon left size="20" class="mb-1" color="primary" v-if="liked">
-                mdi-arrow-up-thick
-              </v-icon>
-              <v-icon left size="20" class="mb-1" v-else>
-                mdi-arrow-up-thick
-              </v-icon>
-              {{ toggleLikeUnlike }}
-            </v-btn>
-          </div>
+          <LikeUnlike :post="post" />
         </v-col>
         <v-col class="pa-2">
           <div>
@@ -141,7 +125,7 @@
               class="ml-2 caption"
               @click="commentExpanded = !commentExpanded"
               elevation="0"
-              color="secondarybg"
+              color="auth-secondarybg"
             >
               <v-icon left size="20">mdi-comment</v-icon>
               comment
@@ -149,40 +133,63 @@
           </div>
         </v-col>
         <v-col class="pa-2">
-          <v-btn elevation="0" color="secondarybg caption">
+          <v-btn elevation="0" color="auth-secondarybg caption">
             <v-icon left size="20">mdi-share-variant</v-icon>
             share
           </v-btn>
         </v-col>
       </v-row>
     </v-card-actions>
-    <AddComment :display="commentExpanded" :post="post" :index="index" />
+    <div>
+      <AddComment :display="commentExpanded" :post="post" />
+      <template v-if="post.comments && post.comments.length">
+        <DisplayComment
+          v-for="comment in post.comments"
+          :key="comment.id"
+          :comment="comment"
+        />
+      </template>
+    </div>
+    <v-snackbar
+      v-model="snackbar"
+      color="#22a56a"
+      class="text-weight-bold"
+      timeout="1500"
+      :width="20"
+    >
+      <div class="text-center">
+        link copied to clipboard
+        <v-icon right size="18">mdi-clipboard-check</v-icon>
+      </div>
+    </v-snackbar>
   </v-card>
 </template>
 
 <script>
 import EditPost from "./EditPost";
 import AddComment from "./AddComment";
-
 import PopoverProfile from "./PopoverProfile";
 import DeletePost from "./DeletePost";
+import DisplayComment from "./DisplayComment";
+import LikeUnlike from "./LikeUnlike.vue";
 
 export default {
   components: {
     EditPost,
     PopoverProfile,
     DeletePost,
-    AddComment
+    AddComment,
+    DisplayComment,
+    LikeUnlike
   },
   props: {
-    post: Object,
-    index: Number
+    post: { type: Object, required: true },
+    index: { type: Number, required: false, default: 0 }
   },
   data: props => ({
-    comment: "",
     commentExpanded: false,
     readActivated: false,
-    liked: props.post.isLiked
+    snackbar: false
   }),
 
   computed: {
@@ -190,33 +197,16 @@ export default {
       return this.$store.getters.getUserId;
     },
     postBody() {
-      if (this.post.postBody.length > 400 && !this.readActivated) {
-        return this.post.postBody.slice(0, 400) + "...";
+      if (this.post.postBody.length > 300 && !this.readActivated) {
+        return this.post.postBody.slice(0, 300) + "...";
       } else return this.post.postBody;
     },
     toggleMoreLess() {
       if (!this.readActivated) return "read&nbsp;more";
       else return "read&nbsp;less";
-    },
-    toggleLikeUnlike() {
-      return !this.liked ? "Like" : "Unlike";
     }
   },
   methods: {
-    async toggleLike() {
-      try {
-        const res = await this.$store.dispatch("toggleLike", {
-          liked: !this.liked,
-          index: this.index,
-          id: this.post._id
-        });
-        if (res.status === 200) {
-          this.liked = !this.liked;
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    },
     copyPostLink() {
       let link = `${location.origin}/#/posts/${this.post._id}`;
       navigator.clipboard

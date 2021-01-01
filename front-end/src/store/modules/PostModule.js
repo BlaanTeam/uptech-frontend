@@ -28,15 +28,6 @@ export default {
         el.remove();
         state.posts.splice(payload.index, 1);
       }, 500);
-    },
-    INCREASE_COMMENT_SIZE(state, payload) {
-      state.posts[payload.index].totalComments += 1;
-    },
-    INCREASE_LIKE_SIZE(state, payload) {
-      state.posts[payload.index].totalLikes += 1;
-    },
-    DECREASE_LIKE_SIZE(state, payload) {
-      state.posts[payload.index].totalLikes -= 1;
     }
   },
   actions: {
@@ -94,45 +85,6 @@ export default {
           .then(res => {
             if (res.status === 204) {
               context.commit("DELETE_POST", payload);
-
-              resolve(res);
-            }
-          })
-          .catch(err => reject(err));
-      });
-    },
-    addComment(context, payload) {
-      return new Promise((resolve, reject) => {
-        Vue.prototype.$http
-          .post(`/feed/posts/${payload.id}/comments`, {
-            commentBody: payload.comment
-          })
-          .then(res => {
-            if (res.status === 200) {
-              context.commit("INCREASE_COMMENT_SIZE", {
-                index: payload.index
-              });
-
-              resolve(res);
-            }
-          })
-          .catch(err => reject(err));
-      });
-    },
-    toggleLike(context, payload) {
-      return new Promise((resolve, reject) => {
-        Vue.prototype.$http
-          .post(`/feed/posts/${payload.id}/like`)
-          .then(res => {
-            if (res.status === 200) {
-              if (payload.liked)
-                context.commit("INCREASE_LIKE_SIZE", {
-                  index: payload.index
-                });
-              else
-                context.commit("DECREASE_LIKE_SIZE", {
-                  index: payload.index
-                });
 
               resolve(res);
             }
