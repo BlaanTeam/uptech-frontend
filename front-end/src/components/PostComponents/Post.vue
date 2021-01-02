@@ -144,9 +144,10 @@
       <AddComment :display="commentExpanded" :post="post" />
       <template v-if="post.comments && post.comments.length">
         <DisplayComment
-          v-for="comment in post.comments"
-          :key="comment.id"
+          v-for="(comment, i) in post.comments"
+          :key="i"
           :comment="comment"
+          :post="post"
         />
       </template>
     </div>
