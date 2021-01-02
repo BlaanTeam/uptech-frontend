@@ -1,29 +1,34 @@
 <template>
   <div class="view-post">
-    <template v-if="post._id">
-      <Post :post="post" />
+    <template>
+      <PostSkeleton v-if="!loaded">
+        <CommentSkeleton v-for="n in 3" :key="n" />
+      </PostSkeleton>
+      <Post v-else :post="post" />
     </template>
   </div>
 </template>
 
 <script>
 import Post from "@/components/PostComponents/Post";
+import PostSkeleton from "@/components/Skeletons/PostSkeleton";
+import CommentSkeleton from "@/components/Skeletons/CommentSkeleton";
 
 export default {
   name: "ViewPost",
-  components: {
-    Post
-  },
+  components: { Post, PostSkeleton, CommentSkeleton },
   data: () => ({
-    post: {}
+    post: {},
+    loaded: false
   }),
-  async created() {
+  async mounted() {
     const postId = this.$route.params.postId;
     try {
       const res = await this.$http.get(`/feed/posts/${postId}`);
-
       this.post = res.data;
+      this.loaded = true;
     } catch (error) {
+      this.loaded = true;
       console.log(error);
     }
   }
