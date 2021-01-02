@@ -121,7 +121,7 @@ export default {
     },
     btnDisabler() {
       return (
-        this.postBody === this.post.postBody &&
+        this.postBody.value === this.post.postBody &&
         this.isPrivate === this.post.isPrivate
       );
     }
