@@ -62,11 +62,13 @@
 
 <script>
 import Emojis from "@/components/Emojis";
+
 export default {
   components: { Emojis },
   data: () => ({
     postBody: { value: "" },
-    isPrivate: false
+    isPrivate: false,
+    loading: { value: false }
   }),
   computed: {
     togglePrivatePublic() {
@@ -79,16 +81,26 @@ export default {
     },
     async createPost() {
       if (this.postBody.value.trim().length < 2) return;
+
+      let temptext = this.postBody.value;
+      this.postBody.value = "";
+      this.loading.value = true;
+      this.$emit("creating", this.loading);
+
       try {
         const res = await this.$store.dispatch("createPost", {
-          postBody: this.postBody.value,
+          postBody: temptext,
           isPrivate: this.isPrivate
         });
         if (res.status === 201) {
           console.log("Post Created");
-          this.postBody.value = "";
+          temptext = "";
+          this.loading.value = false;
         }
       } catch (err) {
+        this.postBody.value = temptext;
+        this.loading.value = false;
+
         console.log(err);
       }
     }
