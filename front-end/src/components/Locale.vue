@@ -35,6 +35,16 @@ export default {
       }
       // TODO: auto reload after locale changing
     }
+  },
+  created() {
+    let locale = localStorage.getItem("locale");
+    this.$i18n.locale = locale;
+    this.$timeago.locale = locale;
+    if (locale === "ar") {
+      this.$vuetify.rtl = true;
+    } else {
+      this.$vuetify.rtl = false;
+    }
   }
 };
 </script>
