@@ -9,39 +9,46 @@
         </v-avatar>
       </v-col>
       <v-col cols="9" class="auth-bg rounded-lg ps-3 pe-2 mx-1">
-        <v-row v-if="editMode" no-gutters>
-          <v-col>
-            <v-textarea
-              id="EditCommentTextArea"
-              autofocus
-              label=""
-              auto-grow
-              :rows="1"
-              v-model="commentBody.value"
-            ></v-textarea>
-          </v-col>
-          <v-col cols="1" class="ms-1 align-self-center">
-            <Emojis
-              id="EditCommentEmojis"
-              left
-              :attach="'#comment' + comment._id"
-              element="EditCommentTextArea"
-              :inputModel="commentBody"
-            />
-          </v-col>
-          <v-col cols="1" class="align-self-center">
-            <v-btn
-              :disabled="comment.commentBody === commentBody.value"
-              icon
-              @click="editComment()"
-            >
-              <v-icon color="primary" class="ms-1">mdi-send</v-icon>
-            </v-btn>
-          </v-col>
+        <v-row no-gutters>
+          <span text class="title font-weight-bold">
+            {{ comment.commentUser.userName }}
+          </span>
         </v-row>
-
-        <p v-else class="mt-3">{{ comment.commentBody }}</p>
+        <v-row no-gutters>
+          <v-row v-if="editMode" no-gutters>
+            <v-col>
+              <v-textarea
+                id="EditCommentTextArea"
+                autofocus
+                label=""
+                auto-grow
+                :rows="1"
+                v-model="commentBody.value"
+              ></v-textarea>
+            </v-col>
+            <v-col cols="1" class="ms-1 align-self-center">
+              <Emojis
+                id="EditCommentEmojis"
+                left
+                :attach="'#comment' + comment._id"
+                element="EditCommentTextArea"
+                :inputModel="commentBody"
+              />
+            </v-col>
+            <v-col cols="1" class="align-self-center">
+              <v-btn
+                :disabled="comment.commentBody === commentBody.value"
+                icon
+                @click="editComment()"
+              >
+                <v-icon color="primary" class="ms-1">mdi-send</v-icon>
+              </v-btn>
+            </v-col>
+          </v-row>
+          <p v-else class="font-weight-light">{{ comment.commentBody }}</p>
+        </v-row>
       </v-col>
+
       <v-col cols="1" class="align-self-center">
         <v-menu
           :attach="'#comment' + comment._id"
@@ -77,6 +84,16 @@
           </v-list-item-group>
         </v-menu>
       </v-col>
+      <v-row no-gutters>
+        <v-col cols="4" class="ms-auto text-end pe-2">
+          <timeago
+            class="font-weight-thin caption"
+            :datetime="comment.createdAt"
+            :auto-update="60"
+          />
+        </v-col>
+        <v-col cols="2"></v-col>
+      </v-row>
     </v-row>
   </div>
 </template>
