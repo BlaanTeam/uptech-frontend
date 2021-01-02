@@ -23,7 +23,7 @@
               auto-grow
             ></v-textarea>
           </v-col>
-          <v-col cols="1" class="align-self-center">
+          <v-col cols="1" class="ms-1 align-self-center">
             <Emojis
               left
               :attach="'.add-comment' + post._id"
@@ -72,7 +72,7 @@ export default {
           console.log("Comment added successfully");
           this.post.totalComments++;
           if (!this.post.comments) this.post.comments = [];
-          this.post.comments.push(res.data.comment);
+          this.post.comments.unshift(res.data.comment);
           this.comment.value = "";
         }
       } catch (err) {
