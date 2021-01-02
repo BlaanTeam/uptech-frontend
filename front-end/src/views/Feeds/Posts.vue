@@ -1,13 +1,20 @@
 <template>
   <div class="feeds">
-    <CreatePost />
+    <CreatePost @creating="handleLoading" />
     <div class="posts">
-      <Post
-        v-for="(post, index) in posts"
-        :key="post._id"
-        :post="post"
-        :index="index"
-      />
+      <span v-if="!loaded">
+        <PostSkeleton v-for="n in 5" :key="n" />
+      </span>
+      <PostSkeleton v-if="loading.value" />
+      <span v-if="loaded">
+        <Post
+          v-for="(post, index) in posts"
+          :key="post._id"
+          :post="post"
+          :index="index"
+          transition="scale-transition"
+        />
+      </span>
     </div>
   </div>
 </template>
@@ -15,18 +22,31 @@
 <script>
 import CreatePost from "@/components/PostComponents/CreatePost";
 import Post from "@/components/PostComponents/Post";
+import PostSkeleton from "@/components/Skeletons/PostSkeleton";
 
 export default {
-  components: { CreatePost, Post },
+  components: { CreatePost, Post, PostSkeleton },
+  data: () => ({
+    loaded: false,
+    loading: { value: false }
+  }),
   computed: {
     posts() {
       return this.$store.getters.getPosts;
     }
   },
-  async created() {
+  methods: {
+    handleLoading(loading) {
+      this.loading = loading;
+    }
+  },
+
+  async mounted() {
     try {
       await this.$store.dispatch("getFeedPosts");
+      this.loaded = true;
     } catch (err) {
+      this.loaded = true;
       console.log(err);
     }
   }
