@@ -1,6 +1,6 @@
 <template>
-  <v-card class="mb-2 py-0 auth-secondarybg" :id="'card' + post._id">
-    <v-card-title :class="'ma-0 card-title' + index">
+  <v-card class="mb-2 py-0 post auth-secondarybg" :id="'card' + post._id">
+    <v-card-title :class="'ma-0 pt-2 pb-3 card-title' + index">
       <v-row no-gutters>
         <v-col lg="1" md="1" sm="2" class="pa-0 ma-0 ms-2">
           <PopoverProfile :index="index">
@@ -99,7 +99,7 @@
       </v-row>
     </v-card-title>
 
-    <div class="headline ps-6 pe-2 py-2">
+    <div class="title font-weight-light ps-6 pe-2 pb-2">
       {{ postBody }}
       <a
         id="read-more"
@@ -120,21 +120,21 @@
         </v-col>
         <v-col class="pa-2">
           <div>
-            {{ post.totalComments }}
+            <span class="caption">{{ post.totalComments }}</span>
             <v-btn
               class="ml-2 caption"
               @click="commentExpanded = !commentExpanded"
               elevation="0"
-              color="auth-secondarybg"
+              color="auth-secondarybg text-lowercase body-2"
             >
-              <v-icon left size="20">mdi-comment</v-icon>
+              <v-icon left size="16">mdi-comment</v-icon>
               comment
             </v-btn>
           </div>
         </v-col>
         <v-col class="pa-2">
-          <v-btn elevation="0" color="auth-secondarybg caption">
-            <v-icon left size="20">mdi-share-variant</v-icon>
+          <v-btn elevation="0" color="auth-secondarybg text-lowercase body-2">
+            <v-icon left size="16">mdi-share-variant</v-icon>
             share
           </v-btn>
         </v-col>
@@ -220,5 +220,3 @@ export default {
   }
 };
 </script>
-
-<style lang="scss"></style>
