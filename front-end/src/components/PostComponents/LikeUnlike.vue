@@ -1,16 +1,16 @@
 <template>
   <div class="toggle-like-unlike">
-    {{ post.totalLikes }}
+    <span class="caption">{{ post.totalLikes }}</span>
     <v-btn
-      class="ml-2 px-4 py-0 caption"
+      class="ml-2 px-4 py-0  text-lowercase body-2"
       elevation="0"
       color="auth-secondarybg"
       @click="toggleLike"
     >
-      <v-icon left size="20" class="mb-1" color="primary" v-if="liked">
+      <v-icon left size="16" class="mb-1" color="primary" v-if="liked">
         mdi-arrow-up-thick
       </v-icon>
-      <v-icon left size="20" class="mb-1" v-else>
+      <v-icon left size="16" class="mb-1" v-else>
         mdi-arrow-up-thick
       </v-icon>
       {{ toggleLikeUnlike }}
