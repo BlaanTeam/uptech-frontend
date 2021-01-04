@@ -30,7 +30,7 @@
               {{ post.postUser.userName }}
             </h5>
           </router-link>
-          <p class="caption font-weight-light pa-0 mt-n2 ma-0 d-block">
+          <p class="caption text--disabled pa-0 mt-n2 ma-0 d-block">
             <timeago :datetime="post.createdAt" :auto-update="60" />
           </p>
         </v-col>
