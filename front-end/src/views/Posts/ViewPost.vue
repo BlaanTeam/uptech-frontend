@@ -44,5 +44,18 @@ export default {
   .container-emoji {
     height: 250px !important;
   }
+  .theme--light {
+    #read-more {
+      color: #240497 !important;
+    }
+  }
+  .theme--dark {
+    #read-more {
+      color: #f5b01b !important;
+    }
+  }
+  .v-car {
+    transition: all 5s !important;
+  }
 }
 </style>
