@@ -8,9 +8,9 @@
           </span>
         </v-avatar>
       </v-col>
-      <v-col cols="9" class="auth-bg rounded-lg ps-3 pe-2 mx-1">
+      <v-col cols="9" class="auth-bg rounded-lg ps-3 pe-2 mx-1 pt-1 pb-2">
         <v-row no-gutters>
-          <span text class="title font-weight-bold">
+          <span text class="body-2 font-weight-bold">
             {{ comment.commentUser.userName }}
           </span>
         </v-row>
@@ -45,11 +45,19 @@
               </v-btn>
             </v-col>
           </v-row>
-          <p v-else class="font-weight-light">{{ comment.commentBody }}</p>
+          <p v-else class="body-2 font-weight-light ma-0">
+            {{ comment.commentBody }}
+          </p>
         </v-row>
       </v-col>
 
-      <v-col cols="1" class="align-self-center">
+      <v-col
+        v-show="
+          userId === post.postUser._id || userId === comment.commentUser._id
+        "
+        cols="1"
+        class="align-self-center"
+      >
         <v-menu
           :attach="'#comment' + comment._id"
           nudge-right="25"
@@ -69,15 +77,30 @@
             </v-btn>
           </template>
           <v-list-item-group class="auth-secondarybg">
-            <v-list-item dense v-if="editMode" @click="editMode = false">
+            <v-list-item
+              dense
+              v-if="editMode && userId === comment.commentUser._id"
+              @click="editMode = false"
+            >
               <v-icon left small color="blue">mdi-file-undo</v-icon>
               <v-list-item-title class="blue--text">cancel</v-list-item-title>
             </v-list-item>
-            <v-list-item dense @click="editMode = true">
+            <v-list-item
+              v-if="userId === comment.commentUser._id"
+              dense
+              @click="editMode = true"
+            >
               <v-icon left small>mdi-square-edit-outline</v-icon>
               <v-list-item-title>edit</v-list-item-title>
             </v-list-item>
-            <v-list-item dense @click="deleteComment()">
+            <v-list-item
+              v-if="
+                userId === comment.commentUser._id ||
+                  userId === post.postUser._id
+              "
+              dense
+              @click="deleteComment()"
+            >
               <v-icon left small color="red">mdi-delete</v-icon>
               <v-list-item-title class="red--text">delete</v-list-item-title>
             </v-list-item>
@@ -87,7 +110,7 @@
       <v-row no-gutters>
         <v-col cols="4" class="ms-auto text-end pe-2">
           <timeago
-            class="font-weight-thin caption"
+            class="font-weight-light text--disabled caption"
             :datetime="comment.createdAt"
             :auto-update="60"
           />
