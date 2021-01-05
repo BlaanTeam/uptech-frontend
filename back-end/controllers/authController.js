@@ -25,7 +25,7 @@ const signUp = async (req, res, next) => {
       $or: [{ userName: result.username }, { userMail: result.email }],
     });
     if (userEixst)
-      throw new createError("Username/Email Already Registered !", 1092, 409);
+      throw new createError("Username/email already registered !", 1092, 409);
     let newUser = new User({
       userName: result.username,
       userMail: result.email,
@@ -87,7 +87,7 @@ const confirmAccount = async (req, res, next) => {
     if (user.isConfirmed()) throw new createError("Unauthorized !", 1026, 401);
     user.confirmAccount();
     await user.save();
-    res.json({ msg: "Account Confirmed Succesfully !", code: 2041 });
+    res.json({ msg: "Account confirmed succesfully !", code: 2041 });
   } catch (err) {
     if (err.isJoi === true) err = new createError(err.message, 1049, 422);
     else if (err.isExpired === true)
@@ -104,11 +104,11 @@ const forgotPassword = async (req, res, next) => {
   try {
     let result = await forgotPasswordSchema.validateAsync(req.body);
     let user = await User.findOne({ userMail: result.email });
-    if (!user) throw new createError("The Email Is Not Exist !", 1030, 404);
+    if (!user) throw new createError("This email doesn't exist !", 1030, 404);
     user.externalURL = req.externalURL;
     let repeats = await client.getAsync(`${user.userMail}:FP`);
     if (repeats > 4) {
-      throw new createError("Too Many Requests !", 1032, 429);
+      throw new createError("Too many requests !", 1032, 429);
     } else if (repeats === null) {
       client.incr(`${user.userMail}:FP`);
     } else if (repeats < 4) {
@@ -119,7 +119,7 @@ const forgotPassword = async (req, res, next) => {
     }
     sendForgotPassword(user, "Reset Your Password");
     res.json({
-      msg: "Forgot Password, Email Has Been Sent!",
+      msg: "An email has been sent !",
       code: 2013,
     });
   } catch (err) {
@@ -164,15 +164,15 @@ const reSendConfirmation = async (req, res, next) => {
   try {
     let result = await reSendConfirmationSchema.validateAsync(req.body);
     let user = await User.findOne({ userMail: result.email });
-    if (!user) throw new createError("The Email Is Not Exist !", 1030, 404);
+    if (!user) throw new createError("This email doesn't exist !", 1030, 404);
     user.externalURL = req.externalURL;
     let isRespect = user.reConfirmTooManyRequest();
     await user.save();
-    if (!isRespect) throw new createError("Too Many Requests !", 1032, 429);
+    if (!isRespect) throw new createError("Too many requests !", 1032, 429);
     sendConfirmation(user, "Confirm Your Account 😇");
     res.json({
       code: 2051,
-      msg: "An Email Has Been Sent !",
+      msg: "An email has been sent !",
     });
   } catch (err) {
     if (err.isJoi === true) err = new createError(err.message, 1049, 422);
