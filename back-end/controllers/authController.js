@@ -132,7 +132,6 @@ const forgotPassword = async (req, res, next) => {
 
 const resetPassword = async (req, res, next) => {
   try {
-    console.log(req.query);
     let result = await resetPasswordSchema.validateAsync(req.body);
     let email = await verifyForgotPassword(result.token);
     let user = await User.findOne({ userMail: email });
