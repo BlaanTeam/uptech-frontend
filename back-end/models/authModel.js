@@ -122,30 +122,6 @@ userSchema.methods.confirmAccount = function () {
   this.mailConfirmed = true;
 };
 
-// resend confirmation too many request
-
-userSchema.methods.reConfirmTooManyRequest = function () {
-  if (this.reSendConfirmationTooManyRequest.timestamp) {
-    this.reSendConfirmationTooManyRequest.repeated = 0;
-
-    if (
-      Date.now() - Date.parse(this.reSendConfirmationTooManyRequest.timestamp) >
-      8.64e7
-    ) {
-      this.reSendConfirmationTooManyRequest.timestamp = null;
-      this.reSendConfirmationTooManyRequest.repeated++;
-      return true;
-    } else {
-      return false;
-    }
-  } else if (this.reSendConfirmationTooManyRequest.repeated >= 4) {
-    this.reSendConfirmationTooManyRequest.timestamp = Date.now();
-    return false;
-  } else {
-    this.reSendConfirmationTooManyRequest.repeated++;
-    return true;
-  }
-};
 // check if reset password token already used
 userSchema.methods.checkIfAlreadyUsed = function (token) {
   if (token === this.resetPasswordToken) {
