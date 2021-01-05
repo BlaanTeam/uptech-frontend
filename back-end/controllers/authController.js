@@ -165,9 +165,17 @@ const reSendConfirmation = async (req, res, next) => {
     let user = await User.findOne({ userMail: result.email });
     if (!user) throw new createError("This email doesn't exist !", 1030, 404);
     user.externalURL = req.externalURL;
-    let isRespect = user.reConfirmTooManyRequest();
-    await user.save();
-    if (!isRespect) throw new createError("Too many requests !", 1032, 429);
+    let repeats = await client.getAsync(`${user.userMail}:RC`);
+    if (repeats > 4) {
+      throw new createError("Too many requests !", 1032, 429);
+    } else if (repeats === null) {
+      client.incr(`${user.userMail}:RC`);
+    } else if (repeats < 4) {
+      client.incr(`${user.userMail}:RC`);
+    } else if (repeats == 4) {
+      client.incr(`${user.userMail}:RC`);
+      client.expire(`${user.userMail}:RC`, 86400);
+    }
     sendConfirmation(user, "Confirm Your Account 😇");
     res.json({
       code: 2051,
