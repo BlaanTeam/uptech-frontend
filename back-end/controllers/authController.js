@@ -15,6 +15,7 @@ const {
   reSendConfirmationSchema,
 } = require("../utils/validationSchema");
 const { sendConfirmation, sendForgotPassword } = require("../utils/mailer");
+const client = require("../utils/redis");
 
 // this function will handle the sign-up process
 const signUp = async (req, res, next) => {
@@ -48,11 +49,14 @@ const signUp = async (req, res, next) => {
 const signIn = async (req, res, next) => {
   try {
     let result = await signInSchema.validateAsync(req.body);
-    let user = await User.findOne({ userName: result.username },{
-      reSendConfirmationTooManyRequest:0,
-      forgotPasswordTooManyRequest:0,
-      __v:0
-    });
+    let user = await User.findOne(
+      { userName: result.username },
+      {
+        reSendConfirmationTooManyRequest: 0,
+        forgotPasswordTooManyRequest: 0,
+        __v: 0,
+      }
+    );
     if (!user)
       throw new createError("This account not registered yet !", 1030, 404);
     let isMatched = await user.isValidPassword(result.password);
@@ -63,7 +67,7 @@ const signIn = async (req, res, next) => {
       throw new createError("This account not confirmed yet !", 1063, 401);
 
     let accessToken = await signAccessToken(user.userName, result.rememberMe);
-    resp = {user:{...user._doc},accessToken:accessToken,code:2032}
+    resp = { user: { ...user._doc }, accessToken: accessToken, code: 2032 };
     delete resp.user.userPass;
     res.json(resp);
   } catch (err) {
@@ -102,9 +106,17 @@ const forgotPassword = async (req, res, next) => {
     let user = await User.findOne({ userMail: result.email });
     if (!user) throw new createError("The Email Is Not Exist !", 1030, 404);
     user.externalURL = req.externalURL;
-    let isRespect = user.forgotPassTooManyRequest();
-    user.save();
-    if (!isRespect) throw new createError("Too Many Requests !", 1032, 429);
+    let repeats = await client.getAsync(`${user.userMail}:FP`);
+    if (repeats > 4) {
+      throw new createError("Too Many Requests !", 1032, 429);
+    } else if (repeats === null) {
+      client.incr(`${user.userMail}:FP`);
+    } else if (repeats < 4) {
+      client.incr(`${user.userMail}:FP`);
+    } else if (repeats == 4) {
+      client.incr(`${user.userMail}:FP`);
+      client.expire(`${user.userMail}:FP`, 86400);
+    }
     sendForgotPassword(user, "Reset Your Password");
     res.json({
       msg: "Forgot Password, Email Has Been Sent!",
@@ -127,7 +139,7 @@ const resetPassword = async (req, res, next) => {
     if (!user) throw new createError("Unauthorized !", 1030, 401);
     else if (user.checkIfAlreadyUsed(result.token))
       throw new createError("Unauthorized !", 1074, 401);
-    
+
     if (req.query.check && req.query.check === "true") {
       res.json({ success: true });
     } else {

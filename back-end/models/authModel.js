@@ -75,15 +75,6 @@ const userSchema = new Schema({
       default: 0,
     },
   },
-  forgotPasswordTooManyRequest: {
-    timestamp: {
-      type: Date,
-    },
-    repeated: {
-      type: Number,
-      default: 0,
-    },
-  },
 });
 
 // Iniatialize Methods To userSchema
@@ -152,29 +143,6 @@ userSchema.methods.reConfirmTooManyRequest = function () {
     return false;
   } else {
     this.reSendConfirmationTooManyRequest.repeated++;
-    return true;
-  }
-};
-// forgot password too many request
-userSchema.methods.forgotPassTooManyRequest = function () {
-  if (this.forgotPasswordTooManyRequest.timestamp) {
-    this.forgotPasswordTooManyRequest.repeated = 0;
-
-    if (
-      Date.now() - Date.parse(this.forgotPasswordTooManyRequest.timestamp) >
-      8.64e7
-    ) {
-      this.forgotPasswordTooManyRequest.timestamp = null;
-      this.forgotPasswordTooManyRequest.repeated++;
-      return true;
-    } else {
-      return false;
-    }
-  } else if (this.forgotPasswordTooManyRequest.repeated >= 4) {
-    this.forgotPasswordTooManyRequest.timestamp = Date.now();
-    return false;
-  } else {
-    this.forgotPasswordTooManyRequest.repeated++;
     return true;
   }
 };
