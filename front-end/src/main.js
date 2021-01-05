@@ -12,6 +12,13 @@ import Notifications from "vue-notification";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/vue-loading.css";
 import VEmojiPicker from "v-emoji-picker";
+import parseBody from "./plugins/parsePost";
+
+Vue.mixin({
+  methods: {
+    parseBody: parseBody
+  }
+});
 
 const originalSetItem = localStorage.setItem;
 
