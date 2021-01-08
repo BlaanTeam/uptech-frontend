@@ -67,6 +67,12 @@ const userSchema = new Schema({
     type: String,
   },
 });
+userSchema.index(
+  {
+    userName: 1,
+  },
+  { unique: true }
+);
 
 const followSchema = new Schema({
   userOne: {
