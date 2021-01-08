@@ -176,6 +176,23 @@ const profileSchema = joi.object({
   }),
 });
 
+const followValidator = async (credentials, requiredFields = []) => {
+  try {
+    followSchema = joi.object({
+      userName: joi
+        .string()
+        .pattern(pattern.userName)
+        .message("Please fill a valid userName"),
+    });
+    followSchema = followSchema.fork(requiredFields, (field) =>
+      field.required()
+    );
+    return await followSchema.asyncValidation(credentials);
+  } catch (err) {
+    throw err;
+  }
+};
+
 module.exports = {
   signInSchema,
   signUpSchema,
@@ -191,4 +208,5 @@ module.exports = {
   commentIdSchema,
   profileIdSchema,
   profileSchema,
+  followValidator,
 };

@@ -9,13 +9,12 @@ const dbURI = `mongodb${
   !isDev ? "+srv" : ""
 }://${dbUser}:${dbPass}@${dbHost}/${dbName}?authSource=admin&retryWrites=true&w=majority`;
 
+mongoose.set("useCreateIndex", true);
 mongoose.connect(dbURI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useFindAndModify: false,
 });
-
-mongoose.set("useCreateIndex", true);
 
 const db = mongoose.connection;
 

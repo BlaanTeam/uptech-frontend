@@ -1,14 +1,8 @@
-#!/usr/bin/env nodemon
-
-/**
- * Module dependencies.
- */
-
-const server = require("../app");
-const socket = require("../utils/socketIo");
+const server = require("./app");
+const socket = require("./app/utils/socketIo");
 const debug = require("debug")("back-end:server");
-const { normalizePort } = require("../utils/globals");
-const io = require("../utils/socketIo");
+const { normalizePort } = require("./app/utils/globals");
+const io = require("./app/utils/socketIo");
 
 // Attach socketio to server
 
