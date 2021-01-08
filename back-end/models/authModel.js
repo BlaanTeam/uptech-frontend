@@ -66,17 +66,24 @@ const userSchema = new Schema({
   resetPasswordToken: {
     type: String,
   },
-  reSendConfirmationTooManyRequest: {
-    timestamp: {
-      type: Date,
-    },
-    repeated: {
-      type: Number,
-      default: 0,
-    },
-  },
 });
 
+const followSchema = new Schema({
+  userOne: {
+    type: Schema.Types.ObjectId,
+    required: true,
+    ref: "users",
+  },
+  userTwo: {
+    type: Schema.Types.ObjectId,
+    required: true,
+    ref: "users",
+  },
+  status: {
+    type: Number,
+    required: true,
+  },
+});
 // Iniatialize Methods To userSchema
 
 // hashing the password
@@ -132,4 +139,5 @@ userSchema.methods.checkIfAlreadyUsed = function (token) {
 
 module.exports = {
   User: Model("users", userSchema),
+  Follow: Model("follow", followSchema),
 };
