@@ -138,7 +138,11 @@ const commentIdSchema = joi.object({
         .required(),
 });
 
-const profileValidator = async (credentials, requiredFields = []) => {
+const profileValidator = async (
+    credentials,
+    requiredFields = [],
+    forbiddenFields = []
+) => {
     try {
         let profileSchema = joi.object({
             userName: joi
@@ -166,6 +170,9 @@ const profileValidator = async (credentials, requiredFields = []) => {
         });
         profileSchema = profileSchema.fork(requiredFields, (field) =>
             field.required()
+        );
+        profileSchema = profileSchema.fork(forbiddenFields, (field) =>
+            field.forbidden()
         );
         return await profileSchema.validateAsync(credentials);
     } catch (err) {

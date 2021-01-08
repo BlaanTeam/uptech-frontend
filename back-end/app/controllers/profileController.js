@@ -51,7 +51,7 @@ const getMyProfile = async (req, res, next) => {
 
 const updateProfile = async (req, res, next) => {
     try {
-        let result = await profileValidator(req.body);
+        let result = await profileValidator(req.body, [], ["userName"]);
         // TODO : avoid change userName
         let user = req.currentUser;
         user._doc.profile = { ...user._doc.profile, ...result.profile };
