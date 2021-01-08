@@ -1,0 +1,38 @@
+### This is the profile API endpoints doc
+
+# Initialize the variables
+
+@baseURL = http://localhost:5000/api/v1
+@access_token ="put access token here"
+
+### get profile
+# endpoint : baseURL/user/profiles/<userId>
+# method : GET
+GET  {{baseURL}}/user/profiles/5fbd12eb72d5341db492dd78
+x-auth-token:{{access_token}}
+
+### get my  profile
+# endpoint : baseURL/user/profiles
+# method : GET
+GET  {{baseURL}}/user/profiles
+x-auth-token:{{access_token}}
+
+### update profile
+# endpoint : baseURL/user/profiles/<userId>
+# method : PUT
+# content-type :application/json
+# params :
+    # userPass          -> optional | string
+    # isPrivate         -> optional | boolean
+    # profile.picture   -> optional | string
+    # profile.firstName -> optional | string
+    # profile.lastName  -> optional | string
+    # profile.bio       -> optional | string
+PUT  {{baseURL}}/user/profiles
+x-auth-token:{{access_token}}
+Content-Type: application/json
+
+{
+    "isPrivate":false,
+    "userPass":"testTeSt!@1"
+}
