@@ -15,6 +15,8 @@ mongoose.connect(dbURI, {
   useFindAndModify: false,
 });
 
+mongoose.set("useCreateIndex", true);
+
 const db = mongoose.connection;
 
 db.on("connected", () => {

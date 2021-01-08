@@ -4,8 +4,6 @@ const Schema = mongoose.Schema;
 const Model = mongoose.model;
 const { pattern } = require("../config/config");
 
-mongoose.set("useCreateIndex", true);
-
 const userSchema = new Schema({
   userName: {
     type: String,

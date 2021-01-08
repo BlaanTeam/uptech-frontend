@@ -2,8 +2,6 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const Model = mongoose.model;
 
-mongoose.set("useCreateIndex", true);
-
 const postSchema = new Schema({
   postBody: {
     type: String,
