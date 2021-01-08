@@ -138,44 +138,40 @@ const commentIdSchema = joi.object({
         .required(),
 });
 
-const profileIdSchema = joi.object({
-    userId: joi
-        .string()
-        .custom((value, helper) => {
-            try {
-                let result = mongoose.Types.ObjectId(value);
-                return result;
-            } catch (err) {
-                return helper.message("Profile Not Found!");
-            }
-        })
-        .required(),
-});
-
-const profileSchema = joi.object({
-    userPass: joi
-        .string()
-        .pattern(pattern.password)
-        .message("Please fill a valid password")
-        .optional(),
-    isPrivate: joi.boolean().optional(),
-    profile: joi.object({
-        firstName: joi.string().optional().trim(),
-        lastName: joi.string().optional().trim(),
-        picture: joi
-            .string()
-            .pattern(pattern.url)
-            .message("Please fill a valid profile picture link")
-            .optional(),
-        bio: joi
-            .string()
-            .pattern(pattern.bio)
-            .message("Please fill a valid bio")
-            .optional()
-            .trim(),
-    }),
-});
-
+const profileValidator = async (credentials, requiredFields = []) => {
+    try {
+        let profileSchema = joi.object({
+            userName: joi
+                .string()
+                .pattern(pattern.username)
+                .message("Please fill a valid userName"),
+            userPass: joi
+                .string()
+                .pattern(pattern.password)
+                .message("Please fill a valid password"),
+            isPrivate: joi.boolean(),
+            profile: joi.object({
+                firstName: joi.string().trim(),
+                lastName: joi.string().trim(),
+                picture: joi
+                    .string()
+                    .pattern(pattern.url)
+                    .message("Please fill a valid profile picture link"),
+                bio: joi
+                    .string()
+                    .pattern(pattern.bio)
+                    .message("Please fill a valid bio")
+                    .trim(),
+            }),
+        });
+        profileSchema = profileSchema.fork(requiredFields, (field) =>
+            field.required()
+        );
+        return await profileSchema.validateAsync(credentials);
+    } catch (err) {
+        throw err;
+    }
+};
 const followValidator = async (credentials, requiredFields = []) => {
     try {
         followSchema = joi.object({
@@ -187,7 +183,7 @@ const followValidator = async (credentials, requiredFields = []) => {
         followSchema = followSchema.fork(requiredFields, (field) =>
             field.required()
         );
-        return await followSchema.asyncValidation(credentials);
+        return await followSchema.validateAsync(credentials);
     } catch (err) {
         throw err;
     }
@@ -206,7 +202,6 @@ module.exports = {
     commentSchema,
     getCommentsSchema,
     commentIdSchema,
-    profileIdSchema,
-    profileSchema,
+    profileValidator,
     followValidator,
 };

@@ -3,12 +3,11 @@
 # Initialize the variables
 
 @baseURL = http://localhost:5000/api/v1
-@access_token ="put access token here"
-
+@access_token =access token here
 ### get profile
-# endpoint : baseURL/user/profiles/<userId>
+# endpoint : baseURL/user/profiles/<userName>
 # method : GET
-GET  {{baseURL}}/user/profiles/5fbd12eb72d5341db492dd78
+GET  {{baseURL}}/user/profiles/testing
 x-auth-token:{{access_token}}
 
 ### get my  profile
@@ -18,7 +17,7 @@ GET  {{baseURL}}/user/profiles
 x-auth-token:{{access_token}}
 
 ### update profile
-# endpoint : baseURL/user/profiles/<userId>
+# endpoint : baseURL/user/profiles/<userName>
 # method : PUT
 # content-type :application/json
 # params :

@@ -1,17 +1,15 @@
 const { User } = require("../models/authModel");
-const { profileIdSchema, profileSchema } = require("../utils/validationSchema");
+const { profileValidator } = require("../utils/validationSchema");
 const { createError } = require("../utils/globals");
 
 // This function will handle getting the profile  process
 const getProfile = async (req, res, next) => {
     try {
-        let result = await profileIdSchema.validateAsync(req.params);
+        let result = await profileValidator(req.params, ["userName"]);
         let user = await User.findOne(
-            { _id: result.userId },
+            { userName: result.userName },
             {
                 userPass: 0,
-                reSendConfirmationTooManyRequest: 0,
-                forgotPasswordTooManyRequest: 0,
                 mailConfirmed: 0,
                 resetPasswordToken: 0,
                 __v: 0,
@@ -53,7 +51,8 @@ const getMyProfile = async (req, res, next) => {
 
 const updateProfile = async (req, res, next) => {
     try {
-        let result = await profileSchema.validateAsync(req.body);
+        let result = await profileValidator(req.body);
+        // TODO : avoid change userName
         let user = req.currentUser;
         user._doc.profile = { ...user._doc.profile, ...result.profile };
         delete result.profile;
