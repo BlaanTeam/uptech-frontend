@@ -43,7 +43,7 @@ const signUp = async (req, res, next) => {
         res.status(201);
         res.json({ code: 2062 });
     } catch (err) {
-        if (err.isJoi === true) err = new createError(err.message, 1049, 422);
+        if (err.isJoi === true) err = new createError(err.message, 1049, 400);
 
         next(err);
     }
@@ -86,7 +86,7 @@ const signIn = async (req, res, next) => {
         delete resp.user.userPass;
         res.json(resp);
     } catch (err) {
-        if (err.isJoi === true) err = new createError(err.message, 1049, 422);
+        if (err.isJoi === true) err = new createError(err.message, 1049, 400);
         next(err);
     }
 };
@@ -105,7 +105,7 @@ const confirmAccount = async (req, res, next) => {
         await user.save();
         res.json({ msg: "Account confirmed succesfully !", code: 2041 });
     } catch (err) {
-        if (err.isJoi === true) err = new createError(err.message, 1049, 422);
+        if (err.isJoi === true) err = new createError(err.message, 1049, 400);
         else if (err.isExpired === true)
             err = new createError("Invalid token or expired !", 1072, 401);
         else if (err.isInvalid === true)
@@ -140,7 +140,7 @@ const forgotPassword = async (req, res, next) => {
             code: 2013,
         });
     } catch (err) {
-        if (err.isJoi === true) err = new createError(err.message, 1049, 422);
+        if (err.isJoi === true) err = new createError(err.message, 1049, 400);
         next(err);
     }
 };
@@ -165,7 +165,7 @@ const resetPassword = async (req, res, next) => {
             res.json({ msg: "The password has been update !", code: 2029 });
         }
     } catch (err) {
-        if (err.isJoi === true) err = new createError(err.message, 1049, 422);
+        if (err.isJoi === true) err = new createError(err.message, 1049, 400);
         else if (err.isExpired === true)
             err = new createError("Invalid token or expired !", 1072, 401);
         else if (err.isInvalid === true)
@@ -200,7 +200,7 @@ const reSendConfirmation = async (req, res, next) => {
             msg: "An email has been sent !",
         });
     } catch (err) {
-        if (err.isJoi === true) err = new createError(err.message, 1049, 422);
+        if (err.isJoi === true) err = new createError(err.message, 1049, 400);
         next(err);
     }
 };
