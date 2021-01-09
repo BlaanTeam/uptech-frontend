@@ -11,7 +11,7 @@
 # method : POST
 # content-type : application/json
 # body params :
-    # postBody      ->  required | string
+    # content      ->  required | string
     # isPrivate     ->  required | boolean
 
 POST {{baseURL}}/feed/posts
@@ -19,7 +19,7 @@ x-auth-token : {{access_token}}
 Content-Type: application/json
 
 {
-    "postBody":"Hello from http client",
+    "content":"Hello from http client",
     "isPrivate":false
 }
 
@@ -40,14 +40,14 @@ x-auth-token : {{access_token}}
 # method : PUT
 # content-type : application/json
 # params :
-    # postBody      ->  required | string
+    # content      ->  required | string
     # isPrivate     ->  required | boolean
 PUT  {{baseURL}}/feed/posts/5fe3ab56c6b08962acb47e86
 x-auth-token : {{access_token}}
 Content-Type: application/json
 
 {
-    "postBody":"Update Post To New Value",
+    "content":"Update Post To New Value",
     "isPrivate":true
 
 }
@@ -66,13 +66,13 @@ x-auth-token: {{access_token}}
 # method : POST
 # content-type: application/json
 # params :
-    # commentBody   -> required | string
+    # content   -> required | string
 POST {{baseURL}}/feed/posts/5fe39e46de76724afb6f152e/comments
 x-auth-token:{{access_token}}
 Content-Type: application/json
 
 {
-    "commentBody": "Last Comment"
+    "content": "Last Comment"
 }
 
 ### get all post comments
@@ -95,13 +95,13 @@ x-auth-token:{{access_token}}
 # method : PUT
 # content-type: application/json
 # params :
-    # commentBody -> required | string
+    # content -> required | string
 PUT {{baseURL}}/feed/posts/5fe3abafc6b08962acb47e8e/comments/5fe3aeff14e0cc699101d936
 x-auth-token:{{access_token}}
 Content-Type: application/json
 
 {
-    "commentBody":"Updated !"
+    "content":"Updated !"
 }
 
 ### delete comment

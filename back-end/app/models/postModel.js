@@ -3,13 +3,14 @@ const Schema = mongoose.Schema;
 const Model = mongoose.model;
 
 const postSchema = new Schema({
-    postBody: {
+    content: {
         type: String,
         required: true,
     },
-    postUser: {
-        type: Schema.Types.ObjectId,
-        ref: "users",
+    isPrivate: {
+        type: Boolean,
+        required: true,
+        default: false,
     },
     createdAt: {
         type: Date,
@@ -20,10 +21,9 @@ const postSchema = new Schema({
         type: Date,
         required: false,
     },
-    isPrivate: {
-        type: Boolean,
-        required: true,
-        default: false,
+    userId: {
+        type: Schema.Types.ObjectId,
+        ref: "users",
     },
     comments: [{ type: Schema.Types.ObjectId, ref: "comments" }],
     likes: [{ type: Schema.Types.ObjectId, ref: "likes" }],
@@ -31,13 +31,11 @@ const postSchema = new Schema({
 });
 
 const commentSchema = new Schema({
-    commentBody: {
+    content: {
         type: String,
         required: true,
         trim: true,
     },
-    commentUser: { type: Schema.Types.ObjectId, ref: "users" },
-    postId: { type: Schema.Types.ObjectId, ref: "posts" },
     createdAt: {
         type: Date,
         required: true,
@@ -46,31 +44,34 @@ const commentSchema = new Schema({
     updatedAt: {
         type: Date,
     },
+    userId: { type: Schema.Types.ObjectId, ref: "users" },
+    postId: { type: Schema.Types.ObjectId, ref: "posts" },
 });
 const likeSchema = new Schema({
-    user: { type: Schema.Types.ObjectId, ref: "users" },
+    liked: {
+        type: Boolean,
+        default: false,
+    },
+    userId: { type: Schema.Types.ObjectId, ref: "users" },
     postId: { type: Schema.Types.ObjectId, ref: "posts" },
 });
 const tagSchema = new Schema({
-    tagName: {
+    name: {
         type: String,
         required: true,
         trim: true,
     },
-    user: { type: Schema.Types.ObjectId, ref: "users" },
-    postId: { type: Schema.Types.ObjectId, ref: "posts" },
+    count: {
+        type: Number,
+    },
 });
 
-postSchema.methods.isLikedByUser = async function (userId) {
-    let post = await this.populate({
-        path: "likes",
-        match: {
-            user: userId,
-        },
-    }).execPopulate();
-    return post.likes.length === 1 ? true : false;
-};
-
+tagSchema.index(
+    {
+        name: 1,
+    },
+    { unique: true }
+);
 module.exports = {
     Post: Model("posts", postSchema),
     Comment: Model("comments", commentSchema),

@@ -6,23 +6,20 @@ const {
     verifyConfirmationToken,
     verifyForgotPassword,
 } = require("../utils/jwt");
-const {
-    signInSchema,
-    signUpSchema,
-    confirmAccountSchema,
-    forgotPasswordSchema,
-    resetPasswordSchema,
-    reSendConfirmationSchema,
-} = require("../utils/validationSchema");
+const { authValidator } = require("../utils/validationSchema");
 const { sendConfirmation, sendForgotPassword } = require("../utils/mailer");
 const client = require("../utils/redis");
 
 // this function will handle the sign-up process
 const signUp = async (req, res, next) => {
     try {
-        let result = await signUpSchema.validateAsync(req.body);
+        let data = await authValidator(
+            req.body,
+            ["username", "email", "password"],
+            ["token", "rememberMe"]
+        );
         let userEixst = await User.findOne({
-            $or: [{ userName: result.username }, { userMail: result.email }],
+            $or: [{ userName: data.username }, { userMail: data.email }],
         });
         if (userEixst)
             throw new createError(
@@ -31,9 +28,9 @@ const signUp = async (req, res, next) => {
                 409
             );
         let newUser = new User({
-            userName: result.username,
-            userMail: result.email,
-            userPass: result.password,
+            userName: data.username,
+            userMail: data.email,
+            userPass: data.password,
         });
         newUser.externalURL = req.externalURL;
         await newUser.hashPassword();
@@ -52,12 +49,15 @@ const signUp = async (req, res, next) => {
 // this function will handle the sign-in process
 const signIn = async (req, res, next) => {
     try {
-        let result = await signInSchema.validateAsync(req.body);
+        let data = await authValidator(
+            req.body,
+            ["username", "password"],
+            ["token", "email"]
+        );
         let user = await User.findOne(
-            { userName: result.username },
+            { userName: data.username },
             {
-                reSendConfirmationTooManyRequest: 0,
-                forgotPasswordTooManyRequest: 0,
+                resetPasswordToken: 0,
                 __v: 0,
             }
         );
@@ -67,7 +67,7 @@ const signIn = async (req, res, next) => {
                 1030,
                 404
             );
-        let isMatched = await user.isValidPassword(result.password);
+        let isMatched = await user.isValidPassword(data.password);
         let isConfirmed = await user.isConfirmed();
         if (!isMatched) {
             throw new createError("Invalid username/password", 1024, 401);
@@ -78,10 +78,7 @@ const signIn = async (req, res, next) => {
                 401
             );
 
-        let accessToken = await signAccessToken(
-            user.userName,
-            result.rememberMe
-        );
+        let accessToken = await signAccessToken(user.userName, data.rememberMe);
         resp = { user: { ...user._doc }, accessToken: accessToken, code: 2032 };
         delete resp.user.userPass;
         res.json(resp);
@@ -95,8 +92,12 @@ const signIn = async (req, res, next) => {
 
 const confirmAccount = async (req, res, next) => {
     try {
-        let result = await confirmAccountSchema.validateAsync(req.body);
-        let email = await verifyConfirmationToken(result.token);
+        let data = await authValidator(
+            req.body,
+            ["token"],
+            ["username", "password", "email", "rememberMe"]
+        );
+        let email = await verifyConfirmationToken(data.token);
         let user = await User.findOne({ userMail: email });
         if (!user) throw new createError("Unauthorized !", 1030, 401);
         if (user.isConfirmed())
@@ -118,8 +119,12 @@ const confirmAccount = async (req, res, next) => {
 
 const forgotPassword = async (req, res, next) => {
     try {
-        let result = await forgotPasswordSchema.validateAsync(req.body);
-        let user = await User.findOne({ userMail: result.email });
+        let data = await authValidator(
+            req.bdoy,
+            ["email"],
+            ["username", "password", "token", "rememberMe"]
+        );
+        let user = await User.findOne({ userMail: data.email });
         if (!user)
             throw new createError("This email doesn't exist !", 1030, 404);
         user.externalURL = req.externalURL;
@@ -149,18 +154,22 @@ const forgotPassword = async (req, res, next) => {
 
 const resetPassword = async (req, res, next) => {
     try {
-        let result = await resetPasswordSchema.validateAsync(req.body);
-        let email = await verifyForgotPassword(result.token);
+        let data = await authValidator(
+            req.bdoy,
+            ["email", "password", "token"],
+            ["username", "rememberMe"]
+        );
+        let email = await verifyForgotPassword(data.token);
         let user = await User.findOne({ userMail: email });
         if (!user) throw new createError("Unauthorized !", 1030, 401);
-        else if (user.checkIfAlreadyUsed(result.token))
+        else if (user.checkIfAlreadyUsed(data.token))
             throw new createError("Unauthorized !", 1074, 401);
 
         if (req.query.check && req.query.check === "true") {
             res.json({ success: true });
         } else {
-            await user.resetPassword(result.password);
-            user.resetPasswordToken = result.token;
+            await user.resetPassword(data.password);
+            user.resetPasswordToken = data.token;
             user.save();
             res.json({ msg: "The password has been update !", code: 2029 });
         }
@@ -178,8 +187,12 @@ const resetPassword = async (req, res, next) => {
 
 const reSendConfirmation = async (req, res, next) => {
     try {
-        let result = await reSendConfirmationSchema.validateAsync(req.body);
-        let user = await User.findOne({ userMail: result.email });
+        let data = await authValidator(
+            req.body,
+            ["email"],
+            ["username", "password", "token", "rememberMe"]
+        );
+        let user = await User.findOne({ userMail: data.email });
         if (!user)
             throw new createError("This email doesn't exist !", 1030, 404);
         user.externalURL = req.externalURL;
