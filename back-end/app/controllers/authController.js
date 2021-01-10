@@ -120,7 +120,7 @@ const confirmAccount = async (req, res, next) => {
 const forgotPassword = async (req, res, next) => {
     try {
         let data = await authValidator(
-            req.bdoy,
+            req.body,
             ["email"],
             ["username", "password", "token", "rememberMe"]
         );
@@ -155,9 +155,9 @@ const forgotPassword = async (req, res, next) => {
 const resetPassword = async (req, res, next) => {
     try {
         let data = await authValidator(
-            req.bdoy,
-            ["email", "password", "token"],
-            ["username", "rememberMe"]
+            req.body,
+            ["password", "token"],
+            ["email", "username", "rememberMe"]
         );
         let email = await verifyForgotPassword(data.token);
         let user = await User.findOne({ userMail: email });

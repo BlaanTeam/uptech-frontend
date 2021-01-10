@@ -30,7 +30,7 @@ const authValidator = async (credentials, requiredFields, forbiddenFields) => {
             token: joi
                 .string()
                 .pattern(pattern.jwtToken)
-                .message("Please fill a valid email"),
+                .message("Please fill a valid token"),
         });
         authSchema = validator(authSchema, requiredFields, forbiddenFields);
         return await authSchema.validateAsync(credentials);
