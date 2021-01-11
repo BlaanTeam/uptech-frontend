@@ -25,10 +25,10 @@
                 placeholder="What's on your mind"
                 label=""
                 auto-grow
-                :rows="parseInt(postBody.value.length / 30)"
+                :rows="parseInt(content.value.length / 30)"
                 height="auto"
                 counter="5000"
-                v-model="postBody.value"
+                v-model="content.value"
               ></v-textarea>
             </v-col>
           </v-row>
@@ -56,7 +56,7 @@
           </v-tooltip>
 
           <Emojis
-            :inputModel="postBody"
+            :inputModel="content"
             element="CreateTextArea"
             nudge-left="320"
             nudge-top="360"
@@ -112,7 +112,7 @@ export default {
   },
   data: props => ({
     dialog: false,
-    postBody: { value: props.post.postBody },
+    content: { value: props.post.content },
     isPrivate: false
   }),
   computed: {
@@ -121,29 +121,29 @@ export default {
     },
     btnDisabler() {
       return (
-        this.postBody.value === this.post.postBody &&
+        this.content.value === this.post.content &&
         this.isPrivate === this.post.isPrivate
       );
     }
   },
   methods: {
     clearTextArea() {
-      this.postBody.value = "";
+      this.content.value = "";
     },
     async editPost() {
-      if (this.postBody.value.trim() === "" || this.postBody.value.length < 2)
+      if (this.content.value.trim() === "" || this.content.value.length < 2)
         return;
       this.dialog = false;
       try {
         const res = await this.$store.dispatch("editPost", {
-          postBody: this.postBody.value,
+          content: this.content.value,
           isPrivate: this.isPrivate,
           id: this.post._id,
           index: this.index,
           totalLikes: this.post.totalLikes,
           totalComments: this.post.totalComments
         });
-        this.post.postBody = this.postBody.value; // fix TypeError
+        this.post.content = this.content.value; // fix TypeError
         console.log("Post Edited successfully");
       } catch (err) {
         console.log(err);

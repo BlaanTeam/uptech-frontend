@@ -14,11 +14,11 @@
         label=""
         auto-grow
         rows="1"
-        :append-outer-icon="postBody.value.length > 1 ? 'mdi-close' : ''"
+        :append-outer-icon="content.value.length > 1 ? 'mdi-close' : ''"
         @click:append-outer="clearTextArea"
         row-height="10"
         counter="5000"
-        v-model="postBody.value"
+        v-model="content.value"
       ></v-textarea>
     </v-card-subtitle>
     <v-divider></v-divider>
@@ -44,11 +44,11 @@
 
       <Emojis
         attach=".create__post"
-        :inputModel="postBody"
+        :inputModel="content"
         element="CreateTextArea"
       />
       <v-btn
-        :disabled="postBody.value && postBody.value.length < 2"
+        :disabled="content.value && content.value.length < 2"
         @click="createPost"
         class="ms-auto primary"
         elevation="0"
@@ -66,7 +66,7 @@ import Emojis from "@/components/Emojis";
 export default {
   components: { Emojis },
   data: () => ({
-    postBody: { value: "" },
+    content: { value: "" },
     isPrivate: false,
     loading: { value: false }
   }),
@@ -77,19 +77,19 @@ export default {
   },
   methods: {
     clearTextArea() {
-      this.postBody.value = "";
+      this.content.value = "";
     },
     async createPost() {
-      if (this.postBody.value.trim().length < 2) return;
+      if (this.content.value.trim().length < 2) return;
 
-      let temptext = this.postBody.value;
-      this.postBody.value = "";
+      let temptext = this.content.value;
+      this.content.value = "";
       this.loading.value = true;
       this.$emit("creating", this.loading);
 
       try {
         const res = await this.$store.dispatch("createPost", {
-          postBody: temptext,
+          content: temptext,
           isPrivate: this.isPrivate
         });
         if (res.status === 201) {
@@ -98,7 +98,7 @@ export default {
           this.loading.value = false;
         }
       } catch (err) {
-        this.postBody.value = temptext;
+        this.content.value = temptext;
         this.loading.value = false;
 
         console.log(err);

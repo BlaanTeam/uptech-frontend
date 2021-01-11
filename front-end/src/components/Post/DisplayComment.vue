@@ -23,7 +23,7 @@
                 label=""
                 auto-grow
                 :rows="1"
-                v-model="commentBody.value"
+                v-model="content.value"
               ></v-textarea>
             </v-col>
             <v-col cols="1" class="ms-1 align-self-center">
@@ -32,12 +32,12 @@
                 left
                 :attach="'#comment' + comment._id"
                 element="EditCommentTextArea"
-                :inputModel="commentBody"
+                :inputModel="content"
               />
             </v-col>
             <v-col cols="1" class="align-self-center">
               <v-btn
-                :disabled="comment.commentBody === commentBody.value"
+                :disabled="comment.content === content.value"
                 icon
                 @click="editComment()"
               >
@@ -46,7 +46,7 @@
             </v-col>
           </v-row>
           <p v-else class="body-2 font-weight-light ma-0">
-            {{ comment.commentBody }}
+            {{ comment.content }}
           </p>
         </v-row>
       </v-col>
@@ -129,7 +129,7 @@ export default {
   },
   data: props => ({
     editMode: false,
-    commentBody: { value: props.comment.commentBody }
+    content: { value: props.comment.content }
   }),
   computed: {
     userId() {
@@ -138,15 +138,15 @@ export default {
   },
   methods: {
     async editComment() {
-      if (!this.commentBody.value.trim()) return (this.commentBody.value = "");
+      if (!this.content.value.trim()) return (this.content.value = "");
       const api = `/feed/posts/${this.post._id}/comments/${this.comment._id}`;
-      const data = { commentBody: this.commentBody.value };
+      const data = { content: this.content.value };
       try {
         const res = await this.$http.put(api, data);
 
         if (res.status === 200) {
           console.log("Comment Updated successfully");
-          this.comment.commentBody = res.data.commentBody;
+          this.comment.content = res.data.content;
           this.editMode = false;
         }
       } catch (err) {

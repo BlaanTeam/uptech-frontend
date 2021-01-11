@@ -64,7 +64,7 @@ export default {
       if (!this.comment.value.trim()) return (this.comment.value = "");
 
       const api = `/feed/posts/${this.post._id}/comments`;
-      const data = { commentBody: this.comment.value };
+      const data = { content: this.comment.value };
       try {
         const res = await this.$http.post(api, data);
 

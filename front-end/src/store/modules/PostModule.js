@@ -48,7 +48,7 @@ export default {
       return new Promise((resolve, reject) => {
         Vue.prototype.$http
           .post("/feed/posts", {
-            postBody: payload.postBody,
+            content: payload.content,
             isPrivate: payload.isPrivate
           })
           .then(res => {
@@ -64,7 +64,7 @@ export default {
       return new Promise((resolve, reject) => {
         Vue.prototype.$http
           .put(`/feed/posts/${payload.id}`, {
-            postBody: payload.postBody,
+            content: payload.content,
             isPrivate: payload.isPrivate
           })
           .then(res => {

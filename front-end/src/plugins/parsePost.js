@@ -1,7 +1,7 @@
 import { encode } from "html-entities";
 import pattern from "../store/patterns";
-export default function(postBody) {
-  this.text = postBody;
+export default function(content) {
+  this.text = content;
   this.parseMention = function() {
     this.text = this.text.replace(pattern.mentionRegex, value => {
       return `<a href="#/profile/${value
