@@ -9,7 +9,7 @@ const {
 const feedPosts = async (req, res, next) => {
     try {
         // let totalPages = await Post.countDocuments({ isPrivate: false });
-        let query = await postValidator(req.query, []);
+        let query = await postValidator(req.query, { offset: 2, limit: 2 });
         // TODO : add per page options
         // const perPage = 50;
         // const page = 4;
@@ -117,9 +117,6 @@ const feedPosts = async (req, res, next) => {
 
         res.json(posts);
     } catch (err) {
-        if (err.isJoi === true) {
-            err.status = 400;
-        }
         next(err);
     }
 };
@@ -127,7 +124,7 @@ const feedPosts = async (req, res, next) => {
 // This function will handle the creating posts process
 addPost = async (req, res, next) => {
     try {
-        let data = await postValidator(req.body, ["content"]);
+        let data = await postValidator(req.body, { content: 1 });
         let newPost = new Post({
             content: data.content,
             userId: req.currentUser._id,
@@ -143,9 +140,6 @@ addPost = async (req, res, next) => {
         res.status(201);
         res.json(newPost);
     } catch (err) {
-        if (err.isJoi === true) {
-            err.status = 400;
-        }
         next(err);
     }
 };
@@ -155,7 +149,7 @@ const getPost = async (req, res, next) => {
     try {
         let commentsLimit = 10;
         let likesLimit = 10;
-        let params = await postValidator(req.params, ["postId"]);
+        let params = await postValidator(req.params, { postId: 1 });
         let post = await Post.aggregate([
             {
                 $match: {
@@ -308,8 +302,6 @@ const getPost = async (req, res, next) => {
         }
         res.json(post);
     } catch (err) {
-        if (err.isJoi === true)
-            err = new createError("Post Not Found !", 1021, 404);
         next(err);
     }
 };
@@ -318,7 +310,7 @@ const getPost = async (req, res, next) => {
 
 const deletePost = async (req, res, next) => {
     try {
-        let params = await postValidator(req.params, ["postId"]);
+        let params = await postValidator(req.params, { postId: 1 });
         let post = await Post.findOne(
             { _id: params.postId },
             { __v: 0, comments: 0, likes: 0, tags: 0 }
@@ -341,8 +333,6 @@ const deletePost = async (req, res, next) => {
         res.status(204);
         res.end();
     } catch (err) {
-        if (err.isJoi === true)
-            err = new createError("Post Not Found !", 1021, 404);
         next(err);
     }
 };
@@ -351,8 +341,8 @@ const deletePost = async (req, res, next) => {
 
 const updatePost = async (req, res, next) => {
     try {
-        let params = await postValidator(req.params, ["postId"]);
-        let data = await postValidator(req.body, ["content"]);
+        let params = await postValidator(req.params, { postId: 1 });
+        let data = await postValidator(req.body, { content: 1, isPrivate: 2 });
         let post = await Post.findOne(
             { _id: params.postId },
             { __v: 0, comments: 0, likes: 0, tags: 0 }
@@ -377,10 +367,6 @@ const updatePost = async (req, res, next) => {
         await post.save();
         res.json(post);
     } catch (err) {
-        if (err.isJoi === true) {
-            err.status = 400;
-            err.code = 1049;
-        }
         next(err);
     }
 };
@@ -389,11 +375,14 @@ const updatePost = async (req, res, next) => {
 
 const getComments = async (req, res, next) => {
     try {
-        let params = await commentValidator(req.params, [
-            "postId",
-            "commentId",
-        ]);
-        let query = await commentValidator(req.query, ["offset", "limit"]);
+        let params = await commentValidator(req.params, {
+            postId: 1,
+            commentId: 1,
+        });
+        let query = await commentValidator(req.query, {
+            offset: 2,
+            limit: 2,
+        });
         let post = await Post.findOne(
             { _id: params.postId },
             { comments: 1, userId: 1, isPrivate: 1 }
@@ -424,9 +413,6 @@ const getComments = async (req, res, next) => {
         }
         res.json(post);
     } catch (err) {
-        if (err.isJoi === true) {
-            err.status = 400;
-        }
         next(err);
     }
 };
@@ -435,11 +421,14 @@ const getComments = async (req, res, next) => {
 
 const addComment = async (req, res, next) => {
     try {
-        let params = await commentValidator(req.params, [
-            "postId",
-            "commentId",
-        ]);
-        let data = await commentValidator(req.query, ["content"]);
+        let params = await commentValidator(req.params, {
+            postId: 1,
+            commentId: 1,
+        });
+        let data = await commentValidator(req.query, {
+            content: 1,
+            isPrivate: 2,
+        });
         let post = await Post.findOne(
             { _id: params.postId },
             { __v: 0 }
@@ -470,9 +459,6 @@ const addComment = async (req, res, next) => {
             .execPopulate();
         res.json({ comment });
     } catch (err) {
-        if (err.isJoi === true) {
-            err.status = 400;
-        }
         next(err);
     }
 };
@@ -481,10 +467,10 @@ const addComment = async (req, res, next) => {
 
 const getComment = async (req, res, next) => {
     try {
-        let params = await commentValidator(req.params, [
-            "postId",
-            "commentId",
-        ]);
+        let params = await commentValidator(req.params, {
+            postId: 1,
+            commentId: 1,
+        });
         let post = await Post.findOne(
             { _id: params.postId },
             {
@@ -520,9 +506,6 @@ const getComment = async (req, res, next) => {
         // }
         res.json(comment);
     } catch (err) {
-        if (err.isJoi === true) {
-            err.status = 400;
-        }
         next(err);
     }
 };
@@ -531,11 +514,14 @@ const getComment = async (req, res, next) => {
 
 const updateComment = async (req, res, next) => {
     try {
-        let params = await commentValidator(req.params, [
-            "postId",
-            "commentId",
-        ]);
-        let data = await commentValidator(req.query, ["content"]);
+        let params = await commentValidator(req.params, {
+            postId: 1,
+            commentId: 1,
+        });
+        let data = await commentValidator(req.query, {
+            content: 1,
+            isPrivate: 2,
+        });
         let post = await Post.findOne(
             { _id: params.postId },
             {
@@ -579,9 +565,6 @@ const updateComment = async (req, res, next) => {
         await comment.save();
         res.json(comment);
     } catch (err) {
-        if (err.isJoi === true) {
-            err.status = 400;
-        }
         next(err);
     }
 };
@@ -590,10 +573,10 @@ const updateComment = async (req, res, next) => {
 
 const deleteComment = async (req, res, next) => {
     try {
-        let params = await commentValidator(req.params, [
-            "postId",
-            "commentId",
-        ]);
+        let params = await commentValidator(req.params, {
+            postId: 1,
+            commentId: 1,
+        });
         let post = await Post.findOne(
             { _id: params.postId },
             {
@@ -648,9 +631,6 @@ const deleteComment = async (req, res, next) => {
         res.status(204);
         res.json(post);
     } catch (err) {
-        if (err.isJoi === true) {
-            err.status = 400;
-        }
         next(err);
     }
 };
@@ -659,9 +639,11 @@ const deleteComment = async (req, res, next) => {
 
 const likePost = async (req, res, next) => {
     try {
-        let result = await postIdSchema.validateAsync(req.params);
+        let params = await postIdSchema.validateAsync(req.params, {
+            postId: 1,
+        });
         let post = await Post.findOne(
-            { _id: result.postId },
+            { _id: params.postId },
             { likes: 1, isPrivate: 1 }
         ).populate({
             path: "userId",
@@ -703,9 +685,6 @@ const likePost = async (req, res, next) => {
             status: "ok",
         });
     } catch (err) {
-        if (err.isJoi === true) {
-            err.status = 400;
-        }
         next(err);
     }
 };

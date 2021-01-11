@@ -13,11 +13,11 @@ const client = require("../utils/redis");
 // this function will handle the sign-up process
 const signUp = async (req, res, next) => {
     try {
-        let data = await authValidator(
-            req.body,
-            ["username", "email", "password"],
-            ["token", "rememberMe"]
-        );
+        let data = await authValidator(req.body, {
+            username: 1,
+            email: 1,
+            password: 1,
+        });
         let userEixst = await User.findOne({
             $or: [{ userName: data.username }, { userMail: data.email }],
         });
@@ -40,8 +40,6 @@ const signUp = async (req, res, next) => {
         res.status(201);
         res.json({ code: 2062 });
     } catch (err) {
-        if (err.isJoi === true) err = new createError(err.message, 1049, 400);
-
         next(err);
     }
 };
@@ -49,11 +47,11 @@ const signUp = async (req, res, next) => {
 // this function will handle the sign-in process
 const signIn = async (req, res, next) => {
     try {
-        let data = await authValidator(
-            req.body,
-            ["username", "password"],
-            ["token", "email"]
-        );
+        let data = await authValidator(req.body, {
+            username: 1,
+            password: 1,
+            rememberMe: 2,
+        });
         let user = await User.findOne(
             { userName: data.username },
             {
@@ -83,7 +81,6 @@ const signIn = async (req, res, next) => {
         delete resp.user.userPass;
         res.json(resp);
     } catch (err) {
-        if (err.isJoi === true) err = new createError(err.message, 1049, 400);
         next(err);
     }
 };
@@ -92,11 +89,9 @@ const signIn = async (req, res, next) => {
 
 const confirmAccount = async (req, res, next) => {
     try {
-        let data = await authValidator(
-            req.body,
-            ["token"],
-            ["username", "password", "email", "rememberMe"]
-        );
+        let data = await authValidator(req.body, {
+            token: 1,
+        });
         let email = await verifyConfirmationToken(data.token);
         let user = await User.findOne({ userMail: email });
         if (!user) throw new createError("Unauthorized !", 1030, 401);
@@ -106,11 +101,6 @@ const confirmAccount = async (req, res, next) => {
         await user.save();
         res.json({ msg: "Account confirmed succesfully !", code: 2041 });
     } catch (err) {
-        if (err.isJoi === true) err = new createError(err.message, 1049, 400);
-        else if (err.isExpired === true)
-            err = new createError("Invalid token or expired !", 1072, 401);
-        else if (err.isInvalid === true)
-            err = new createError("Invalid token or expired !", 1079, 401);
         next(err);
     }
 };
@@ -119,11 +109,7 @@ const confirmAccount = async (req, res, next) => {
 
 const forgotPassword = async (req, res, next) => {
     try {
-        let data = await authValidator(
-            req.body,
-            ["email"],
-            ["username", "password", "token", "rememberMe"]
-        );
+        let data = await authValidator(req.body, { email: 1 });
         let user = await User.findOne({ userMail: data.email });
         if (!user)
             throw new createError("This email doesn't exist !", 1030, 404);
@@ -145,7 +131,6 @@ const forgotPassword = async (req, res, next) => {
             code: 2013,
         });
     } catch (err) {
-        if (err.isJoi === true) err = new createError(err.message, 1049, 400);
         next(err);
     }
 };
@@ -154,11 +139,10 @@ const forgotPassword = async (req, res, next) => {
 
 const resetPassword = async (req, res, next) => {
     try {
-        let data = await authValidator(
-            req.body,
-            ["password", "token"],
-            ["email", "username", "rememberMe"]
-        );
+        let data = await authValidator(req.body, {
+            token: 1,
+            password: 1,
+        });
         let email = await verifyForgotPassword(data.token);
         let user = await User.findOne({ userMail: email });
         if (!user) throw new createError("Unauthorized !", 1030, 401);
@@ -174,11 +158,6 @@ const resetPassword = async (req, res, next) => {
             res.json({ msg: "The password has been update !", code: 2029 });
         }
     } catch (err) {
-        if (err.isJoi === true) err = new createError(err.message, 1049, 400);
-        else if (err.isExpired === true)
-            err = new createError("Invalid token or expired !", 1072, 401);
-        else if (err.isInvalid === true)
-            err = new createError("Invalid token or expired !", 1079, 401);
         next(err);
     }
 };
@@ -187,11 +166,7 @@ const resetPassword = async (req, res, next) => {
 
 const reSendConfirmation = async (req, res, next) => {
     try {
-        let data = await authValidator(
-            req.body,
-            ["email"],
-            ["username", "password", "token", "rememberMe"]
-        );
+        let data = await authValidator(req.body, { email: 1 });
         let user = await User.findOne({ userMail: data.email });
         if (!user)
             throw new createError("This email doesn't exist !", 1030, 404);
@@ -213,7 +188,6 @@ const reSendConfirmation = async (req, res, next) => {
             msg: "An email has been sent !",
         });
     } catch (err) {
-        if (err.isJoi === true) err = new createError(err.message, 1049, 400);
         next(err);
     }
 };

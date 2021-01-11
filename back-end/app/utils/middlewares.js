@@ -18,10 +18,6 @@ const protectRouter = (router) => {
             req.currentUser = user;
             next();
         } catch (err) {
-            if (err.isExpired === true)
-                err = new createError("Invalid token or expired !", 1072, 401);
-            else if (err.isInvalid === true)
-                err = new createError("Invalid token or expired !", 1079, 401);
             next(err);
         }
     });
@@ -42,10 +38,6 @@ const protectSocketIo = async (socket, next) => {
         socket.currentUser = user;
         next();
     } catch (err) {
-        if (err.isExpired === true)
-            err = new createError("Invalid token or expired !", 1072, 401);
-        else if (err.isInvalid === true)
-            err = new createError("Invalid token or expired !", 1079, 401);
         next({ message: JSON.stringify(err) });
     }
 };
