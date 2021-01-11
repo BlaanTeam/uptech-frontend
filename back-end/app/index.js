@@ -9,7 +9,7 @@ require("dotenv").config(); // Include .env variables
 require("./utils/redis");
 require("./config/db"); // Iniatialize db
 const {
-  app: { port },
+    app: { port },
 } = require("./config/config");
 
 // Include middlewares
@@ -33,8 +33,8 @@ app.use(express.urlencoded({ extended: false }));
 
 // add external url to req param
 app.use((req, res, next) => {
-  req.externalURL = `${req.protocol}://${req.hostname}:${req.app.settings.port}`;
-  next();
+    req.externalURL = `${req.protocol}://${req.hostname}:${req.app.settings.port}`;
+    next();
 });
 
 // Use the middlewares
@@ -51,19 +51,19 @@ app.use("/api/v1/user", profileRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
-  next(createError(404));
+    next(createError(404));
 });
 
 // error handler
 app.use(function (err, req, res, next) {
-  const error = {
-    msg: err.message,
-    code: err.code,
-  };
+    const error = {
+        msg: err.message,
+        code: err.code,
+    };
 
-  // return json response to client
-  res.status(err.status || 500);
-  res.json({ error });
+    // return json response to client
+    res.status(err.status || 500);
+    res.json({ error });
 });
 
 module.exports = server;

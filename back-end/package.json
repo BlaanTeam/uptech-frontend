@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "./bin/www"
+    "start": "nodemon server.js"
   },
   "dependencies": {
     "bcrypt": "^5.0.0",
