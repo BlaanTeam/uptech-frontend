@@ -21,7 +21,7 @@ const postSchema = new Schema({
         type: Date,
         required: false,
     },
-    userId: {
+    user: {
         type: Schema.Types.ObjectId,
         ref: "users",
     },
@@ -44,7 +44,7 @@ const commentSchema = new Schema({
     updatedAt: {
         type: Date,
     },
-    userId: { type: Schema.Types.ObjectId, ref: "users" },
+    user: { type: Schema.Types.ObjectId, ref: "users" },
     postId: { type: Schema.Types.ObjectId, ref: "posts" },
 });
 const likeSchema = new Schema({
@@ -52,7 +52,7 @@ const likeSchema = new Schema({
         type: Boolean,
         default: false,
     },
-    userId: { type: Schema.Types.ObjectId, ref: "users" },
+    user: { type: Schema.Types.ObjectId, ref: "users" },
     postId: { type: Schema.Types.ObjectId, ref: "posts" },
 });
 const tagSchema = new Schema({

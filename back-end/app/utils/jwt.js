@@ -57,9 +57,13 @@ const verifyConfirmationToken = async (token) => {
         return payload["email"];
     } catch (err) {
         if (err.name === "TokenExpiredError") {
-            err.isExpired = true;
+            err.code = 1072;
+            err.status = 401;
+            err.message = "Invalid token or expired !";
         } else if (err.name === "JsonWebTokenError") {
-            err.isInvalid = true;
+            err.code = 1079;
+            err.status = 401;
+            err.message = "Invalid token or expired !";
         }
         throw err;
     }
@@ -89,9 +93,13 @@ const verifyForgotPassword = async (token) => {
         return payload["email"];
     } catch (err) {
         if (err.name === "TokenExpiredError") {
-            err.isExpired = true;
+            err.code = 1072;
+            err.status = 401;
+            err.message = "Invalid token or expired !";
         } else if (err.name === "JsonWebTokenError") {
-            err.isInvalid = true;
+            err.code = 1079;
+            err.status = 401;
+            err.message = "Invalid token or expired !";
         }
         throw err;
     }

@@ -38,13 +38,18 @@ const feedPosts = async (req, res, next) => {
             {
                 $lookup: {
                     from: "users",
-                    localField: "userId",
-                    foreignField: "_id",
-                    // let: { userId: "_id" },
-                    // pipeline: [
-                    //   { $match: { $expr: { $eq: ["$userId", "$userId"] } } },
-                    //   { $project: { userName: 1, profile: 1 } },
-                    // ],
+                    let: { userId: req.currentUser._id },
+                    pipeline: [
+                        {
+                            $match: { $expr: { $eq: ["$_id", "$$userId"] } },
+                        },
+                        {
+                            $project: {
+                                userName: 1,
+                                profile: 1,
+                            },
+                        },
+                    ],
                     as: "user",
                 },
             },
@@ -93,7 +98,6 @@ const feedPosts = async (req, res, next) => {
             },
             {
                 $project: {
-                    userId: 0,
                     liked: 0,
                     comments: 0,
                     likes: 0,
@@ -122,18 +126,18 @@ const feedPosts = async (req, res, next) => {
 };
 
 // This function will handle the creating posts process
-addPost = async (req, res, next) => {
+const addPost = async (req, res, next) => {
     try {
-        let data = await postValidator(req.body, { content: 1 });
+        let data = await postValidator(req.body, { content: 1, isPrivate: 2 });
         let newPost = new Post({
             content: data.content,
-            userId: req.currentUser._id,
+            user: req.currentUser._id,
             isPrivate: data.isPrivate,
         });
         await newPost.save();
         await newPost
             .populate({
-                path: "userId",
+                path: "user",
                 select: "userName profile",
             })
             .execPopulate();
@@ -213,7 +217,7 @@ const getPost = async (req, res, next) => {
                         {
                             $lookup: {
                                 from: "users",
-                                let: { userId: "$userId" },
+                                let: { userId: "$user" },
                                 pipeline: [
                                     {
                                         $match: {
@@ -277,9 +281,11 @@ const getPost = async (req, res, next) => {
             {
                 $lookup: {
                     from: "users",
-                    let: { userId: "$userId" },
+                    let: { userId: req.currentUser._id },
                     pipeline: [
-                        { $match: { $expr: { $eq: ["$_id", "$$userId"] } } },
+                        {
+                            $match: { $expr: { $eq: ["$_id", "$$userId"] } },
+                        },
                         {
                             $project: {
                                 userName: 1,
@@ -314,18 +320,13 @@ const deletePost = async (req, res, next) => {
         let post = await Post.findOne(
             { _id: params.postId },
             { __v: 0, comments: 0, likes: 0, tags: 0 }
-        ).populate({
-            path: "userId",
-            select: "userName profile",
-        });
+        );
         if (!post) throw new createError("Post Not Found !", 1021, 404);
-        else if (
-            post.userId._id.toString() !== req.currentUser._id.toString()
-        ) {
+        else if (post.user.toString() !== req.currentUser._id.toString()) {
             throw new createError("You don't have permission !", 1003, 403);
         } else if (
             post.isPrivate === true &&
-            post.userId._id.toString() !== req.currentUser._id.toString()
+            post.user.toString() !== req.currentUser._id.toString()
         ) {
             throw new createError("You don't have permission !", 1003, 403);
         }
@@ -346,18 +347,12 @@ const updatePost = async (req, res, next) => {
         let post = await Post.findOne(
             { _id: params.postId },
             { __v: 0, comments: 0, likes: 0, tags: 0 }
-        ).populate({
-            path: "userId",
-            select: "userName profile",
-        });
+        );
+        console.log(post);
         if (!post) throw new createError("Post Not Found !", 1021, 404);
-        else if (
-            post.userId._id.toString() !== req.currentUser._id.toString()
-        ) {
+        else if (post.user.toString() !== req.currentUser._id.toString()) {
             throw new createError("You don't have permission !", 1003, 403);
-        } else if (
-            post.userId._id.toString() !== req.currentUser._id.toString()
-        ) {
+        } else if (post.user.toString() !== req.currentUser._id.toString()) {
             throw new createError("You don't have permission !", 1003, 403);
         }
         // update documments
@@ -377,41 +372,91 @@ const getComments = async (req, res, next) => {
     try {
         let params = await commentValidator(req.params, {
             postId: 1,
-            commentId: 1,
         });
         let query = await commentValidator(req.query, {
             offset: 2,
             limit: 2,
         });
-        let post = await Post.findOne(
-            { _id: params.postId },
-            { comments: 1, userId: 1, isPrivate: 1 }
-        )
-            .populate({
-                path: "comments",
-                select: "-__v",
-                options: {
-                    sort: "-createdAt",
-                    skip: query.offset,
-                    limit: query.limit,
+        let post = await Post.aggregate([
+            {
+                $match: {
+                    _id: params.postId,
                 },
-                populate: {
-                    path: "userId",
-                    select: "userName profile",
+            },
+            {
+                $lookup: {
+                    from: "comments",
+                    let: { postId: "$_id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: { $eq: ["$postId", "$$postId"] },
+                            },
+                        },
+                        {
+                            $lookup: {
+                                from: "users",
+                                let: { userId: "$user" },
+                                pipeline: [
+                                    {
+                                        $match: {
+                                            $expr: {
+                                                $eq: ["$_id", "$$userId"],
+                                            },
+                                        },
+                                    },
+                                    {
+                                        $project: {
+                                            userName: 1,
+                                            profile: 1,
+                                        },
+                                    },
+                                ],
+                                as: "user",
+                            },
+                        },
+                        { $unwind: "$user" },
+                        { $project: { __v: 0 } },
+                        { $sort: { createdAt: -1 } },
+                        { $limit: query.limit },
+                        { $skip: query.offset },
+                    ],
+                    as: "comments",
                 },
-            })
-            .populate({
-                path: "userId",
-                select: "userName profile",
-            });
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    let: { userId: "$user" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: { $eq: ["$_id", "$$userId"] },
+                            },
+                        },
+                        { $project: { userName: 1, profile: 1 } },
+                    ],
+                    as: "user",
+                },
+            },
+            { $unwind: "$user" },
+            {
+                $project: {
+                    __v: 0,
+                    likes: 0,
+                    tags: 0,
+                },
+            },
+        ]);
+        post = post[0];
         if (!post) throw new createError("Post Not Found !", 1021, 404);
         else if (
             post.isPrivate === true &&
-            post.userId.toString() !== req.currentUser._id.toString()
+            post.user._id.toString() !== req.currentUser._id.toString()
         ) {
             throw new createError("You don't have permission !", 1003, 403);
         }
-        res.json(post);
+        res.json({ comments: post.comments });
     } catch (err) {
         next(err);
     }
@@ -423,40 +468,32 @@ const addComment = async (req, res, next) => {
     try {
         let params = await commentValidator(req.params, {
             postId: 1,
-            commentId: 1,
         });
-        let data = await commentValidator(req.query, {
+        let data = await commentValidator(req.body, {
             content: 1,
-            isPrivate: 2,
         });
-        let post = await Post.findOne(
-            { _id: params.postId },
-            { __v: 0 }
-        ).populate({
-            path: "userId",
-            select: "userName profile",
-        });
+        let post = await Post.findOne({ _id: params.postId }, { __v: 0 });
         if (!post) throw new createError("Post Not Found !", 1021, 404);
         else if (
             post.isPrivate === true &&
-            post.userId._id.toString() !== req.currentUser._id.toString()
+            post.user.toString() !== req.currentUser._id.toString()
         ) {
             throw new createError("You don't have permission !", 1003, 403);
         }
         let comment = new Comment({
             content: data.content,
-            userId: req.currentUser._id,
+            user: req.currentUser._id,
             postId: params.postId,
         });
         await comment.save();
-        post.comments.push(comment._id);
-        await post.save();
         await comment
             .populate({
-                path: "userId",
+                path: "user",
                 select: "userName profile",
             })
             .execPopulate();
+        post.comments.push(comment._id);
+        await post.save();
         res.json({ comment });
     } catch (err) {
         next(err);
@@ -478,13 +515,13 @@ const getComment = async (req, res, next) => {
                 isPrivate: 1,
             }
         ).populate({
-            path: "userId",
+            path: "user",
             select: "_id",
         });
         if (!post) throw new createError("Post Not Found !", 1021, 404);
         else if (
             post.isPrivate === true &&
-            post.userId._id.toString() !== req.currentUser._id.toString()
+            post.user._id.toString() !== req.currentUser._id.toString()
         ) {
             throw new createError("You don't have permission !", 1003, 403);
         }
@@ -497,7 +534,7 @@ const getComment = async (req, res, next) => {
                 select: "_id",
             })
             .populate({
-                path: "userId",
+                path: "user",
                 select: "userName profile",
             });
         if (!comment) throw new createError("Comment Not Found !", 1022, 404);
@@ -529,13 +566,13 @@ const updateComment = async (req, res, next) => {
                 isPrivate: 1,
             }
         ).populate({
-            path: "userId",
+            path: "user",
             select: "_id",
         });
         if (!post) throw new createError("Post Not Found !", 1021, 404);
         else if (
             post.isPrivate === true &&
-            post.userId._id.toString() !== req.currentUser._id.toString()
+            post.user._id.toString() !== req.currentUser._id.toString()
         ) {
             throw new createError("You don't have permission !", 1003, 403);
         }
@@ -548,15 +585,15 @@ const updateComment = async (req, res, next) => {
                 select: "_id",
             })
             .populate({
-                path: "userId",
+                path: "user",
                 select: "userName profile",
             });
         if (!comment) throw new createError("Comment Not Found !", 1022, 404);
         else if (comment.postId._id.toString() !== post._id.toString()) {
             throw new createError("You don't have permission !", 1003, 403);
         } else if (
-            req.currentUser._id.toString() !== post.userId._id.toString() &&
-            req.currentUser._id.toString() !== comment.userId._id.toString()
+            req.currentUser._id.toString() !== post.user._id.toString() &&
+            req.currentUser._id.toString() !== comment.user._id.toString()
         ) {
             throw new createError("You don't have permission !", 1003, 403);
         }
@@ -590,13 +627,13 @@ const deleteComment = async (req, res, next) => {
                 select: "_id",
             })
             .populate({
-                path: "userId",
+                path: "user",
                 select: "_id userName",
             });
         if (!post) throw new createError("Post Not Found !", 1021, 404);
         else if (
             post.isPrivate === true &&
-            post.userId._id.toString() !== req.currentUser._id.toString()
+            post.user._id.toString() !== req.currentUser._id.toString()
         ) {
             throw new createError("You don't have permission !", 1003, 403);
         }
@@ -609,15 +646,15 @@ const deleteComment = async (req, res, next) => {
                 select: "_id",
             })
             .populate({
-                path: "userId",
+                path: "user",
                 select: "userName profile",
             });
         if (!comment) throw new createError("Comment Not Found !", 1022, 404);
         else if (comment.postId._id.toString() !== post._id.toString()) {
             throw new createError("You don't have permission !", 1003, 403);
         } else if (
-            req.currentUser._id.toString() !== post.userId._id.toString() &&
-            req.currentUser._id.toString() !== comment.userId._id.toString()
+            req.currentUser._id.toString() !== post.user._id.toString() &&
+            req.currentUser._id.toString() !== comment.user._id.toString()
         ) {
             throw new createError("You don't have permission !", 1003, 403);
         }
@@ -646,13 +683,13 @@ const likePost = async (req, res, next) => {
             { _id: params.postId },
             { likes: 1, isPrivate: 1 }
         ).populate({
-            path: "userId",
+            path: "user",
             select: "userName profile",
         });
         if (!post) throw new createError("Post Not Found !", 1021, 404);
         else if (
             post.isPrivate === true &&
-            post.userId._id.toString() !== req.currentUser._id.toString()
+            post.user._id.toString() !== req.currentUser._id.toString()
         ) {
             throw new createError("You don't have permission !", 1003, 403);
         }

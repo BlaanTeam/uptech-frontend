@@ -96,6 +96,7 @@ const commentValidator = async (credentials, select) => {
     try {
         let commentSchema = joi.object({
             content: joi.string().trim(),
+            isPrivate: joi.boolean().default(false),
             offset: joi.number().default(0),
             limit: joi.number().greater(0).less(101).default(50),
             postId: joi.string().custom((value, helper) => {
