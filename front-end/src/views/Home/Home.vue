@@ -1,55 +1,51 @@
 <template>
   <div class="home ma-0 pa-0">
-    <v-container fluid class=" pa-0 ma-0">
-      <section class="first-section d-flex align-end pa-4">
-        <div class="first-section__background">
-          <WaveSvg />
-        </div>
-        <v-row class="first-section__header">
-          <v-col class="ml-10">
-            <h1 class="first-section__title display-2 pb-2 ">
-              Lorem ipsum adipisicing 
-            </h1>
-            <h2 class="first-section__title display-1 pb-10">
-              amet consectetur adipisicing
-            </h2>
-            <div>
-              <v-btn
-                elevation="0"
-                rounded
-                dark
-                class="mt-4 py-6 px-12"
-                color="#e08c04"
-                to="/sign_up"
-              >
-                Create an account
-              </v-btn>
-            </div>
-          </v-col>
-          <v-col class="svg-image d-none d-sm-flex">
-            <SocialSvg />
-          </v-col>
-        </v-row>
-      </section>
-    </v-container>
-    <Guest />
-    <Privacy />
+    <section class="first-section pa-4">
+      <v-row class="first-section__header">
+        <v-col class="ms-1 align-self-center">
+          <h1
+            class="first-section__title text-lg-h2 text-xl-h1 text--primary pb-2 font-weight-regular"
+          >
+            {{ $t("home.section1.h1") }}
+          </h1>
+          <h2 class="first-section__title display-1 text--secondary pb-10">
+            {{ $t("home.section1.h2") }}
+          </h2>
+          <div>
+            <v-btn
+              elevation="0"
+              rounded
+              dark
+              class="mt-4 py-6 px-12"
+              color="primary"
+              to="/sign_up"
+            >
+              {{ $t("home.section1.btn") }}
+            </v-btn>
+          </div>
+        </v-col>
+        <v-col class="align-self-end">
+          <SocialSvg width="500" height="420" />
+        </v-col>
+      </v-row>
+      <div class="first-section__background">
+        <WaveSvg :fillColor="$theme.currentTheme.bg" />
+      </div>
+    </section>
+    <RealTimeChat />
   </div>
 </template>
 
 <script>
-import Guest from "@/components/HomeComponents/Guest";
-import Privacy from "@/components/HomeComponents/Privacy";
-// import svg images
+import RealTimeChat from "@/components/Home/RealTimeChat";
 import SocialSvg from "@/components/svg/SocialSvg";
 import WaveSvg from "@/components/svg/WaveSvg";
 
 export default {
   name: "Home",
   components: {
-    Guest,
-    Privacy,
 
+    RealTimeChat,
     // svg images
     SocialSvg,
     WaveSvg
@@ -66,13 +62,21 @@ export default {
     min-height: 80vh;
     position: relative;
     &__background {
+
+      width: 100vw;
+      height: 100px;
       z-index: 2;
-      #wave-one {
-        position: absolute;
-        bottom: -105px;
-        left: 0;
-        fill: #ffffff;
-      }
+      position: absolute;
+      bottom: -100px;
+      left: 0;
+    }
+  }
+}
+@media screen and (max-width: 700px) {
+  .home {
+    .first-section {
+      margin-top: 50px;
+
     }
   }
 }

@@ -1,15 +1,19 @@
 <template>
   <v-app dark>
-    <UnAuthNav />
+    <Nav />
     <slot></slot>
+    <Footer />
   </v-app>
 </template>
 
 <script>
-import UnAuthNav from "@/layouts/partials/UnAuthNav";
+import Nav from "./partials/UnAuth/Nav";
+import Footer from "./partials/UnAuth/Footer";
+
 export default {
   components: {
-    UnAuthNav
+    Nav,
+    Footer
   }
 };
 </script>

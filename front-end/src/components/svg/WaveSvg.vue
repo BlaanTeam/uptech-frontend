@@ -1,8 +1,8 @@
 <template>
   <svg
+    :fill="fillColor"
     id="wave-one"
-    width="1440"
-    height="146"
+
     viewBox="0 0 1440 146"
     xmlns="http://www.w3.org/2000/svg"
   >
@@ -13,7 +13,11 @@
 </template>
 
 <script>
-export default {};
+export default {
+  props: {
+    fillColor: String
+  }
+};
 </script>
 
 <style></style>

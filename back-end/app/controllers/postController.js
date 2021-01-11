@@ -233,10 +233,10 @@ const getPost = async (req, res, next) => {
                                         },
                                     },
                                 ],
-                                as: "commentUser",
+                                as: "user",
                             },
                         },
-                        { $unwind: "$commentUser" },
+                        { $unwind: "$user" },
                         { $sort: { createdAt: -1 } },
                         { $limit: commentsLimit },
                     ],
@@ -555,7 +555,7 @@ const updateComment = async (req, res, next) => {
             postId: 1,
             commentId: 1,
         });
-        let data = await commentValidator(req.query, {
+        let data = await commentValidator(req.body, {
             content: 1,
             isPrivate: 2,
         });
@@ -676,7 +676,7 @@ const deleteComment = async (req, res, next) => {
 
 const likePost = async (req, res, next) => {
     try {
-        let params = await postIdSchema.validateAsync(req.params, {
+        let params = await postValidator(req.params, {
             postId: 1,
         });
         let post = await Post.findOne(

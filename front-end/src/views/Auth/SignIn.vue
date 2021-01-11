@@ -1,47 +1,95 @@
 <template>
   <v-container fluid fill-height class="sign-in">
     <div class="sign-in__background">
-      <WaveSvg />
+
+      <WaveSvg :fillColor="$theme.currentTheme.secondarybg" />
     </div>
-    <CloudSvg
+    <!-- <CloudSvg
       v-for="(n, i) in ['one', 'two', 'three', 'four']"
       :key="i"
       :id="n"
-    />
-    <v-card class="mx-auto" width="550">
-      <v-avatar color="#F9A826">
+      :fillColor="$theme.currentTheme.secondarybg"
+    /> -->
+    <v-card class="mx-auto bg lighten-1" width="550">
+      <v-avatar class=" pa-0 ma-0 d-block mx-auto primary" width="60px">
+
         <v-icon dark>
           mdi-account-circle
         </v-icon>
       </v-avatar>
-
-      <v-card-title class="display-1 justify-center brown--text">
-        Welcome Back
+      <v-card-title class="pt-0 mt-3 mb-2 display-1 justify-center">
+        {{ $t("signin.h1") }}
       </v-card-title>
-
+      <!-- <v-card-subtitle class="my-2 text-center">
+        <v-btn
+          class="me-2 py-1 text-none my-1"
+          color="secondarybg"
+          rounded
+          elevation="0"
+        >
+          <v-icon left color="#ff0000">mdi-google</v-icon>
+          {{ $t("signin.google") }}
+        </v-btn>
+        <v-btn
+          class="ms-2 py-1 text-none my-1"
+          color="secondarybg"
+          rounded
+          elevation="0"
+        >
+          <v-icon left color="blue">mdi-facebook</v-icon>
+          {{ $t("signin.facebook") }}
+        </v-btn>
+        <v-btn class="me-2 py-1 px-6" color="secondarybg" rounded elevation="0">
+          Log In with
+          <v-icon right color="primary" size="20">mdi-google</v-icon>
+        </v-btn>
+        <v-btn class="ms-2 py-1 px-6" color="secondarybg" rounded elevation="0">
+          Log In with
+          <v-icon right color="primary" size="22">mdi-facebook</v-icon>
+        </v-btn>
+      </v-card-subtitle> -->
       <v-card-text>
-        <v-form>
+        <v-form ref="signin">
           <v-text-field
-            v-model="email"
-            :rules="[rules.required, rules.email]"
-            label="E-mail"
-            hint="test"
+            name="username"
+            autocomplete="false"
+            v-model="username"
+            :label="$t('signin.form.username')"
+            :rules="usernameRules"
           ></v-text-field>
           <v-text-field
-            class="my-6"
+            class="mt-4"
             v-model="password"
-            :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
-            :rules="[rules.required, rules.min]"
-            :type="show1 ? 'text' : 'password'"
+            :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
+            :type="show ? 'text' : 'password'"
             name="password"
-            label="Password"
-            @click:append="show1 = !show1"
+            :label="$t('signin.form.password')"
+            :rules="passwordRules"
+            @click:append="show = !show"
           ></v-text-field>
+          <v-checkbox
+            name="rememberMe"
+            v-model="rememberMe"
+            :label="$t('signin.form.rememberMe')"
+          >
+          </v-checkbox>
+          <router-link class="my-2 d-block" to="forgot_password">
+            {{ $t("signin.form.forgotPassword") }}
+          </router-link>
+          <router-link class="my-2 d-block" block to="resend_confirmation">
+            {{ $t("signin.form.resendConfirmation") }}
+          </router-link>
         </v-form>
       </v-card-text>
-
-      <v-btn block class="py-6" color="#d18409" dark elevation="0">
-        Login
+      <v-btn
+        @click="handlesubmit()"
+        block
+        class="py-6"
+        color="primary"
+        dark
+        elevation="0"
+      >
+        {{ $t("signin.name") }}
       </v-btn>
     </v-card>
   </v-container>
@@ -49,38 +97,101 @@
 
 <script>
 import WaveSvg from "@/components/svg/WaveSvg";
-import CloudSvg from "@/components/svg/CloudSvg";
+// import CloudSvg from "@/components/svg/CloudSvg";
 
 export default {
   components: {
-    WaveSvg,
-    CloudSvg
+    WaveSvg
+    // CloudSvg
   },
-  data: () => ({
-    valid: false,
-    show1: false,
-    password: "",
-    rules: {
-      required: value => !!value || "Required.",
-      min: v => v.length >= 8 || "At least 8 characters",
-      emailMatch: () => `The email and password you entered don't match`
+  data() {
+    return {
+      show: false,
+      // models
+      username: "",
+      password: "",
+      rememberMe: false
+    };
+  },
+  computed: {
+    usernameRules() {
+      return [
+        v => !!v || this.$t("signin.errors.urequired"),
+        v => this.$pattern.username.test(v) || this.$t("signin.errors.invalidu")
+      ];
     },
-    email: "",
-    emailRules: [
-      v => !!v || "E-mail is required",
-      v =>
-        /^\w+([/.-]?\w+)*@\w+([/.-]?\w+)*(\.\w{2,3})+$/.test(v) ||
-        "E-mail must be valid"
-    ]
-  }),
+    passwordRules() {
+      return [
+        v => !!v || this.$t("signin.errors.prequired"),
+        v => this.$pattern.password.test(v) || this.$t("signin.errors.invalidp")
+      ];
+    },
+    valid() {
+      return this.$refs.signin.validate();
+    }
+  },
+  watch: {
+    "$i18n.locale"(newV, oldV) {
+      this.$refs.signin.validate();
+    }
+  },
   methods: {
-    submit() {
-      if (this.$refs.form.validate()) {
-        this.$refs.form.$el.submit();
-      }
+    errorNotification(text, type = "error") {
+      this.$notify({
+        group: "errors",
+        type: type,
+        title: this.$t("signin.errors.auth"),
+        text: text
+      });
     },
-    clear() {
-      this.$refs.form.reset();
+    handlesubmit() {
+      if (this.valid) {
+        let loader = this.$loading.show({
+          container: null,
+          canCancel: false
+        });
+        this.$store
+          .dispatch("signIn", {
+            username: this.username,
+            password: this.password,
+            rememberMe: this.rememberMe
+          })
+          .then(res => {
+            loader.hide();
+            if (res.status === 200 && res.data.code === 2032) {
+              if (this.$route.query.nextPath) {
+                this.$router
+                  .push({ name: this.$route.query.nextPath })
+                  .then(null, err => {
+                    this.$router.push({ name: "NotFound" });
+                  });
+              } else this.$router.push({ name: "Feeds" });
+            }
+          })
+          .catch(({ response }) => {
+            loader.hide();
+            this.password = "";
+            if (
+              response?.status === 404 &&
+              response?.data?.error?.code === 1030
+            ) {
+              this.errorNotification(this.$t("signin.errors.notRegistredYet"));
+            } else if (
+              response?.status === 401 &&
+              response?.data?.error?.code === 1024
+            ) {
+              this.errorNotification(this.$t("signin.errors.invalid"));
+            } else if (
+              response?.status === 401 &&
+              response?.data?.error?.code === 1063
+            ) {
+              this.errorNotification(
+                this.$t("signin.errors.notConfirmed"),
+                "warn"
+              );
+            }
+          });
+      }
     }
   }
 };
@@ -96,8 +207,6 @@ export default {
       position: absolute;
       bottom: 0px;
       left: 0;
-      // color: #d18409
-      fill: rgb(207, 206, 206);
     }
   }
 
@@ -105,24 +214,25 @@ export default {
   #two,
   #three,
   #four {
-    position: absolute;
-    fill: #e0e0e0;
+    position: fixed;
   }
   #one {
-    top: 50px;
-    left: 0;
+    top: 10vw;
+    left: -15%;
   }
   #two {
-    top: -10px;
+    top: -2vw;
     left: 20%;
   }
   #three {
-    top: -30px;
-    left: 60%;
+    top: -5vw;
+    left: 50%;
   }
   #four {
-    top: 20px;
+    top: 5vw;
     right: 0;
+    color: #f5c55e;
+
   }
 }
 </style>

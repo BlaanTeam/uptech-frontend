@@ -1,47 +1,31 @@
 import Vue from "vue";
+import i18n from "../plugins/i18n";
+import store from "../store";
 import VueRouter from "vue-router";
-import Home from "../views/Home/Home.vue";
+
+import home from "./home";
+import auth from "./auth";
+import post from "./post";
+import profile from "./profile";
+
+
 Vue.use(VueRouter);
 
+const t = (key, params) => i18n.t(key, { ...params });
+
 const routes = [
+  ...home,
+  ...auth,
+  ...post,
+  ...profile,
   {
-    path: "/",
-    name: "Home",
-    component: Home,
-    meta: {
-      title: "Home"
-    }
-  },
-  {
-    path: "/about",
-    name: "About",
-    component: () => import("@/views/Home/About"),
-    meta: {
-      title: "About Us"
-    }
-  },
-  {
-    path: "/sign_in",
-    name: "SignIn",
-    component: () => import("@/views/Auth/SignIn"),
-    meta: {
-      title: "Sign In"
-    }
-  },
-  {
-    path: "/sign_up",
-    name: "SignUp",
-    component: () => import("@/views/Auth/SignUp"),
-    meta: {
-      title: "Sing Up"
-    }
-  },
-  {
-    path: "*",
+    path: "/not_found",
+    alias: "*",
     name: "NotFound",
     component: () => import("@/views/Errors/NotFound"),
     meta: {
-      title: "Not Found"
+      global: true,
+      title: "titles.notFound"
     }
   }
 ];
@@ -54,8 +38,31 @@ const router = new VueRouter({
 
 router.afterEach((to, from) => {
   Vue.nextTick(() => {
-    document.title = "UpTech | " + (to.meta.title || "Welcome");
+    document.title = `${t("appName")} | ${t(to.meta.title, { ...to.meta })}`;
   });
 });
-
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.authRequired)) {
+    if (store.getters.isLoggedIn) {
+      next();
+    } else {
+      next({
+        name: "SignIn",
+        query: {
+          nextPath: to.name
+        }
+      });
+    }
+  } else if (to.matched.some(record => record.meta.global)) {
+    next();
+  } else {
+    if (store.getters.isLoggedIn) {
+      next({
+        name: "Feeds"
+      });
+    } else {
+      next();
+    }
+  }
+});
 export default router;
