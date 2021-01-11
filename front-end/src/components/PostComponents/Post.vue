@@ -99,8 +99,7 @@
       </v-row>
     </v-card-title>
 
-    <div class="title font-weight-light ps-6 pe-2 pb-2">
-      {{ postBody }}
+    <div class="title font-weight-light ps-6 pe-2 pb-2" v-html="postBody">
       <a
         id="read-more"
         text
@@ -200,7 +199,7 @@ export default {
     postBody() {
       if (this.post.postBody.length > 300 && !this.readActivated) {
         return this.post.postBody.slice(0, 300) + "...";
-      } else return this.post.postBody;
+      } else return this.parseBody(this.post.postBody);
     },
     toggleMoreLess() {
       if (!this.readActivated) return "read&nbsp;more";
