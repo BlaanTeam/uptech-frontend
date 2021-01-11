@@ -12,7 +12,7 @@
             <v-col cols="2" class="pa-0 ma-0 text-center">
               <v-avatar width="40" color="green" class="mt-2">
                 <span class="white--text caption">
-                  {{ post.postUser.userName.slice(0, 4) }}
+                  {{ post.user.userName.slice(0, 4) }}
                 </span>
               </v-avatar>
             </v-col>

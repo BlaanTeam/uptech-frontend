@@ -4,14 +4,14 @@
       <v-col cols="1" class="">
         <v-avatar width="20" color="green">
           <span class="white--text caption">
-            {{ comment.commentUser.userName.slice(0, 4) }}
+            {{ comment.user.userName.slice(0, 4) }}
           </span>
         </v-avatar>
       </v-col>
       <v-col cols="9" class="auth-bg rounded-lg ps-3 pe-2 mx-1 pt-1 pb-2">
         <v-row no-gutters>
           <span text class="body-2 font-weight-bold">
-            {{ comment.commentUser.userName }}
+            {{ comment.user.userName }}
           </span>
         </v-row>
         <v-row no-gutters>
@@ -61,10 +61,7 @@
         >
           <template v-slot:activator="{ on, attrs }">
             <v-btn
-              v-show="
-                userId === post.postUser._id ||
-                  userId === comment.commentUser._id
-              "
+              v-show="userId === post.user._id || userId === comment.user._id"
               v-bind="attrs"
               v-on="on"
               class="auth-secondarybg"
@@ -77,14 +74,14 @@
           <v-list-item-group class="auth-secondarybg">
             <v-list-item
               dense
-              v-if="editMode && userId === comment.commentUser._id"
+              v-if="editMode && userId === comment.user._id"
               @click="editMode = false"
             >
               <v-icon left small color="blue">mdi-file-undo</v-icon>
               <v-list-item-title class="blue--text">cancel</v-list-item-title>
             </v-list-item>
             <v-list-item
-              v-if="userId === comment.commentUser._id"
+              v-if="userId === comment.user._id"
               dense
               @click="editMode = true"
             >
@@ -92,10 +89,7 @@
               <v-list-item-title>edit</v-list-item-title>
             </v-list-item>
             <v-list-item
-              v-if="
-                userId === comment.commentUser._id ||
-                  userId === post.postUser._id
-              "
+              v-if="userId === comment.user._id || userId === post.user._id"
               dense
               @click="deleteComment()"
             >

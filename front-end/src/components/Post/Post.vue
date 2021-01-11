@@ -7,12 +7,12 @@
             <router-link
               :to="{
                 name: 'ViewProfile',
-                params: { userId: post.postUser._id }
+                params: { userId: post.user._id }
               }"
             >
               <v-avatar width="40" color="red">
                 <span class="white--text caption">
-                  {{ post.postUser.userName.slice(0, 4) }}
+                  {{ post.user.userName.slice(0, 4) }}
                 </span>
               </v-avatar>
             </router-link>
@@ -22,12 +22,12 @@
           <router-link
             :to="{
               name: 'ViewProfile',
-              params: { userId: post.postUser._id }
+              params: { userId: post.user._id }
             }"
             class="pa-0 ma-0"
           >
             <h5 class="font-weight-medium d-inline-block">
-              {{ post.postUser.userName }}
+              {{ post.user.userName }}
             </h5>
           </router-link>
           <p class="caption text--disabled pa-0 mt-n2 ma-0 d-block">
@@ -74,7 +74,7 @@
               <EditPost
                 :post="post"
                 :index="index"
-                v-if="post.postUser._id === userId"
+                v-if="post.user._id === userId"
               >
                 <v-list-item dense>
                   <v-icon left small>mdi-square-edit-outline</v-icon>
@@ -84,7 +84,7 @@
               <DeletePost
                 :post="post"
                 :index="index"
-                v-if="post.postUser._id === userId"
+                v-if="post.user._id === userId"
               >
                 <v-list-item dense class="text-start">
                   <v-icon left color="red" small>mdi-delete</v-icon>
