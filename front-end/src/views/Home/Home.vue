@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import RealTimeChat from "@/components/HomeComponents/RealTimeChat";
+import RealTimeChat from "@/components/Home/RealTimeChat";
 import SocialSvg from "@/components/svg/SocialSvg";
 import WaveSvg from "@/components/svg/WaveSvg";
 

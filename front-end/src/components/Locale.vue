@@ -26,19 +26,25 @@ export default {
   methods: {
     setLocale(locale) {
       this.$i18n.locale = locale;
+      this.$timeago.locale = locale;
       localStorage.setItem("locale", locale);
       if (locale === "ar") {
         this.$vuetify.rtl = true;
-      } else this.$vuetify.rtl = false;
+      } else {
+        this.$vuetify.rtl = false;
+      }
       // TODO: auto reload after locale changing
     }
   },
-  beforeCreate() {
-    this.locale = localStorage.getItem("locale");
-    if (this.locale === "ar") {
+  created() {
+    let locale = localStorage.getItem("locale");
+    this.$i18n.locale = locale;
+    this.$timeago.locale = locale;
+    if (locale === "ar") {
       this.$vuetify.rtl = true;
+    } else {
+      this.$vuetify.rtl = false;
     }
-    this.$i18n.locale = this.locale;
   }
 };
 </script>

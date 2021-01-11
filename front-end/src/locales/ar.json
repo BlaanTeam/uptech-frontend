@@ -11,7 +11,9 @@
     "errors": {
       "connectionError": "Connection Error",
       "wentWrong": "عذرًا ، حدث خطأ ما",
-      "lostConnection": "فقدت الاتصال!"
+      "lostConnection": "فقدت الاتصال!",
+      "authError": "خطأ في التفويض",
+      "authorizationError": "من فضلك قبل القيام بأي شيء ، يجب عليك تسجيل الدخول!"
     }
   },
   "nav": {
@@ -30,7 +32,10 @@
     "notFound": "غير موجود‎",
     "resetPassword": "إعادة تعيين كلمة المرور",
     "forgotPassword": "هل نسيت كلمة المرور؟",
-    "resendConfirmation": "أعد إرسال التأكيد"
+    "resendConfirmation": "أعد إرسال التأكيد",
+    "feeds": "المشاركات",
+    "myProfile": "ملفي الشخصي",
+    "viewProfile": "ملف {userName}"
   },
 
   "home": {

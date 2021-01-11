@@ -1,18 +1,18 @@
 <template>
   <v-app dark>
-    <AuthNav />
-    <AuthAppBar />
+    <SideNav />
+    <AppBar />
     <slot></slot>
   </v-app>
 </template>
 
 <script>
-import AuthNav from "@/layouts/partials/AuthNav";
-import AuthAppBar from "../components/Navigation/AuthAppBar";
+import SideNav from "./partials/Auth/SideNav";
+import AppBar from "./partials/Auth/AppBar";
 export default {
   components: {
-    AuthNav,
-    AuthAppBar
+    SideNav,
+    AppBar
   }
 };
 </script>
