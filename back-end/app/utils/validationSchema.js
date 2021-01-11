@@ -2,12 +2,28 @@ const joi = require("joi");
 const mongoose = require("mongoose");
 const { pattern } = require("../config/config");
 
-const validator = (schema, requiredFields, forbiddenFields) => {
+const validator = (schema, select = {}) => {
+    const requiredFields = [];
+    const optionalFields = [];
+    const forbiddenFields = [];
+    schema._ids._byKey.forEach((el) => {
+        switch (select[el.id]) {
+            case 1:
+                requiredFields.push(el.id);
+                break;
+            case 2:
+                optionalFields.push(el.id);
+                break;
+            default:
+                forbiddenFields.push(el.id);
+        }
+    });
     schema = schema.fork(requiredFields, (field) => field.required());
+    schema = schema.fork(optionalFields, (field) => field.optional());
     schema = schema.fork(forbiddenFields, (field) => field.forbidden());
     return schema;
 };
-const authValidator = async (credentials, requiredFields, forbiddenFields) => {
+const authValidator = async (credentials, select) => {
     try {
         let authSchema = joi.object({
             username: joi
@@ -32,14 +48,20 @@ const authValidator = async (credentials, requiredFields, forbiddenFields) => {
                 .pattern(pattern.jwtToken)
                 .message("Please fill a valid token"),
         });
-        authSchema = validator(authSchema, requiredFields, forbiddenFields);
+        authSchema = validator(authSchema, select);
         return await authSchema.validateAsync(credentials);
     } catch (err) {
+        if (err.isJoi) {
+            err.status = 400;
+            err.code = 1049;
+            // TODO add message in  production
+            // err.message = "Missing or invalid fields.";
+        }
         throw err;
     }
 };
 
-const postValidator = async (credentials, requiredFields, forbiddenFields) => {
+const postValidator = async (credentials, select) => {
     try {
         let postSchema = joi.object({
             postId: joi.string().custom((value, helper) => {
@@ -47,31 +69,35 @@ const postValidator = async (credentials, requiredFields, forbiddenFields) => {
                     let result = mongoose.Types.ObjectId(value);
                     return result;
                 } catch (err) {
-                    return helper.message("Post Not Found!");
+                    return helper.message("Post Not Found!", {
+                        postNotFound: true,
+                    });
                 }
             }),
             content: joi.string().min(2).max(5000).trim(),
             isPrivate: joi.boolean().default(false),
-            offset: joi.number().optional().default(0),
-            limit: joi.number().greater(0).less(101).optional().default(50),
+            offset: joi.number().default(0),
+            limit: joi.number().greater(0).less(101).default(50),
         });
-        postSchema = validator(postSchema, requiredFields, forbiddenFields);
+        postSchema = validator(postSchema, select);
         return await postSchema.validateAsync(credentials);
     } catch (err) {
+        if (err.isJoi) {
+            err.status = 400;
+            err.code = 1049;
+            // TODO add message in  production
+            // err.message = "Missing or invalid fields.";
+        }
         throw err;
     }
 };
 
-const commentValidator = async (
-    credentials,
-    requiredFields = [],
-    forbiddenFields = []
-) => {
+const commentValidator = async (credentials, select) => {
     try {
         let commentSchema = joi.object({
             content: joi.string().trim(),
-            offset: joi.number().optional().default(0),
-            limit: joi.number().greater(0).less(101).optional().default(50),
+            offset: joi.number().default(0),
+            limit: joi.number().greater(0).less(101).default(50),
             postId: joi.string().custom((value, helper) => {
                 try {
                     let result = mongoose.Types.ObjectId(value);
@@ -90,22 +116,20 @@ const commentValidator = async (
             }),
         });
 
-        commentSchema = validator(
-            commentSchema,
-            requiredFields,
-            forbiddenFields
-        );
+        commentSchema = validator(commentSchema, select);
         return await commentSchema.validateAsync(credentials);
     } catch (err) {
+        if (err.isJoi) {
+            err.status = 400;
+            err.code = 1049;
+            // TODO add message in  production
+            // err.message = "Missing or invalid fields.";
+        }
         throw err;
     }
 };
 
-const profileValidator = async (
-    credentials,
-    requiredFields = [],
-    forbiddenFields = []
-) => {
+const profileValidator = async (credentials, select) => {
     try {
         let profileSchema = joi.object({
             userName: joi
@@ -131,21 +155,19 @@ const profileValidator = async (
                     .trim(),
             }),
         });
-        profileSchema = validator(
-            profileSchema,
-            requiredFields,
-            forbiddenFields
-        );
+        profileSchema = validator(profileSchema, select);
         return await profileSchema.validateAsync(credentials);
     } catch (err) {
+        if (err.isJoi) {
+            err.status = 400;
+            err.code = 1049;
+            // TODO add message in  production
+            // err.message = "Missing or invalid fields.";
+        }
         throw err;
     }
 };
-const followValidator = async (
-    credentials,
-    requiredFields = [],
-    forbiddenFields = []
-) => {
+const followValidator = async (credentials, select) => {
     try {
         followSchema = joi.object({
             userName: joi
@@ -153,9 +175,15 @@ const followValidator = async (
                 .pattern(pattern.username)
                 .message("Please fill a valid userName"),
         });
-        followSchema = validator(followSchema, requiredFields, forbiddenFields);
+        followSchema = validator(followSchema, select);
         return await followSchema.validateAsync(credentials);
     } catch (err) {
+        if (err.isJoi) {
+            err.status = 400;
+            err.code = 1049;
+            // TODO add message in  production
+            // err.message = "Missing or invalid fields.";
+        }
         throw err;
     }
 };
