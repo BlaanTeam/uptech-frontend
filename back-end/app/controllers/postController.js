@@ -555,7 +555,7 @@ const updateComment = async (req, res, next) => {
             postId: 1,
             commentId: 1,
         });
-        let data = await commentValidator(req.query, {
+        let data = await commentValidator(req.body, {
             content: 1,
             isPrivate: 2,
         });
