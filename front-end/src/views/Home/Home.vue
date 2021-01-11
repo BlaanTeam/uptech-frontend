@@ -44,7 +44,6 @@ import WaveSvg from "@/components/svg/WaveSvg";
 export default {
   name: "Home",
   components: {
-
     RealTimeChat,
     // svg images
     SocialSvg,
@@ -62,7 +61,6 @@ export default {
     min-height: 80vh;
     position: relative;
     &__background {
-
       width: 100vw;
       height: 100px;
       z-index: 2;
@@ -76,7 +74,6 @@ export default {
   .home {
     .first-section {
       margin-top: 50px;
-
     }
   }
 }

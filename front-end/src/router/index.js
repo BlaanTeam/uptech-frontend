@@ -8,7 +8,6 @@ import auth from "./auth";
 import post from "./post";
 import profile from "./profile";
 
-
 Vue.use(VueRouter);
 
 const t = (key, params) => i18n.t(key, { ...params });
