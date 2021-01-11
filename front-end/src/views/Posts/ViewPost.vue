@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import Post from "@/components/PostComponents/Post";
+import Post from "@/components/Post/Post";
 import PostSkeleton from "@/components/Skeletons/PostSkeleton";
 import CommentSkeleton from "@/components/Skeletons/CommentSkeleton";
 

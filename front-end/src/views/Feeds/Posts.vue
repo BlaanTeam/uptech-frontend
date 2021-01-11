@@ -20,8 +20,8 @@
 </template>
 
 <script>
-import CreatePost from "@/components/PostComponents/CreatePost";
-import Post from "@/components/PostComponents/Post";
+import CreatePost from "@/components/Post/CreatePost";
+import Post from "@/components/Post/Post";
 import PostSkeleton from "@/components/Skeletons/PostSkeleton";
 
 export default {
