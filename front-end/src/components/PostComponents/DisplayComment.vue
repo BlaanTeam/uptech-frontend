@@ -51,13 +51,7 @@
         </v-row>
       </v-col>
 
-      <v-col
-        v-show="
-          userId === post.postUser._id || userId === comment.commentUser._id
-        "
-        cols="1"
-        class="align-self-center"
-      >
+      <v-col cols="1" class="align-self-center">
         <v-menu
           :attach="'#comment' + comment._id"
           nudge-right="25"
@@ -67,6 +61,10 @@
         >
           <template v-slot:activator="{ on, attrs }">
             <v-btn
+              v-show="
+                userId === post.postUser._id ||
+                  userId === comment.commentUser._id
+              "
               v-bind="attrs"
               v-on="on"
               class="auth-secondarybg"
