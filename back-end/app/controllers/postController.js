@@ -676,7 +676,7 @@ const deleteComment = async (req, res, next) => {
 
 const likePost = async (req, res, next) => {
     try {
-        let params = await postIdSchema.validateAsync(req.params, {
+        let params = await postValidator(req.params, {
             postId: 1,
         });
         let post = await Post.findOne(
