@@ -28,10 +28,25 @@ const feedPosts = async (req, res, next) => {
             {
                 $lookup: {
                     from: "likes",
-                    localField: "_id",
-                    foreignField: "postId",
-                    // let: { post_id: "_id" },
-                    // pipeline: [{ $match: { $expr: { $eq: ["$$post_id", "$postId"] } } }],
+                    // localField: "_id",
+                    // foreignField: "postId",
+                    let: { postId: "$_id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ["$postId", "$$postId"],
+                                        },
+                                        {
+                                            $eq: ["$liked", true],
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                    ],
                     as: "likesCount",
                 },
             },
@@ -70,6 +85,9 @@ const feedPosts = async (req, res, next) => {
                                         },
                                         {
                                             $eq: ["$user", "$$userId"],
+                                        },
+                                        {
+                                            $eq: ["$liked", true],
                                         },
                                     ],
                                 },
@@ -163,6 +181,26 @@ const getPost = async (req, res, next) => {
             {
                 $lookup: {
                     from: "likes",
+                    let: { postId: "$_id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ["$postId", "$$postId"] },
+                                        { $eq: ["$liked", true] },
+                                    ],
+                                },
+                            },
+                        },
+                        { $project: { __v: 0 } },
+                    ],
+                    as: "likes",
+                },
+            },
+            {
+                $lookup: {
+                    from: "likes",
                     let: { userId: req.currentUser._id, postId: params.postId },
                     pipeline: [
                         {
@@ -175,6 +213,9 @@ const getPost = async (req, res, next) => {
                                         {
                                             $eq: ["$user", "$$userId"],
                                         },
+                                        {
+                                            $eq: ["$liked", true],
+                                        },
                                     ],
                                 },
                             },
@@ -183,7 +224,6 @@ const getPost = async (req, res, next) => {
                     as: "liked",
                 },
             },
-            // { $unwind: "$liked" },
             {
                 $addFields: {
                     totalComments: { $size: "$comments" },
@@ -693,31 +733,60 @@ const likePost = async (req, res, next) => {
         ) {
             throw new createError("You don't have permission !", 1003, 403);
         }
-        let isLikingPost = await post.isLikedByUser(req.currentUser._id);
+        // check if user like the post
 
-        if (isLikingPost === true) {
-            let like = await Like.findOne({
+        let like = await Like.findOne({
+            user: req.currentUser._id.toString(),
+            postId: params.postId,
+        });
+        console.log(like);
+        if (!like) {
+            let newLike = new Like({
                 user: req.currentUser._id,
-                postId: post._id,
+                postId: params.postId,
+                liked: true,
             });
-
+            await newLike.save();
+            post.likes.push(newLike._id);
+            await post.save();
+        } else {
+            like.liked = !like.liked;
             let deletedLike = await Post.findOneAndUpdate(
                 {
-                    _id: post._id,
+                    _id: params.postId,
                 },
-                { $pull: { likes: like._id } },
-                { new: true }
+                {
+                    $pull: { likes: like._id },
+                },
+                {
+                    new: true,
+                }
             );
-            await like.remove();
-        } else {
-            let like = new Like({
-                user: req.currentUser._id,
-                postId: post._id,
-            });
             await like.save();
-            post.likes.push(like._id);
-            await post.save();
         }
+        // if (isLikingPost === true) {
+        //     let like = await Like.findOne({
+        //         user: req.currentUser._id,
+        //         postId: post._id,
+        //     });
+
+        //     let deletedLike = await Post.findOneAndUpdate(
+        //         {
+        //             _id: post._id,
+        //         },
+        //         { $pull: { likes: like._id } },
+        //         { new: true }
+        //     );
+        //     await like.remove();
+        // } else {
+        //     let like = new Like({
+        //         user: req.currentUser._id,
+        //         postId: post._id,
+        //     });
+        //     await like.save();
+        //     post.likes.push(like._id);
+        //     await post.save();
+        // }
         res.json({
             status: "ok",
         });
