@@ -1,6 +1,7 @@
 <template>
   <v-container fluid fill-height class="sign-in">
     <div class="sign-in__background">
+
       <WaveSvg :fillColor="$theme.currentTheme.secondarybg" />
     </div>
     <!-- <CloudSvg
@@ -11,6 +12,7 @@
     /> -->
     <v-card class="mx-auto bg lighten-1" width="550">
       <v-avatar class=" pa-0 ma-0 d-block mx-auto primary" width="60px">
+
         <v-icon dark>
           mdi-account-circle
         </v-icon>
@@ -230,6 +232,7 @@ export default {
     top: 5vw;
     right: 0;
     color: #f5c55e;
+
   }
 }
 </style>

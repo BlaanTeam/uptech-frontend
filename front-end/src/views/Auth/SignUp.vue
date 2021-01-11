@@ -1,5 +1,6 @@
 <template>
   <v-container fluid class="sign-up d-flex">
+
     <SignupWaveSvg
       :fillColor="$theme.currentTheme.secondarybg"
       class="background"
@@ -21,12 +22,14 @@
             :label="$t('signup.form.username')"
             :rules="usernameRules"
           ></v-text-field>
+
           <v-text-field
             prepend-icon="mdi-email"
             class="my-6"
             v-model="email"
             :rules="emailRules"
             :label="$t('signup.form.email')"
+
             required
             type="email"
             name="email"

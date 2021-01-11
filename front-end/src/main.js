@@ -48,7 +48,6 @@ Vue.use(VEmojiPicker);
 Vue.prototype.$theme = vuetify.framework.theme;
 Vue.prototype.$pattern = patterns;
 Vue.config.productionTip = false;
-
 new Vue({
   computed: {
     isLoggedIn: _ => store.getters.isLoggedIn

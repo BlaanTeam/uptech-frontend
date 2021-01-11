@@ -2,6 +2,7 @@
   <svg
     :fill="fillColor"
     id="wave-one"
+
     viewBox="0 0 1440 146"
     xmlns="http://www.w3.org/2000/svg"
   >

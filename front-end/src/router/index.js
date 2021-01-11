@@ -2,10 +2,12 @@ import Vue from "vue";
 import i18n from "../plugins/i18n";
 import store from "../store";
 import VueRouter from "vue-router";
+
 import home from "./home";
 import auth from "./auth";
 import post from "./post";
 import profile from "./profile";
+
 
 Vue.use(VueRouter);
 

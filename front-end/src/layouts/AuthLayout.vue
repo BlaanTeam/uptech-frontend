@@ -2,6 +2,7 @@
   <v-app dark>
     <SideNav />
     <AppBar />
+
     <slot></slot>
   </v-app>
 </template>

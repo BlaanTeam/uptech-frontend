@@ -19,6 +19,7 @@
       </v-main>
     </AuthLayout>
   </div>
+
 </template>
 
 <script>
@@ -26,10 +27,7 @@ import UnAuthLayout from "./layouts/UnAuthLayout";
 import AuthLayout from "@/layouts/AuthLayout";
 
 export default {
-  data: () => ({
-    locale: "en"
-  }),
-  name: "App",
+
   components: {
     UnAuthLayout,
     AuthLayout
