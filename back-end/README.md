@@ -54,3 +54,7 @@ In case you wanna run the script :
 ```sh
 npm start
 ```
+
+## API's Documentations
+
+We use [postman](https://www.postman.com/) to document our API's. all endpoints with their documentation [here](https://documenter.getpostman.com/view/11044396/TVzRFxms)

@@ -33,7 +33,8 @@ app.use(express.urlencoded({ extended: false }));
 
 // add external url to req param
 app.use((req, res, next) => {
-    req.externalURL = `${req.protocol}://${req.hostname}:${req.app.settings.port}`;
+    // req.externalURL = `${req.protocol}://${req.hostname}:${req.app.settings.port}`; // production
+    req.externalURL = `${req.protocol}://${req.hostname}:8080`; // development
     next();
 });
 
