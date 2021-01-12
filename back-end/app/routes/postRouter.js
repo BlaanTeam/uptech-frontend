@@ -17,6 +17,6 @@ router.delete(
     "/posts/:postId/comments/:commentId",
     postController.deleteComment
 );
-router.post("/posts/:postId/like", postController.likePost);
+router.put("/posts/:postId/likes", postController.likePost);
 
 module.exports = router;

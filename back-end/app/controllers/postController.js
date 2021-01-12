@@ -619,17 +619,12 @@ const updateComment = async (req, res, next) => {
         let comment = await Comment.findOne(
             { _id: params.commentId },
             { __v: 0 }
-        )
-            .populate({
-                path: "postId",
-                select: "_id",
-            })
-            .populate({
-                path: "user",
-                select: "userName profile",
-            });
+        ).populate({
+            path: "user",
+            select: "userName profile",
+        });
         if (!comment) throw new createError("Comment Not Found !", 1022, 404);
-        else if (comment.postId._id.toString() !== post._id.toString()) {
+        else if (comment.postId.toString() !== post._id.toString()) {
             throw new createError("You don't have permission !", 1003, 403);
         } else if (
             req.currentUser._id.toString() !== post.user._id.toString() &&
@@ -680,17 +675,12 @@ const deleteComment = async (req, res, next) => {
         let comment = await Comment.findOne(
             { _id: params.commentId },
             { __v: 0 }
-        )
-            .populate({
-                path: "postId",
-                select: "_id",
-            })
-            .populate({
-                path: "user",
-                select: "userName profile",
-            });
+        ).populate({
+            path: "user",
+            select: "userName profile",
+        });
         if (!comment) throw new createError("Comment Not Found !", 1022, 404);
-        else if (comment.postId._id.toString() !== post._id.toString()) {
+        else if (comment.postId.toString() !== post._id.toString()) {
             throw new createError("You don't have permission !", 1003, 403);
         } else if (
             req.currentUser._id.toString() !== post.user._id.toString() &&
@@ -739,7 +729,6 @@ const likePost = async (req, res, next) => {
             user: req.currentUser._id.toString(),
             postId: params.postId,
         });
-        console.log(like);
         if (!like) {
             let newLike = new Like({
                 user: req.currentUser._id,
@@ -764,31 +753,8 @@ const likePost = async (req, res, next) => {
             );
             await like.save();
         }
-        // if (isLikingPost === true) {
-        //     let like = await Like.findOne({
-        //         user: req.currentUser._id,
-        //         postId: post._id,
-        //     });
-
-        //     let deletedLike = await Post.findOneAndUpdate(
-        //         {
-        //             _id: post._id,
-        //         },
-        //         { $pull: { likes: like._id } },
-        //         { new: true }
-        //     );
-        //     await like.remove();
-        // } else {
-        //     let like = new Like({
-        //         user: req.currentUser._id,
-        //         postId: post._id,
-        //     });
-        //     await like.save();
-        //     post.likes.push(like._id);
-        //     await post.save();
-        // }
         res.json({
-            status: "ok",
+            status: "success",
         });
     } catch (err) {
         next(err);
