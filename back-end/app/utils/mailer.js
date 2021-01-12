@@ -55,7 +55,7 @@ chooseTemplate = (template) => {
 const sendConfirmation = async (user, subject) => {
     try {
         let token = await signConfirmationToken(user.userMail);
-        user.token_url = `${user.externalURL}/confirm_account/${token}`;
+        user.token_url = `${user.externalURL}/#/confirm_account/${token}`;
         sendMail({
             to: user.userMail,
             subject: subject,
@@ -70,8 +70,8 @@ const sendConfirmation = async (user, subject) => {
 // this function will send reset password request to user mail
 const sendForgotPassword = async (user, subject) => {
     try {
-        let token = await signForgotPassword(user.userMail);
-        user.token_url = `${user.externalURL}/reset_password/${token}`;
+        let token = await signForgotPassword(user.userMail, user.userPass);
+        user.token_url = `${user.externalURL}/#/reset_password/${user._id}/${token}`;
         sendMail({
             to: user.userMail,
             subject: subject,

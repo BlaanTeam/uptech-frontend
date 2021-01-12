@@ -139,23 +139,25 @@ const forgotPassword = async (req, res, next) => {
 
 const resetPassword = async (req, res, next) => {
     try {
-        let data = await authValidator(req.body, {
+        let params = await authValidator(req.params, {
             token: 1,
-            password: 1,
+            userId: 1,
         });
-        let email = await verifyForgotPassword(data.token);
-        let user = await User.findOne({ userMail: email });
+        let user = await User.findOne({ _id: params.userId });
         if (!user) throw new createError("Unauthorized !", 1030, 401);
-        else if (user.checkIfAlreadyUsed(data.token))
-            throw new createError("Unauthorized !", 1074, 401);
-
-        if (req.query.check && req.query.check === "true") {
-            res.json({ success: true });
-        } else {
-            await user.resetPassword(data.password);
-            user.resetPasswordToken = data.token;
+        let email = await verifyForgotPassword(params.token, user.userPass);
+        if (user.userMail !== email) {
+            throw new createError("Unauthorized !", 1030, 401);
+        }
+        if (req.method === "GET") {
+            res.json({ email });
+        } else if (req.method === "POST") {
+            let data = await authValidator(req.body, { password: 1 });
+            await user.resetPassword(data.password); // hash password with bcrypt
             user.save();
             res.json({ msg: "The password has been update !", code: 2029 });
+        } else {
+            throw new createError("Method Not Allowed!", 1003, 405);
         }
     } catch (err) {
         next(err);

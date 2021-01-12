@@ -18,3 +18,4 @@
     # [403] - Don't Have Permission : {code:1003,msg:"Unauthorized !"}
     # [404] - Post Not Found {code:1021,msg:"Post Not Found"}
     # [404] - Comment Not Found {code:1022,msg:"Comment Not Found !"}
+    # [405] - Method not allowed {code:1005, msg:"Method Not Allowed !"}

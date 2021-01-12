@@ -61,9 +61,6 @@ const userSchema = new Schema({
         type: Boolean,
         default: false,
     },
-    resetPasswordToken: {
-        type: String,
-    },
 });
 userSchema.index(
     {
@@ -131,14 +128,6 @@ userSchema.methods.isConfirmed = function () {
 
 userSchema.methods.confirmAccount = function () {
     this.mailConfirmed = true;
-};
-
-// check if reset password token already used
-userSchema.methods.checkIfAlreadyUsed = function (token) {
-    if (token === this.resetPasswordToken) {
-        return true;
-    }
-    return false;
 };
 
 module.exports = {

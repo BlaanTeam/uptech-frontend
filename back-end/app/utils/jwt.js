@@ -69,11 +69,11 @@ const verifyConfirmationToken = async (token) => {
     }
 };
 
-const signForgotPassword = async (email) => {
+const signForgotPassword = async (email, password) => {
     try {
         let token = await jwt.sign(
             { email },
-            jwtSecrets.forgotPasswordSecretKey,
+            jwtSecrets.forgotPasswordSecretKey + password,
             {
                 expiresIn: "30m",
             }
@@ -84,11 +84,11 @@ const signForgotPassword = async (email) => {
     }
 };
 
-const verifyForgotPassword = async (token) => {
+const verifyForgotPassword = async (token, password) => {
     try {
         let payload = await jwt.verify(
             token,
-            jwtSecrets.forgotPasswordSecretKey
+            jwtSecrets.forgotPasswordSecretKey + password
         );
         return payload["email"];
     } catch (err) {
