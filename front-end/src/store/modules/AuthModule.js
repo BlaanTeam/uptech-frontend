@@ -34,7 +34,7 @@ export default {
     signIn: (context, payload) => {
       return new Promise((resolve, reject) => {
         Vue.prototype.$http
-          .post("/auth/sign_in", payload)
+          .post("/auth/sign-in", payload)
           .then(res => {
             if (res.status === 200 && res.data.code === 2032) {
               context.commit("AUTH_SUCCESS", {
@@ -52,7 +52,7 @@ export default {
     signUp: (context, payload) => {
       return new Promise((resolve, reject) => {
         Vue.prototype.$http
-          .post("/auth/sign_up", payload)
+          .post("/auth/sign-up", payload)
           .then(res => {
             resolve(res);
           })
@@ -64,7 +64,7 @@ export default {
     confirmAccount: (context, payload) => {
       return new Promise((resolve, reject) => {
         Vue.prototype.$http
-          .post("/auth/confirm_account", payload)
+          .post("/auth/confirm-account", payload)
           .then(res => {
             resolve(res);
           })
@@ -76,7 +76,7 @@ export default {
     forgotPassword: (context, payload) => {
       return new Promise((resolve, reject) => {
         Vue.prototype.$http
-          .post("/auth/forgot_password", payload)
+          .post("/auth/forgot-password", payload)
           .then(res => {
             resolve(res);
           })
@@ -88,7 +88,9 @@ export default {
     resetPassword: (context, payload) => {
       return new Promise((resolve, reject) => {
         Vue.prototype.$http
-          .post("/auth/reset_password", payload)
+          .post(`/auth/reset-password/${payload.userId}/${payload.token}`, {
+            password: payload.password
+          })
           .then(res => {
             resolve(res);
           })
@@ -100,7 +102,7 @@ export default {
     resendConfirmation: (context, payload) => {
       return new Promise((resolve, reject) => {
         Vue.prototype.$http
-          .post("/auth/resend_confirmation", payload)
+          .post("/auth/resend-confirmation", payload)
           .then(res => {
             resolve(res);
           })

@@ -49,7 +49,7 @@ axios.interceptors.response.use(
         text: i18n.t("globals.errors.lostConnection")
       });
     } else {
-      if (error.response.status === 404) {
+      if (error.response.status === 404 && store.getters.isLoggedIn) {
         store.dispatch("handleNotFound");
       }
       if (
@@ -57,7 +57,9 @@ axios.interceptors.response.use(
         error.response.data.error.code === 1072 ||
         error.response.data.error.code === 1075
       ) {
-        store.dispatch("destroySession");
+        if (store.getters.isLoggedIn) {
+          store.dispatch("destroySession");
+        }
         Vue.prototype.$notify({
           group: "errors",
           type: "error",
