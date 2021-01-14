@@ -95,6 +95,7 @@ const followUser = async (req, res, next) => {
         if (req.currentUser.userName === params.userName) {
             let err = new createError("You can't follow yourself !", 1020, 403);
             next(err);
+            return;
         }
         let user = await User.aggregate([
             {
