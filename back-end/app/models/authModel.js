@@ -88,13 +88,10 @@ const followSchema = new Schema({
 });
 
 // Indexing followSchema by userOne & userTwo fields
-followSchema.index(
-    {
-        userOne: 1,
-        userTwo: 1,
-    },
-    { unique: true }
-);
+followSchema.index({
+    userOne: 1,
+    userTwo: 1,
+});
 
 // Iniatialize Methods To userSchema
 
