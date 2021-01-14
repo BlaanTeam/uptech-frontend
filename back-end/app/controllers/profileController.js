@@ -5,7 +5,7 @@ const { createError } = require("../utils/globals");
 // This function will handle getting the profile  process
 const getProfile = async (req, res, next) => {
     try {
-        let result = await profileValidator(req.params, ["userName"]);
+        let result = await profileValidator(req.params, { userName: 1 });
         let user = await User.findOne(
             { userName: result.userName },
             {
@@ -51,7 +51,7 @@ const getMyProfile = async (req, res, next) => {
 
 const updateProfile = async (req, res, next) => {
     try {
-        let result = await profileValidator(req.body, [], ["userName"]);
+        let result = await profileValidator(req.body, { profile: 2 });
         // TODO : avoid change userName
         let user = req.currentUser;
         user._doc.profile = { ...user._doc.profile, ...result.profile };
