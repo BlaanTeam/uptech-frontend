@@ -7,4 +7,7 @@ protectRouter(router);
 router.get("/profiles/:userName", profileController.getProfile);
 router.get("/profiles", profileController.getMyProfile);
 router.put("/profiles", profileController.updateProfile);
+
+router.put("/following/:userName", profileController.followUser);
+
 module.exports = router;
