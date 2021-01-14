@@ -132,7 +132,7 @@ const followUser = async (req, res, next) => {
                                         {
                                             $or: [
                                                 { $eq: ["$status", 1] },
-                                                { $eq: ["$status", 0] },
+                                                { $eq: ["$status", 2] },
                                             ],
                                         },
                                     ],
