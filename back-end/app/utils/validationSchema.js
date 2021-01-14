@@ -47,6 +47,16 @@ const authValidator = async (credentials, select) => {
                 .string()
                 .pattern(pattern.jwtToken)
                 .message("Please fill a valid token"),
+            userId: joi.string().custom((value, helper) => {
+                try {
+                    let result = mongoose.Types.ObjectId(value);
+                    return result;
+                } catch (err) {
+                    return helper.message("Account Not Found!", {
+                        postNotFound: true,
+                    });
+                }
+            }),
         });
         authSchema = validator(authSchema, select);
         return await authSchema.validateAsync(credentials);

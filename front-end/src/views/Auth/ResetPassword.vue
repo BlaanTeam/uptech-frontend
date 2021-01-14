@@ -48,6 +48,7 @@ export default {
   name: "ResetPassword",
   data() {
     return {
+      userInfo: {},
       show1: false,
       show2: false,
       password: "",
@@ -76,6 +77,7 @@ export default {
         this.$store
           .dispatch("resetPassword", {
             token: this.$route.params.token,
+            userId: this.$route.params.userId,
             password: this.password
           })
           .then(res => {
@@ -101,17 +103,21 @@ export default {
   },
   created() {
     if (
-      this.$route.params.token &&
-      this.$route.params.token.match(this.$pattern.jwtToken)
+      this.$route.params.token?.match(this.$pattern.jwtToken) &&
+      this.$route.params.userId?.match(this.$pattern.objectId)
     ) {
       this.$http
-        .post("/auth/reset_password?check=true", {
-          token: this.$route.params.token,
-          password: "Abcd123#@"
-        })
-        .then(null, err => {
-          this.$router.push({ name: "NotFound" });
-        });
+        .get(
+          `/auth/reset-password/${this.$route.params.userId}/${this.$route.params.token}`
+        )
+        .then(
+          resp => {
+            this.userInfo = resp.data;
+          },
+          err => {
+            this.$router.push({ name: "NotFound" });
+          }
+        );
     } else {
       this.$router.push({ name: "NotFound" });
     }

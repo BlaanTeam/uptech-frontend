@@ -45,7 +45,7 @@ export default [
     }
   },
   {
-    path: "/reset_password/:token",
+    path: "/reset_password/:userId/:token",
     name: "ResetPassword",
     component: () => import("@/views/Auth/ResetPassword"),
     meta: {
