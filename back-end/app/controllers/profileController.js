@@ -144,11 +144,20 @@ const followUser = async (req, res, next) => {
                 },
             },
             {
+                $unwind: {
+                    path: "$follow",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
                 $addFields: {
                     alreadyFollowed: {
                         $cond: {
                             if: {
-                                $eq: [{ $size: "$follow" }, 1],
+                                $or: [
+                                    { $eq: ["$follow.status", 1] },
+                                    { $eq: ["$follow.status", 2] },
+                                ],
                             },
                             then: true,
                             else: false,
@@ -175,14 +184,25 @@ const followUser = async (req, res, next) => {
             res.end();
             return;
         }
-        // create new follow document
-        let follow = new Follow({
-            userOne: req.currentUser._id,
-            userTwo: user._id,
-            status: user.isPrivate ? 1 : 2,
-        });
 
-        await follow.save();
+        let follow = await Follow.findOne({
+            userOne: req.currentUser._id.toString(),
+            userTwo: user._id.toString(),
+            status: 0,
+        });
+        if (!follow) {
+            //  create new follow document
+            let newFollow = new Follow({
+                userOne: req.currentUser._id,
+                userTwo: user._id,
+                status: user.isPrivate ? 1 : 2,
+            });
+            await newFollow.save();
+        } else {
+            // update exist document
+            follow.status = user.isPrivate ? 1 : 2;
+            await follow.save();
+        }
         res.status(204); // not content
         res.end();
     } catch (err) {
