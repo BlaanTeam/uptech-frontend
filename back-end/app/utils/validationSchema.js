@@ -146,7 +146,9 @@ const profileValidator = async (credentials, select) => {
             userName: joi
                 .string()
                 .pattern(pattern.username)
-                .message("Please fill a valid userName"),
+                .message("Please fill a valid userName")
+                .lowercase()
+                .trim(),
             userPass: joi
                 .string()
                 .pattern(pattern.password)
