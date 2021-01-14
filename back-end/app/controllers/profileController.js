@@ -210,9 +210,130 @@ const followUser = async (req, res, next) => {
     }
 };
 
+// this function will hanlde unfollowing user process.
+const unFollowUser = async (req, res, next) => {
+    try {
+        let params = await profileValidator(req.params, { userName: 1 });
+        // prevent user from unfollow himself
+        if (req.currentUser.userName === params.userName) {
+            let err = new createError(
+                "You can't unfollow yourself !",
+                1023,
+                403
+            );
+            next(err);
+            return;
+        }
+        let user = await User.aggregate([
+            {
+                $match: {
+                    userName: { $eq: params.userName },
+                },
+            },
+            {
+                $limit: 1,
+            },
+            {
+                $lookup: {
+                    from: "follows",
+                    let: {
+                        userOne: req.currentUser._id,
+                        userTwo: "$_id",
+                    },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ["$userOne", "$$userOne"],
+                                        },
+                                        {
+                                            $eq: ["$userTwo", "$$userTwo"],
+                                        },
+                                        {
+                                            $eq: ["$status", 0],
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                        {
+                            $project: {
+                                __v: 0,
+                            },
+                        },
+                    ],
+                    as: "follow",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$follow",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $addFields: {
+                    alreadyUnfollowed: {
+                        $cond: {
+                            if: {
+                                $eq: ["$follow.status", 0],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                },
+            },
+            {
+                $project: {
+                    alreadyUnfollowed: 1,
+                    follow: 1,
+                    isPrivate: 1,
+                },
+            },
+        ]);
+        user = user[0];
+
+        if (!user) {
+            throw new createError("Account doesn't exist !", 1030, 404);
+        } else if (user.alreadyUnfollowed) {
+            // check if the current user is already  unfollowed this user
+            // return not modified
+            res.status(304);
+            res.end();
+            return;
+        }
+
+        let unFollow = await Follow.findOne({
+            userOne: req.currentUser._id.toString(),
+            userTwo: user._id.toString(),
+            $or: [{ status: 1 }, { status: 2 }],
+        });
+
+        if (!unFollow) {
+            throw new createError(
+                "You can't unfollow a user who you don't follow !",
+                1029,
+                403
+            );
+        } else {
+            // update exist document
+            unFollow.status = 0;
+            await unFollow.save();
+        }
+        res.status(204);
+        res.end();
+    } catch (err) {
+        next(err);
+    }
+};
+
 module.exports = {
     getProfile,
     getMyProfile,
     updateProfile,
     followUser,
+    unFollowUser,
 };
