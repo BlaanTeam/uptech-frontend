@@ -9,5 +9,6 @@ router.get("/profiles", profileController.getMyProfile);
 router.put("/profiles", profileController.updateProfile);
 
 router.put("/following/:userName", profileController.followUser);
+router.delete("/following/:userName", profileController.unFollowUser);
 
 module.exports = router;
