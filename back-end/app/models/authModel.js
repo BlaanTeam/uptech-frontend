@@ -62,6 +62,7 @@ const userSchema = new Schema({
         default: false,
     },
 });
+// Indexing userSchema by userName field
 userSchema.index(
     {
         userName: 1,
@@ -85,6 +86,13 @@ const followSchema = new Schema({
         required: true,
     },
 });
+
+// Indexing followSchema by userOne & userTwo fields
+followSchema.index({
+    userOne: 1,
+    userTwo: 1,
+});
+
 // Iniatialize Methods To userSchema
 
 // hashing the password
