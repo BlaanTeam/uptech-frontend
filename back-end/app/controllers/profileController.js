@@ -104,11 +104,6 @@ const followUser = async (req, res, next) => {
                 },
             },
             {
-                $group: {
-                    _id: "$_id",
-                },
-            },
-            {
                 $limit: 1,
             },
             {
