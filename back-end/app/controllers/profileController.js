@@ -1,6 +1,6 @@
 const { User, Follow } = require("../models/authModel");
 const { profileValidator } = require("../utils/validationSchema");
-const { createError } = require("../utils/globals");
+const createError = require("http-errors");
 
 // This function will handle getting the profile  process
 const getProfile = async (req, res, next) => {
@@ -91,11 +91,9 @@ There're five types of follow status :
 const followUser = async (req, res, next) => {
     try {
         let params = await profileValidator(req.params, { userName: 1 });
-        // prevent the user to follow himself
+        // prevent the user from following himself
         if (req.currentUser.userName === params.userName) {
-            let err = new createError("You can't follow yourself !", 1020, 403);
-            next(err);
-            return;
+            throw createError.Forbidden();
         }
         let user = await User.aggregate([
             {
@@ -124,19 +122,13 @@ const followUser = async (req, res, next) => {
                                         {
                                             $eq: ["$userTwo", "$$userTwo"],
                                         },
-                                        {
-                                            $or: [
-                                                { $eq: ["$status", 1] },
-                                                { $eq: ["$status", 2] },
-                                            ],
-                                        },
                                     ],
                                 },
                             },
                         },
                         {
                             $project: {
-                                __v: 0,
+                                status: 1,
                             },
                         },
                     ],
@@ -167,8 +159,8 @@ const followUser = async (req, res, next) => {
             },
             {
                 $project: {
+                    follow: 1,
                     alreadyFollowed: 1,
-                    _id: 1,
                     isPrivate: 1,
                 },
             },
@@ -176,21 +168,14 @@ const followUser = async (req, res, next) => {
         user = user[0];
         // check if user exist
         if (!user) {
-            throw new createError("Account doesn't exist !", 1030, 404);
+            throw createError.NotFound();
         } else if (user.alreadyFollowed) {
             // check if the current user is already followed this user
             // return not modified
             res.status(304);
             res.end();
             return;
-        }
-
-        let follow = await Follow.findOne({
-            userOne: req.currentUser._id.toString(),
-            userTwo: user._id.toString(),
-            status: 0,
-        });
-        if (!follow) {
+        } else if (!user.follow) {
             //  create new follow document
             let newFollow = new Follow({
                 userOne: req.currentUser._id,
@@ -198,10 +183,19 @@ const followUser = async (req, res, next) => {
                 status: user.isPrivate ? 1 : 2,
             });
             await newFollow.save();
-        } else {
+        } else if (user.follow.status === 0) {
             // update exist document
-            follow.status = user.isPrivate ? 1 : 2;
-            await follow.save();
+            let follow = await Follow.findOneAndUpdate(
+                {
+                    userOne: req.currentUser._id,
+                    userTwo: user._id,
+                },
+                {
+                    status: user.isPrivate ? 1 : 2,
+                }
+            );
+        } else {
+            throw createError.Forbidden();
         }
         res.status(204); // not content
         res.end();
@@ -214,15 +208,9 @@ const followUser = async (req, res, next) => {
 const unFollowUser = async (req, res, next) => {
     try {
         let params = await profileValidator(req.params, { userName: 1 });
-        // prevent user from unfollow himself
+        // prevent user from unfollowing himself
         if (req.currentUser.userName === params.userName) {
-            let err = new createError(
-                "You can't unfollow yourself !",
-                1023,
-                403
-            );
-            next(err);
-            return;
+            throw createError.Forbidden();
         }
         let user = await User.aggregate([
             {
@@ -251,25 +239,22 @@ const unFollowUser = async (req, res, next) => {
                                         {
                                             $eq: ["$userTwo", "$$userTwo"],
                                         },
-                                        {
-                                            $eq: ["$status", 0],
-                                        },
                                     ],
                                 },
                             },
                         },
                         {
                             $project: {
-                                __v: 0,
+                                status: 1,
                             },
                         },
                     ],
-                    as: "follow",
+                    as: "unFollow",
                 },
             },
             {
                 $unwind: {
-                    path: "$follow",
+                    path: "$unFollow",
                     preserveNullAndEmptyArrays: true,
                 },
             },
@@ -278,7 +263,7 @@ const unFollowUser = async (req, res, next) => {
                     alreadyUnfollowed: {
                         $cond: {
                             if: {
-                                $eq: ["$follow.status", 0],
+                                $eq: ["$unFollow.status", 0],
                             },
                             then: true,
                             else: false,
@@ -289,39 +274,35 @@ const unFollowUser = async (req, res, next) => {
             {
                 $project: {
                     alreadyUnfollowed: 1,
-                    follow: 1,
+                    unFollow: 1,
                     isPrivate: 1,
                 },
             },
         ]);
         user = user[0];
-
         if (!user) {
-            throw new createError("Account doesn't exist !", 1030, 404);
+            throw createError.NotFound();
         } else if (user.alreadyUnfollowed) {
             // check if the current user is already  unfollowed this user
             // return not modified
             res.status(304);
             res.end();
             return;
-        }
-
-        let unFollow = await Follow.findOne({
-            userOne: req.currentUser._id.toString(),
-            userTwo: user._id.toString(),
-            $or: [{ status: 1 }, { status: 2 }],
-        });
-
-        if (!unFollow) {
-            throw new createError(
-                "You can't unfollow a user who you don't follow !",
-                1029,
-                403
+        } else if (!user.unFollow) {
+            throw createError.Forbidden();
+        } else if (user.unFollow.status === 1 || user.unFollow.status === 2) {
+            // update exist document
+            let unFollow = await Follow.findOneAndUpdate(
+                {
+                    userOne: req.currentUser._id,
+                    userTwo: user._id,
+                },
+                {
+                    status: 0,
+                }
             );
         } else {
-            // update exist document
-            unFollow.status = 0;
-            await unFollow.save();
+            throw createError.Forbidden();
         }
         res.status(204);
         res.end();
@@ -408,23 +389,24 @@ const blockUser = async (req, res, next) => {
             res.status(304);
             res.end();
             return;
-        }
-
-        let block = await Follow.findOne({
-            userOne: req.currentUser._id,
-            userTwo: user._id,
-        });
-        if (!block) {
+        } else if (!user.block) {
             let newBlock = new Follow({
                 userOne: req.currentUser._id,
                 userTwo: user._id,
                 status: 4,
             });
             await newBlock.save();
-        } else if (block.status !== 4) {
+        } else if (user.block.status !== 4) {
             // update exist document
-            block.status = 4;
-            await block.save();
+            let block = await Follow.findOneAndUpdate(
+                {
+                    userOne: req.currentUser._id,
+                    userTwo: user._id,
+                },
+                {
+                    status: 4,
+                }
+            );
         }
         res.status(204); // no content
         res.end();
@@ -432,11 +414,125 @@ const blockUser = async (req, res, next) => {
         next(err);
     }
 };
+
+const unBlockUser = async (req, res, next) => {
+    try {
+        let params = await profileValidator(req.params, { userName: 1 });
+        // prevent user from unblocking himself
+        if (req.currentUser.userName === params.userName) {
+            throw createError.Forbidden();
+        }
+        let user = await User.aggregate([
+            {
+                $match: {
+                    userName: params.userName,
+                },
+            },
+            {
+                $limit: 1,
+            },
+            {
+                $lookup: {
+                    from: "follows",
+                    let: {
+                        userOne: req.currentUser._id,
+                        userTwo: "$_id",
+                    },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ["$userOne", "$$userOne"],
+                                        },
+                                        {
+                                            $eq: ["$userTwo", "$$userTwo"],
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                        {
+                            $project: {
+                                status: 1,
+                            },
+                        },
+                    ],
+                    as: "unBlock",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$unBlock",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $addFields: {
+                    alreadyUnblocked: {
+                        $cond: {
+                            if: {
+                                $or: [
+                                    { $eq: ["$unBlock.status", 0] },
+                                    { $eq: ["$unBlock.status", 1] },
+                                    { $eq: ["$unBlock.status", 2] },
+                                    { $eq: ["$unBlock.status", 3] },
+                                ],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                },
+            },
+            {
+                $project: {
+                    unBlock: 1,
+                    alreadyUnblocked: 1,
+                },
+            },
+        ]);
+        user = user[0];
+        if (!user) {
+            throw createError.NotFound();
+        } else if (user.alreadyUnblocked) {
+            // check the current user if is already unblocked this user
+            // return not modified
+            res.status(304);
+            res.end();
+            return;
+        } else if (!user.unBlock) {
+            // prevent from unblocking user, not in their follow
+            throw createError.Forbidden();
+        } else if (user.unBlock.status === 4) {
+            // update exist document
+            let unBlock = await Follow.findOneAndUpdate(
+                {
+                    userOne: req.currentUser._id,
+                    userTwo: user._id,
+                },
+                {
+                    status: 0,
+                }
+            );
+        } else {
+            throw createError.Forbidden();
+        }
+
+        res.status(204); // no content
+        res.end();
+    } catch (err) {
+        next(err);
+    }
+};
+
 module.exports = {
     getProfile,
     getMyProfile,
     updateProfile,
     followUser,
     unFollowUser,
-    blockUser
+    blockUser,
+    unBlockUser,
 };
