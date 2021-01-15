@@ -330,10 +330,113 @@ const unFollowUser = async (req, res, next) => {
     }
 };
 
+const blockUser = async (req, res, next) => {
+    try {
+        let params = await profileValidator(req.params, { userName: 1 });
+        // prevent user from blocking himself
+        if (req.currentUser.userName === params.userName) {
+            throw createError.Forbidden();
+        }
+        let user = await User.aggregate([
+            {
+                $match: {
+                    userName: params.userName,
+                },
+            },
+            { $limit: 1 },
+            {
+                $lookup: {
+                    from: "follows",
+                    let: { userOne: req.currentUser._id, userTwo: "$_id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ["$userOne", "$$userOne"],
+                                        },
+                                        {
+                                            $eq: ["$userTwo", "$$userTwo"],
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                        {
+                            $project: {
+                                status: 1,
+                            },
+                        },
+                    ],
+                    as: "block",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$block",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $addFields: {
+                    alreadyBlocked: {
+                        $cond: {
+                            if: {
+                                $eq: ["$block.status", 4],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                },
+            },
+            {
+                $project: {
+                    alreadyBlocked: 1,
+                    block: 1,
+                },
+            },
+        ]);
+
+        user = user[0];
+        if (!user) {
+            throw createError.NotFound();
+        } else if (user.alreadyBlocked) {
+            // check if current user if is already blocked this user
+            // return not modified
+            res.status(304);
+            res.end();
+            return;
+        }
+
+        let block = await Follow.findOne({
+            userOne: req.currentUser._id,
+            userTwo: user._id,
+        });
+        if (!block) {
+            let newBlock = new Follow({
+                userOne: req.currentUser._id,
+                userTwo: user._id,
+                status: 4,
+            });
+            await newBlock.save();
+        } else if (block.status !== 4) {
+            // update exist document
+            block.status = 4;
+            await block.save();
+        }
+        res.status(204); // no content
+        res.end();
+    } catch (err) {
+        next(err);
+    }
+};
 module.exports = {
     getProfile,
     getMyProfile,
     updateProfile,
     followUser,
     unFollowUser,
+    blockUser
 };
