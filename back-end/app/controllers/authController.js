@@ -31,6 +31,7 @@ const signUp = async (req, res, next) => {
             userName: data.username,
             userMail: data.email,
             userPass: data.password,
+            mailConfirmed: true, // TODO: set false in production
         });
         newUser.externalURL = req.externalURL;
         await newUser.hashPassword();
