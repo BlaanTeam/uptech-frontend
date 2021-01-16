@@ -156,7 +156,7 @@ const getUser = async (req, res, next) => {
                     rejectedByViewer: {
                         $cond: {
                             if: {
-                                $eq: ["$followOne.status", 3],
+                                $eq: ["$followTwo.status", 3],
                             },
                             then: true,
                             else: false,
@@ -198,6 +198,15 @@ const getUser = async (req, res, next) => {
                             else: false,
                         },
                     },
+                    hasRejectedViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followOne.status", 3],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
                     following: { $size: "$followingCount" },
                     followers: { $size: "$followersCount" },
                 },
@@ -221,6 +230,7 @@ const getUser = async (req, res, next) => {
                     followsViewer: 1,
                     hasBlockedViewer: 1,
                     hasRequestedViewer: 1,
+                    hasRejectedViewer: 1,
                     following: 1,
                     followers: 1,
                 },
@@ -302,8 +312,45 @@ const followUser = async (req, res, next) => {
                 },
             },
             {
+                $lookup: {
+                    from: "follows",
+                    let: {
+                        userOne: req.currentUser._id,
+                        userTwo: "$_id",
+                    },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ["$userOne", "$$userTwo"],
+                                        },
+                                        {
+                                            $eq: ["$userTwo", "$$userOne"],
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                        {
+                            $project: {
+                                status: 1,
+                            },
+                        },
+                    ],
+                    as: "block",
+                },
+            },
+            {
                 $unwind: {
                     path: "$follow",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $unwind: {
+                    path: "$block",
                     preserveNullAndEmptyArrays: true,
                 },
             },
@@ -321,6 +368,15 @@ const followUser = async (req, res, next) => {
                             else: false,
                         },
                     },
+                    blockedMe: {
+                        $cond: {
+                            if: {
+                                $eq: ["$block.status", 4],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
                 },
             },
             {
@@ -328,6 +384,7 @@ const followUser = async (req, res, next) => {
                     follow: 1,
                     alreadyFollowed: 1,
                     isPrivate: 1,
+                    blockedMe: 1,
                 },
             },
         ]);
@@ -335,6 +392,8 @@ const followUser = async (req, res, next) => {
         // check if user exist
         if (!user) {
             throw createError.NotFound();
+        } else if (user.blockedMe) {
+            throw createError.Forbidden();
         } else if (user.alreadyFollowed) {
             // check if the current user is already followed this user
             // return not modified
@@ -419,8 +478,45 @@ const unFollowUser = async (req, res, next) => {
                 },
             },
             {
+                $lookup: {
+                    from: "follows",
+                    let: {
+                        userOne: req.currentUser._id,
+                        userTwo: "$_id",
+                    },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ["$userOne", "$$userTwo"],
+                                        },
+                                        {
+                                            $eq: ["$userTwo", "$$userOne"],
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                        {
+                            $project: {
+                                status: 1,
+                            },
+                        },
+                    ],
+                    as: "block",
+                },
+            },
+            {
                 $unwind: {
                     path: "$unFollow",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $unwind: {
+                    path: "$block",
                     preserveNullAndEmptyArrays: true,
                 },
             },
@@ -435,6 +531,15 @@ const unFollowUser = async (req, res, next) => {
                             else: false,
                         },
                     },
+                    blockedMe: {
+                        $cond: {
+                            if: {
+                                $eq: ["$block.status", 4],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
                 },
             },
             {
@@ -442,12 +547,16 @@ const unFollowUser = async (req, res, next) => {
                     alreadyUnfollowed: 1,
                     unFollow: 1,
                     isPrivate: 1,
+                    testing: 1,
+                    blockedMe: 1,
                 },
             },
         ]);
         user = user[0];
         if (!user) {
             throw createError.NotFound();
+        } else if (user.blockedMe) {
+            throw createError.Forbidden();
         } else if (user.alreadyUnfollowed) {
             // check if the current user is already  unfollowed this user
             // return not modified
@@ -542,6 +651,7 @@ const blockUser = async (req, res, next) => {
                 $project: {
                     alreadyBlocked: 1,
                     block: 1,
+                    isPrivate: 1,
                 },
             },
         ]);
@@ -571,6 +681,10 @@ const blockUser = async (req, res, next) => {
                 },
                 {
                     status: 4,
+                    prevStatus:
+                        user.isPrivate && user.block.status === 3
+                            ? user.block.status
+                            : null,
                 }
             );
         }
@@ -622,6 +736,7 @@ const unBlockUser = async (req, res, next) => {
                         {
                             $project: {
                                 status: 1,
+                                prevStatus: 1,
                             },
                         },
                     ],
@@ -639,12 +754,7 @@ const unBlockUser = async (req, res, next) => {
                     alreadyUnblocked: {
                         $cond: {
                             if: {
-                                $or: [
-                                    { $eq: ["$unBlock.status", 0] },
-                                    { $eq: ["$unBlock.status", 1] },
-                                    { $eq: ["$unBlock.status", 2] },
-                                    { $eq: ["$unBlock.status", 3] },
-                                ],
+                                $eq: ["$unBlock.status", 0],
                             },
                             then: true,
                             else: false,
@@ -660,6 +770,7 @@ const unBlockUser = async (req, res, next) => {
             },
         ]);
         user = user[0];
+        console.log(user);
         if (!user) {
             throw createError.NotFound();
         } else if (user.alreadyUnblocked) {
@@ -679,7 +790,14 @@ const unBlockUser = async (req, res, next) => {
                     userTwo: user._id,
                 },
                 {
-                    status: 0,
+                    status:
+                        typeof user.unBlock.prevStatus === "undefined" ||
+                        user.unBlock.prevStatus === null
+                            ? 0
+                            : user.unBlock.prevStatus,
+                    $unset: {
+                        prevStatus: user.unBlock.prevStatus === null ? 1 : 0,
+                    },
                 }
             );
         } else {
@@ -762,7 +880,6 @@ const rejectUser = async (req, res, next) => {
             },
         ]);
         user = user[0];
-        console.log(user.reject);
         if (!user) {
             throw createError.NotFound();
         } else if (!user.reject) {
@@ -796,6 +913,94 @@ const rejectUser = async (req, res, next) => {
     }
 };
 
+// unReject User
+
+const unRejectUser = async (req, res, next) => {
+    try {
+        let params = await profileValidator(req.params, { userName: 1 });
+        if (req.currentUser.userName === params.userName) {
+            throw createError.Forbidden();
+        }
+        let user = await User.aggregate([
+            {
+                $match: {
+                    userName: params.userName,
+                },
+            },
+            { $limit: 1 },
+            {
+                $lookup: {
+                    from: "follows",
+                    let: { userOne: req.currentUser._id, userTwo: "$_id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ["$userOne", "$$userTwo"],
+                                        },
+                                        {
+                                            $eq: ["$userTwo", "$$userOne"],
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                        {
+                            $project: {
+                                status: 1,
+                                prevStatus: 1,
+                            },
+                        },
+                    ],
+                    as: "unReject",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$unReject",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $project: {
+                    _id: 1,
+                    unReject: 1,
+                },
+            },
+        ]);
+        user = user[0];
+
+        if (!user) {
+            throw createError.NotFound();
+        } else if (!user.unReject) {
+            throw createError.Forbidden();
+        } else if (user.unReject.status === 3) {
+            // update exist document
+
+            let unReject = await Follow.findOneAndUpdate(
+                {
+                    userOne: user._id,
+                    userTwo: req.currentUser._id,
+                },
+                {
+                    status: 0,
+                    $unset: {
+                        prevStatus: 1,
+                    },
+                }
+            );
+        } else {
+            throw createError.Forbidden();
+        }
+        res.status(204); // not content
+        res.end();
+    } catch (err) {
+        next(err);
+    }
+};
+
 module.exports = {
     getUser,
     followUser,
@@ -803,4 +1008,5 @@ module.exports = {
     blockUser,
     unBlockUser,
     rejectUser,
+    unRejectUser,
 };

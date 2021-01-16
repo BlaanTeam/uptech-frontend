@@ -85,6 +85,9 @@ const followSchema = new Schema({
         type: Number,
         required: true,
     },
+    prevStatus: {
+        type: Number,
+    },
 });
 
 // Indexing followSchema by userOne & userTwo fields
