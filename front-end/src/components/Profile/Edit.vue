@@ -141,7 +141,10 @@ export default {
       "November",
       "December"
     ]
-  })
+  }),
+  mounted() {
+    console.log("edit post");
+  }
 };
 </script>
 
