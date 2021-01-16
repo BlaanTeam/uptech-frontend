@@ -53,7 +53,7 @@ const feedPosts = async (req, res, next) => {
             {
                 $lookup: {
                     from: "users",
-                    let: { userId: req.currentUser._id },
+                    let: { userId: "$user" },
                     pipeline: [
                         {
                             $match: { $expr: { $eq: ["$_id", "$$userId"] } },
