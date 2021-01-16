@@ -2,75 +2,241 @@ const { User, Follow } = require("../models/authModel");
 const { profileValidator } = require("../utils/validationSchema");
 const createError = require("http-errors");
 
-// This function will handle getting the profile  process
-const getProfile = async (req, res, next) => {
+const getUser = async (req, res, next) => {
     try {
-        let result = await profileValidator(req.params, { userName: 1 });
-        let user = await User.findOne(
-            { userName: result.userName },
+        let params = await profileValidator(req.params, { userName: 1 });
+        let user = await User.aggregate([
             {
-                userPass: 0,
-                mailConfirmed: 0,
-                resetPasswordToken: 0,
-                __v: 0,
-            }
-        );
-        resp = { ...user?._doc };
+                $match: {
+                    userName: params.userName,
+                },
+            },
+            {
+                $limit: 1,
+            },
+            {
+                $addFields: {
+                    userOnwer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$_id", req.currentUser._id],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                },
+            },
+            {
+                $lookup: {
+                    from: "follows",
+                    let: { userOne: "$_id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ["$userOne", "$$userOne"] },
+                                        { $eq: ["$status", 2] },
+                                    ],
+                                },
+                            },
+                        },
+                        {
+                            $project: {
+                                _id: 1,
+                            },
+                        },
+                    ],
+                    as: "followingCount",
+                },
+            },
+            {
+                $lookup: {
+                    from: "follows",
+                    let: { userTwo: "$_id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ["$userTwo", "$$userTwo"] },
+                                        { $eq: ["$status", 2] },
+                                    ],
+                                },
+                            },
+                        },
+                        {
+                            $project: {
+                                _id: 1,
+                            },
+                        },
+                    ],
+                    as: "followersCount",
+                },
+            },
+            {
+                $lookup: {
+                    from: "follows",
+                    let: {
+                        userOne: req.currentUser._id,
+                        userTwo: "$_id",
+                    },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ["$userOne", "$$userOne"] },
+
+                                        { $eq: ["$userTwo", "$$userTwo"] },
+                                    ],
+                                },
+                            },
+                        },
+                    ],
+                    as: "followOne",
+                },
+            },
+            {
+                $lookup: {
+                    from: "follows",
+                    let: {
+                        userOne: req.currentUser._id,
+                        userTwo: "$_id",
+                    },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ["$userOne", "$$userTwo"] },
+
+                                        { $eq: ["$userTwo", "$$userOne"] },
+                                    ],
+                                },
+                            },
+                        },
+                    ],
+                    as: "followTwo",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$followOne",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $unwind: {
+                    path: "$followTwo",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $addFields: {
+                    blockedByViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followOne.status", 4],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    followedByViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followOne.status", 2],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    rejectedByViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followOne.status", 3],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    requestedByViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followOne.status", 1],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    followsViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 2],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    hasBlockedViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 4],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    hasRequestedViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 1],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    following: { $size: "$followingCount" },
+                    followers: { $size: "$followersCount" },
+                },
+            },
+            {
+                $project: {
+                    userName: 1,
+                    userMail: {
+                        $cond: [
+                            { $eq: ["$_id", req.currentUser._id] },
+                            "$userMail",
+                            "$$REMOVE",
+                        ],
+                    },
+                    profile: 1,
+                    isPrivate: 1,
+                    blockedByViewer: 1,
+                    followedByViewer: 1,
+                    rejectedByViewer: 1,
+                    requestedByViewer: 1,
+                    followsViewer: 1,
+                    hasBlockedViewer: 1,
+                    hasRequestedViewer: 1,
+                    following: 1,
+                    followers: 1,
+                },
+            },
+        ]);
+
+        user = user[0];
+
         if (!user) {
-            throw new createError("Profile Not Found", 1030, 404);
-        } else if (user._id.toString() !== req.currentUser._id.toString()) {
-            delete resp.userMail;
-            // TODO: if there's any sensitive info in the profile, please pull it from `resp`
+            throw createError.NotFound();
+        } else if (user.hasBlockedViewer) {
+            throw createError.Forbidden();
         }
-        res.json(resp);
-    } catch (err) {
-        if (err.isJoi === true) {
-            err.status = 400;
-        }
-        next(err);
-    }
-};
-// This function will handle getting my profile process
-const getMyProfile = async (req, res, next) => {
-    try {
-        let resp = { ...req.currentUser._doc };
-        delete resp.userPass;
-        delete resp.reSendConfirmationTooManyRequest;
-        delete resp.forgotPasswordTooManyRequest;
-        delete resp.mailConfirmed;
-        delete resp.resetPasswordToken;
-        delete resp.__v;
 
-        res.json(resp);
+        res.json(user);
     } catch (err) {
-        next(err);
-    }
-};
-
-// This function will handle updating profile process
-
-const updateProfile = async (req, res, next) => {
-    try {
-        let result = await profileValidator(req.body, { profile: 2 });
-        // TODO : avoid change userName
-        let user = req.currentUser;
-        user._doc.profile = { ...user._doc.profile, ...result.profile };
-        delete result.profile;
-        user._doc = { ...user._doc, ...result };
-        if (result.userPass) {
-            await user.hashPassword();
-        }
-        let updatedUser = await User.findOneAndUpdate(
-            { _id: req.currentUser._id },
-            { ...user._doc },
-            { new: true }
-        );
-        res.json({ status: "ok" });
-    } catch (err) {
-        console.dir(err);
-        if (err.isJoi) {
-            err.status = 400;
-        }
         next(err);
     }
 };
@@ -528,9 +694,7 @@ const unBlockUser = async (req, res, next) => {
 };
 
 module.exports = {
-    getProfile,
-    getMyProfile,
-    updateProfile,
+    getUser,
     followUser,
     unFollowUser,
     blockUser,
