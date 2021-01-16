@@ -22,32 +22,82 @@
         </v-row>
         <v-row no-gutters>
           <v-col class="me-4">
-            <v-text-field outlined dense label="First Name"></v-text-field>
+            <v-text-field
+              v-model="profileData.firstName"
+              outlined
+              dense
+              required
+              label="First Name"
+            />
           </v-col>
           <v-col>
-            <v-text-field outlined dense label="Last Name"></v-text-field>
+            <v-text-field
+              v-model="profileData.lastName"
+              outlined
+              dense
+              label="Last Name"
+            />
           </v-col>
         </v-row>
         <v-row no-gutters>
           <v-col>
-            <v-textarea outlined dense label="Bio"></v-textarea>
+            <v-textarea v-model="profileData.bio" outlined dense label="Bio" />
           </v-col>
         </v-row>
         <v-row no-gutters>
           <v-col>
-            <v-text-field outlined dense label="Location"></v-text-field>
+            <v-text-field
+              v-model="profileData.location"
+              type="country"
+              outlined
+              dense
+              label="Location"
+            />
           </v-col>
         </v-row>
 
         <v-row no-gutters>
           <v-col>
-            <v-text-field outlined label="Website"></v-text-field>
+            <v-text-field
+              v-model="profileData.website"
+              type="url"
+              outlined
+              label="Website"
+            />
           </v-col>
         </v-row>
-        <v-row no-gutters>
-          <v-col>
-            <v-text-field outlined label="Birth Date"></v-text-field>
+        <div>Birth Date</div>
+        <v-row no-gutters class="mt-2">
+          <v-col class="me-4">
+            <v-select :items="months" label="Month" dense outlined />
           </v-col>
+          <v-col class="me-4">
+            <v-text-field
+              label="Day"
+              dense
+              outlined
+              type="number"
+              min="1"
+              max="31"
+            />
+          </v-col>
+          <v-col>
+            <v-text-field
+              label="Year"
+              dense
+              outlined
+              type="number"
+              min="1901"
+              max="2020"
+            />
+          </v-col>
+          <!-- <v-col>
+            <v-text-field
+              v-model="profileData.birthDate"
+              outlined
+              label="Birth Date"
+            />
+          </v-col> -->
         </v-row>
       </v-card-text>
       <v-card-actions>
@@ -73,8 +123,24 @@
 
 <script>
 export default {
-  data: () => ({
-    dialog: false
+  props: { profile: { type: Object, required: true } },
+  data: props => ({
+    dialog: false,
+    profileData: { ...props.profile },
+    months: [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"
+    ]
   })
 };
 </script>

@@ -1,9 +1,8 @@
 <template>
   <div class="view-profile bg">
     <!-- <ProfileSkeleton /> -->
-    <Profile>
+    <Profile :profile="profile">
       <v-menu
-        nudge-right="10"
         attach=".profile"
         offset-y
         left
@@ -21,17 +20,40 @@
             <v-icon size="40">mdi-dots-horizontal</v-icon>
           </v-btn>
         </template>
-        <v-list-item-group dense class="auth-secondarybg text-center">
-          <v-list-item dense @click="log('follow')">
-            <v-list-item-title>Follow</v-list-item-title>
-          </v-list-item>
-          <v-list-item dense @click="log('message')">
-            <v-list-item-title>Message</v-list-item-title>
-          </v-list-item>
-          <v-list-item dense @click="log('report')">
-            <v-list-item-title>Report</v-list-item-title>
-          </v-list-item>
-        </v-list-item-group>
+        <div class="bg d-flex flex-column align-start">
+          <v-btn
+            tile
+            block
+            text
+            :loading="loading"
+            @click="log('follow')"
+            class="text-capitalize justify-start "
+          >
+            <v-icon small left>mdi-account-plus-outline</v-icon>
+            Follow
+          </v-btn>
+
+          <v-btn
+            tile
+            block
+            text
+            @click="log('message')"
+            class="text-capitalize justify-start"
+          >
+            <v-icon small left>mdi-message-outline</v-icon>
+            Message
+          </v-btn>
+          <v-btn
+            tile
+            block
+            text
+            @click="log('report')"
+            class="text-capitalize justify-start"
+          >
+            <v-icon small left>mdi-flag-outline</v-icon>
+            Report
+          </v-btn>
+        </div>
       </v-menu>
     </Profile>
     <Tabs />
@@ -46,8 +68,27 @@ import Tabs from "@/components/Profile/Tabs";
 export default {
   name: "MyProfile",
   components: { Profile, Tabs /*ProfileSkeleton*/ },
+  data: () => ({
+    profile: {
+      firstName: "Abdelouahed",
+      lastName: "Oumoussa",
+      userName: "oumoussa98",
+      bio: ` Digital is the world's largest virtual biotech partnering and
+             education event, convening thousands of global biotech leaders and
+             innovators.`,
+      location: "Morocco",
+      website: "https://oumoussa98.netlify.com",
+      posts: "20",
+      followers: "200",
+      following: "150",
+      joinedAt: "Joined january 14 2020"
+    },
+    loading: false,
+    toggle_none: 0
+  }),
   methods: {
     log(e) {
+      this.loading = !this.loading;
       console.log(e + " clicked");
     }
   }

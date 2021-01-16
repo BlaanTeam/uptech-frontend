@@ -1,8 +1,8 @@
 <template>
   <div class="my-profile bg">
     <!-- <ProfileSkeleton /> -->
-    <Profile>
-      <Dialog>
+    <Profile :profile="profile">
+      <Dialog :profile="profile">
         <v-btn
           class="ms-2 mt-n2 text-capitalize"
           @click="log('Edit')"
@@ -28,6 +28,22 @@ import Dialog from "@/components/Profile/Dialog";
 export default {
   name: "MyProfile",
   components: { Profile, Tabs, Dialog /*ProfileSkeleton*/ },
+  data: () => ({
+    profile: {
+      firstName: "Abdelouahed",
+      lastName: "Oumoussa",
+      userName: "oumoussa98",
+      bio: ` Digital is the world's largest virtual biotech partnering and
+             education event, convening thousands of global biotech leaders and
+             innovators.`,
+      location: "Morocco",
+      website: "https://oumoussa98.netlify.com",
+      posts: "20",
+      followers: "200",
+      following: "150",
+      joinedAt: "Joined january 14 2020"
+    }
+  }),
   methods: {
     log(e) {
       console.log(e + " clicked");
