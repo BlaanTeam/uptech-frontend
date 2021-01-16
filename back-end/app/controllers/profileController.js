@@ -15,6 +15,40 @@ const getUser = async (req, res, next) => {
                 $limit: 1,
             },
             {
+                $set: {
+                    isOwner: {
+                        $cond: {
+                            if: {
+                                $eq: ["$_id", req.currentUser._id],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                },
+            },
+            {
+                $lookup: {
+                    from: "posts",
+                    let: { userId: "$_id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $eq: ["$user", "$$userId"],
+                                },
+                            },
+                        },
+                        {
+                            $project: {
+                                _id: 1,
+                            },
+                        },
+                    ],
+                    as: "userPosts",
+                },
+            },
+            {
                 $addFields: {
                     userOnwer: {
                         $cond: {
@@ -209,6 +243,7 @@ const getUser = async (req, res, next) => {
                     },
                     following: { $size: "$followingCount" },
                     followers: { $size: "$followersCount" },
+                    posts: { $size: "$userPosts" },
                 },
             },
             {
@@ -233,11 +268,14 @@ const getUser = async (req, res, next) => {
                     hasRejectedViewer: 1,
                     following: 1,
                     followers: 1,
+                    posts: 1,
+                    isOwner: 1,
                 },
             },
         ]);
 
         user = user[0];
+        console.log(user);
 
         if (!user) {
             throw createError.NotFound();
