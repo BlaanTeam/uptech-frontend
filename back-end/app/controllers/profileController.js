@@ -247,7 +247,7 @@ There're five types of follow status :
 0 -> Nothing
 1 -> Pending
 2 -> Accepted
-3 -> Declined
+3 -> Rejected
 4 -> Blocked
 
 
@@ -693,10 +693,114 @@ const unBlockUser = async (req, res, next) => {
     }
 };
 
+// Reject User
+const rejectUser = async (req, res, next) => {
+    try {
+        let params = await profileValidator(req.params, { userName: 1 });
+        // prevent user from rejecting himself
+        if (req.currentUser.userName === params.userName) {
+            throw createError.Forbidden();
+        }
+        let user = await User.aggregate([
+            {
+                $match: { userName: params.userName },
+            },
+            {
+                $limit: 1,
+            },
+            {
+                $lookup: {
+                    from: "follows",
+                    let: { userOne: req.currentUser._id, userTwo: "$_id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ["$userOne", "$$userTwo"],
+                                        },
+                                        {
+                                            $eq: ["$userTwo", "$$userOne"],
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                        {
+                            $project: {
+                                status: 1,
+                            },
+                        },
+                    ],
+                    as: "reject",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$reject",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $addFields: {
+                    alreadyRejected: {
+                        $cond: {
+                            if: { $eq: ["$reject.status", 3] },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                },
+            },
+            {
+                $project: {
+                    _id: 1,
+                    reject: 1,
+                    alreadyRejected: 1,
+                },
+            },
+        ]);
+        user = user[0];
+        console.log(user.reject);
+        if (!user) {
+            throw createError.NotFound();
+        } else if (!user.reject) {
+            throw createError.Forbidden();
+        } else if (user.alreadyRejected) {
+            // check the current user if already reject this user
+            // return not modified
+            res.status(304);
+            res.end();
+            return;
+        } else if (user.reject.status === 1) {
+            // update exist document
+            let reject = await Follow.findOneAndUpdate(
+                {
+                    userOne: user._id,
+                    userTwo: req.currentUser._id,
+                },
+                {
+                    status: 3,
+                }
+            );
+        } else {
+            throw createError.Forbidden();
+        }
+
+        // res.json(user);
+        res.status(204); // no content
+        res.end();
+    } catch (err) {
+        next(err);
+    }
+};
+
 module.exports = {
     getUser,
     followUser,
     unFollowUser,
     blockUser,
     unBlockUser,
+    rejectUser,
 };

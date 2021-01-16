@@ -11,4 +11,5 @@ router.delete("/following/:userName", profileController.unFollowUser);
 
 router.put("/blocks/:userName", profileController.blockUser);
 router.delete("/blocks/:userName", profileController.unBlockUser);
+router.put("/rejects/:userName", profileController.rejectUser);
 module.exports = router;
