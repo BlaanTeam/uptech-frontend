@@ -5,6 +5,8 @@ import store from "../store/index";
 
 axios.defaults.baseURL = "http://localhost:5000/api/v1/";
 
+axios.defaults.validateStatus = status => status >= 200 && status < 399;
+
 // Add a request interceptor
 axios.interceptors.request.use(
   async function(config) {
