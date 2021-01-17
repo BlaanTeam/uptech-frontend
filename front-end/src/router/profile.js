@@ -1,31 +1,11 @@
 export default [
   {
-    path: "/profile/",
-    component: () => import("@/views/Profile/Main"),
+    path: "/profile/:userName",
+    name: "ViewProfile",
+    component: () => import("@/views/Profile/ViewProfile"),
     meta: {
-      authRequired: true
-    },
-    children: [
-      {
-        path: "",
-        name: "MyProfile",
-        component: () => import("@/views/Profile/MyProfile"),
-        meta: {
-          authRequired: true,
-          title: "titles.myProfile"
-        }
-      },
-      {
-        path: ":userId",
-        name: "ViewProfile",
-        component: () => import("@/views/Profile/ViewProfile"),
-        meta: {
-          authRequired: true,
-          title: "titles.viewProfile",
-          userName: "Unknown"
-        },
-        props: true
-      }
-    ]
+      authRequired: true,
+      title: "titles.viewProfile"
+    }
   }
 ];
