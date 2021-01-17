@@ -13,7 +13,7 @@
 
     <AuthLayout v-else :style="authBackground">
       <v-main>
-        <keep-alive :max="5">
+        <keep-alive :max="5" :exclude="excludedComponents">
           <router-view :key="$route.fullPath"></router-view>
         </keep-alive>
       </v-main>
@@ -30,6 +30,9 @@ export default {
     UnAuthLayout,
     AuthLayout
   },
+  data: () => ({
+    excludedComponents: ["ViewProfile", "ViewPost"]
+  }),
   computed: {
     unAuthBackground() {
       return { background: this.$vuetify.theme.currentTheme.bg };
