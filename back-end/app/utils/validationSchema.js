@@ -154,6 +154,7 @@ const profileValidator = async (credentials, select) => {
                 .pattern(pattern.password)
                 .message("Please fill a valid password"),
             isPrivate: joi.boolean(),
+            page: joi.number().greater(0).default(1),
             profile: joi.object({
                 firstName: joi.string().trim(),
                 lastName: joi.string().trim(),
