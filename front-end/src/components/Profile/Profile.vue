@@ -1,6 +1,6 @@
 <template>
   <div class="profile">
-    <v-row class="pt-10" width="200px">
+    <v-row class="pt-10">
       <v-col cols="3" class="px-4 lighten-1 text-center ms-4 align-self-center">
         <img
           src="@/assets/images/avatar.svg"
@@ -9,62 +9,113 @@
           color="primary"
         />
       </v-col>
-      <v-col cols="8" class="">
-        <h1 class="display-1 mt-n2 d-inline-block">
-          {{ profile.firstName }} {{ profile.lastName }}
-        </h1>
-        <span class="d-inline-block mt-n4">
+      <v-col cols="8" class="align-self-center">
+        <h2
+          v-if="userInfo.profile.firstName || userInfo.profile.lastName"
+          class="font-weight-regular mt-n3 d-inline-block"
+        >
+          {{ userInfo.profile.firstName }} {{ userInfo.profile.lastName }}
+        </h2>
+        <span
+          class="d-inline-block float-right me-8"
+          :class="{
+            'mt-n2': !userInfo.profile.firstName && !userInfo.profile.lastName
+          }"
+        >
           <slot> </slot>
         </span>
-        <h3 class="mt-n2">@{{ profile.userName }}</h3>
-        <p class="mt-4 pe-10" v-if="profile.bio">
-          {{ profile.bio }}
+        <h3 class="mt-n2">@{{ userInfo.userName }}</h3>
+        <p class="mt-4 pe-3" v-if="userInfo.profile.bio">
+          {{ userInfo.profile.bio }}
         </p>
-        <div class="more-info d-flex flex-column">
-          <div class="my-1" v-if="profile.location">
+        <div class="more-info d-flex flex-column mt-4">
+          <div class="mb-1" v-if="userInfo.profile.location">
             <v-icon left size="18" class="mt-n1">mdi-map-marker</v-icon>
-            <span>{{ profile.location }}</span>
+            <span>{{ userInfo.profile.location }}</span>
           </div>
-          <div class="mb-1" v-if="profile.website">
+          <div class="mb-1" v-if="userInfo.profile.website">
             <v-icon left size="18" class="mt-n1">mdi-link-variant</v-icon>
-            <a :href="profile.website" target="_blanck" class="primary--text"
-              >{{ profile.website }}
+            <a
+              :href="userInfo.profile.website"
+              target="_blanck"
+              class="primary--text"
+              >{{ userInfo.profile.website }}
             </a>
           </div>
           <div>
             <v-icon left size="18" class="mt-n1">mdi-calendar-month</v-icon>
-            <span>{{ profile.joinedAt }}</span>
+            <span>{{ new Date(userInfo.createdAt).toDateString() }}</span>
           </div>
         </div>
         <div class="statistics">
           <v-row>
             <v-col cols="2">
-              <span class="font-weight-bold">{{ profile.posts }}</span> Posts
+              <span class="font-weight-bold">{{ userInfo.posts }}</span> Posts
             </v-col>
-            <v-col cols="3">
-              <span class="font-weight-bold">{{ profile.followers }}</span>
-              Followers
+            <v-col cols="3" class="follows">
+              <Followers
+                :userName="userInfo.userName"
+                :followers="userInfo.followers"
+              >
+                <span class="font-weight-bold">{{ userInfo.followers }}</span>
+                Followers
+              </Followers>
             </v-col>
-            <v-col cols="3">
-              <span class="font-weight-bold">{{ profile.following }}</span>
-              Following
+            <v-col cols="3" class="follows">
+              <Following
+                :userName="userInfo.userName"
+                :following="userInfo.following"
+              >
+                <span class="font-weight-bold">{{ userInfo.following }}</span>
+                Following
+              </Following>
             </v-col>
           </v-row>
         </div>
+        <v-row v-if="userInfo.hasRequestedViewer" no-gutters class="mt-4">
+          <v-btn
+            class="text-capitalize me-4"
+            elevation="0"
+            dark
+            color="primary"
+            rounded
+            width="120"
+          >
+            <v-icon small left>mdi-account-check</v-icon>
+            Confirm
+          </v-btn>
+
+          <v-btn
+            width="120"
+            class="text-capitalize mx-4 secondarybg"
+            elevation="0"
+            rounded
+          >
+            <v-icon small left>mdi-account-cancel</v-icon>
+            Reject
+          </v-btn>
+        </v-row>
       </v-col>
     </v-row>
   </div>
 </template>
 
 <script>
+import Following from "@/components/Profile/Following";
+import Followers from "@/components/Profile/Followers";
+
 export default {
   name: "Profile",
-  props: { profile: { type: Object, required: true } }
+  components: { Following, Followers },
+  props: { userInfo: { type: Object, required: true } }
 };
 </script>
 
 <style>
 .profile a:hover {
+  text-decoration: underline;
+}
+.profile .follows:hover {
   text-decoration: underline;
 }
 </style>
