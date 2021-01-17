@@ -303,7 +303,7 @@ const getUser = async (req, res, next) => {
         if (!user) {
             throw createError.NotFound();
         } else if (user.hasBlockedViewer) {
-            throw createError.Forbidden();
+            throw createError.NotFound();
         }
 
         res.json(user);
