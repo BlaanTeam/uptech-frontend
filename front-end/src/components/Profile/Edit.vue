@@ -23,7 +23,7 @@
         <v-row no-gutters>
           <v-col class="me-4">
             <v-text-field
-              v-model="profileData.firstName"
+              v-model="profile.firstName"
               outlined
               dense
               required
@@ -32,7 +32,7 @@
           </v-col>
           <v-col>
             <v-text-field
-              v-model="profileData.lastName"
+              v-model="profile.lastName"
               outlined
               dense
               label="Last Name"
@@ -41,13 +41,13 @@
         </v-row>
         <v-row no-gutters>
           <v-col>
-            <v-textarea v-model="profileData.bio" outlined dense label="Bio" />
+            <v-textarea v-model="profile.bio" outlined dense label="Bio" />
           </v-col>
         </v-row>
         <v-row no-gutters>
           <v-col>
             <v-text-field
-              v-model="profileData.location"
+              v-model="profile.location"
               type="country"
               outlined
               dense
@@ -59,7 +59,7 @@
         <v-row no-gutters>
           <v-col>
             <v-text-field
-              v-model="profileData.website"
+              v-model="profile.website"
               type="url"
               outlined
               label="Website"
@@ -93,7 +93,7 @@
           </v-col>
           <!-- <v-col>
             <v-text-field
-              v-model="profileData.birthDate"
+              v-model="profile.birthDate"
               outlined
               label="Birth Date"
             />
@@ -124,9 +124,8 @@
 <script>
 export default {
   props: { profile: { type: Object, required: true } },
-  data: props => ({
+  data: () => ({
     dialog: false,
-    profileData: { ...props.profile },
     months: [
       "January",
       "February",
@@ -143,7 +142,7 @@ export default {
     ]
   }),
   mounted() {
-    console.log("edit post");
+    console.log("edit post mounted");
   }
 };
 </script>
