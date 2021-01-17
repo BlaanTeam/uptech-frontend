@@ -1,22 +1,33 @@
 <template>
   <div class="tabs mt-4 px-10">
+    {{ user }}
     <v-tabs v-model="tabs" centered grow background-color="bg">
-      <v-tab href="#posts">
+      <v-tab>
         Posts
       </v-tab>
-
-      <v-tab href="#likes-and-comments">
+      <v-tab>
         Likes and comments
       </v-tab>
-
-      <v-tab href="#media">
+      <v-tab>
         Media
       </v-tab>
     </v-tabs>
 
-    <v-tabs-items v-model="tabs" class="auth-bg px-1">
-      <v-tab-item value="posts">
-        <div class="auth-bg pt-4 px-1">
+    <v-tabs-items
+      class="auth-bg"
+      v-model="tabs"
+      v-if="
+        userInfo.isPrivate && !userInfo.followedByViewer && !userInfo.isOwner
+      "
+    >
+      <div class="mt-4 text-center auth-bg">
+        <h1>Private account</h1>
+      </div>
+    </v-tabs-items>
+
+    <v-tabs-items v-else v-model="tabs" class="auth-bg px-1">
+      <v-tab-item>
+        <div v-if="posts.length" class="auth-bg pt-4 px-1">
           <span v-for="(post, index) in posts" :key="post._id">
             <Post
               :post="post"
@@ -26,13 +37,16 @@
             />
           </span>
         </div>
+        <div v-else>
+          <h1>No Posts yet</h1>
+        </div>
       </v-tab-item>
-      <v-tab-item value="likes-and-comments">
+      <v-tab-item>
         <div class="auth-bg">
           likes and comments
         </div>
       </v-tab-item>
-      <v-tab-item value="media">
+      <v-tab-item>
         <div class="auth-bg">
           media
         </div>
@@ -42,27 +56,45 @@
 </template>
 
 <script>
-import Post from "@/components/Post/Post";
-
 export default {
   name: "Tabs",
-  components: { Post },
+  components: { Post: () => import("@/components/Post/Post") },
+  props: {
+    userInfo: { type: Object, required: true }
+  },
   data: () => ({
-    tabs: null
+    tabs: null,
+    posts: [],
+    pageInfo: {}
   }),
-  computed: {
-    posts() {
-      return this.$store.getters.getPosts;
+  methods: {
+    async getUserPosts() {
+      try {
+        let userName = this.userInfo.userName;
+        let res = await this.$http.get(`/users/${userName}/posts`);
+        if (res.status === 200) {
+          this.posts = res.data.posts;
+          this.pageInfo = res.data.pageInfo;
+
+          console.log(res);
+          return res.data.posts;
+        }
+      } catch (err) {
+        console.log(err);
+      }
     }
   },
-  async mounted() {
-    try {
-      await this.$store.dispatch("getFeedPosts");
-      this.loaded = true;
-    } catch (err) {
-      this.loaded = true;
-      console.log(err);
+  mounted() {
+    if (
+      this.userInfo.isPrivate &&
+      !this.userInfo.followedByViewer &&
+      !this.userInfo.isOwner
+    )
+      return;
+    else {
+      this.getUserPosts();
     }
+    this.user.userName = "replaced";
   }
 };
 </script>
