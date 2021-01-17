@@ -1,97 +1,56 @@
 <template>
   <div class="view-profile bg">
-    <!-- <ProfileSkeleton /> -->
-    <Profile :profile="profile">
-      <v-menu
-        attach=".profile"
-        offset-y
-        left
-        transition="slide-y-transition"
-        :close-on-content-click="false"
-      >
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn
-            v-bind="attrs"
-            v-on="on"
-            color="primary"
-            text
-            class="ms-5 mt-n2 pa-0 ma-0"
-          >
-            <v-icon size="40">mdi-dots-horizontal</v-icon>
-          </v-btn>
-        </template>
-        <div class="bg d-flex flex-column align-start">
-          <v-btn
-            tile
-            block
-            text
-            :loading="loading"
-            @click="log('follow')"
-            class="text-capitalize justify-start "
-          >
-            <v-icon small left>mdi-account-plus-outline</v-icon>
-            Follow
-          </v-btn>
-
-          <v-btn
-            tile
-            block
-            text
-            @click="log('message')"
-            class="text-capitalize justify-start"
-          >
-            <v-icon small left>mdi-message-outline</v-icon>
-            Message
-          </v-btn>
-          <v-btn
-            tile
-            block
-            text
-            @click="log('report')"
-            class="text-capitalize justify-start"
-          >
-            <v-icon small left>mdi-flag-outline</v-icon>
-            Report
-          </v-btn>
-        </div>
-      </v-menu>
+    <ProfileSkeleton v-if="!loaded" />
+    <Profile v-else-if="exist" :userInfo="userInfo">
+      <Menu v-if="!userInfo.isOwner" :userInfo="userInfo" />
+      <Edit v-else :profile="userInfo.profile">
+        <v-btn class="ms-2 mt-n2 text-capitalize" color="primary" dark text>
+          <v-icon left size="18">mdi-square-edit-outline</v-icon>
+          Edit
+        </v-btn>
+      </Edit>
     </Profile>
-    <Tabs />
+    <Tabs v-if="exist" :userInfo="userInfo" />
   </div>
 </template>
 
 <script>
-import Profile from "@/components/Profile/Profile";
 import ProfileSkeleton from "@/components/Skeletons/ProfileSkeleton";
-import Tabs from "@/components/Profile/Tabs";
 
 export default {
-  name: "MyProfile",
-  components: { Profile, Tabs /*ProfileSkeleton*/ },
+  name: "ViewProfile",
+  components: {
+    Menu: () => import("@/components/Profile/Menu"),
+    Edit: () => import("@/components/Profile/Edit"),
+    Profile: () => import("@/components/Profile/Profile"),
+    Tabs: () => import("@/components/Profile/Tabs"),
+    ProfileSkeleton
+  },
+
   data: () => ({
-    profile: {
-      firstName: "Abdelouahed",
-      lastName: "Oumoussa",
-      userName: "oumoussa98",
-      bio: ` Digital is the world's largest virtual biotech partnering and
-             education event, convening thousands of global biotech leaders and
-             innovators.`,
-      location: "Morocco",
-      website: "https://oumoussa98.netlify.com",
-      posts: "20",
-      followers: "200",
-      following: "150",
-      joinedAt: "Joined january 14 2020"
-    },
-    loading: false,
-    toggle_none: 0
+    userInfo: {},
+    exist: false,
+    loaded: false
   }),
-  methods: {
-    log(e) {
-      this.loading = !this.loading;
-      console.log(e + " clicked");
+  async created() {
+    let userName = this.$route.params.userName;
+    try {
+      let res = await this.$http.get(`/users/${userName}`);
+      if (res.status === 200) this.exist = true;
+      this.userInfo = res.data;
+      this.loaded = true;
+      console.log(res);
+    } catch (err) {
+      this.loaded = true;
+      console.log(err);
     }
   }
+
+  // mounted() {
+  //   if (this.$route.params.username === this.profile.userName)
+  //     this.owned = true;
+  //   else this.notOwned = true;
+  // }
 };
 </script>
 
