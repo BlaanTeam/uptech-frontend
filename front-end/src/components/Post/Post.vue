@@ -7,7 +7,7 @@
             <router-link
               :to="{
                 name: 'ViewProfile',
-                params: { username: post.user.userName }
+                params: { userName: post.user.userName }
               }"
             >
               <v-avatar width="40" color="red">
@@ -22,7 +22,7 @@
           <router-link
             :to="{
               name: 'ViewProfile',
-              params: { username: post.user.userName }
+              params: { userName: post.user.userName }
             }"
             class="pa-0 ma-0"
           >
