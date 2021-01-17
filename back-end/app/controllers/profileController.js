@@ -1062,6 +1062,473 @@ const unRejectUser = async (req, res, next) => {
     }
 };
 
+// get user posts
+
+const getUserPosts = async (req, res, next) => {
+    try {
+        let params = await profileValidator(req.params, { userName: 1 });
+        let query = await profileValidator(req.query, { page: 2 });
+        console.log(query);
+        let perPage = 50;
+        let pageNumber = query.page;
+        let user = await User.aggregate([
+            {
+                $match: {
+                    userName: params.userName,
+                },
+            },
+            { $limit: 1 },
+            {
+                $set: {
+                    isOwner: {
+                        $cond: {
+                            if: {
+                                $eq: ["$_id", req.currentUser._id],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                },
+            },
+            {
+                $lookup: {
+                    from: "follows",
+                    let: {
+                        userOne: req.currentUser._id,
+                        userTwo: "$_id",
+                    },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ["$userOne", "$$userOne"],
+                                        },
+                                        {
+                                            $eq: ["$userTwo", "$$userTwo"],
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                        {
+                            $project: {
+                                status: 1,
+                            },
+                        },
+                    ],
+                    as: "followOne",
+                },
+            },
+            {
+                $lookup: {
+                    from: "follows",
+                    let: {
+                        userOne: "$_id",
+                        userTwo: req.currentUser._id,
+                    },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ["$userOne", "$$userOne"],
+                                        },
+                                        {
+                                            $eq: ["$userTwo", "$$userTwo"],
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                        {
+                            $project: {
+                                status: 1,
+                            },
+                        },
+                    ],
+                    as: "followTwo",
+                },
+            },
+            {
+                $lookup: {
+                    from: "posts",
+                    let: { userId: "$_id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $eq: ["$user", "$$userId"],
+                                },
+                            },
+                        },
+                        {
+                            $sort: {
+                                createdAt: -1,
+                            },
+                        },
+                        {
+                            $facet: {
+                                pageInfo: [
+                                    { $count: "total" },
+                                    {
+                                        $addFields: {
+                                            perPage: perPage,
+                                            pageNumber: pageNumber,
+                                            total: {
+                                                $cond: {
+                                                    if: {
+                                                        $gt: [
+                                                            {
+                                                                $divide: [
+                                                                    "$total",
+                                                                    perPage,
+                                                                ],
+                                                            },
+                                                            1,
+                                                        ],
+                                                    },
+                                                    then: {
+                                                        $divide: [
+                                                            "$total",
+                                                            perPage,
+                                                        ],
+                                                    },
+                                                    else: 1,
+                                                },
+                                            },
+                                        },
+                                    },
+                                ],
+                                data: [
+                                    {
+                                        $lookup: {
+                                            from: "users",
+                                            let: { userId: "$user" },
+                                            pipeline: [
+                                                {
+                                                    $match: {
+                                                        $expr: {
+                                                            $eq: [
+                                                                "$_id",
+                                                                "$$userId",
+                                                            ],
+                                                        },
+                                                    },
+                                                },
+                                                {
+                                                    $project: {
+                                                        userName: 1,
+                                                        profile: 1,
+                                                    },
+                                                },
+                                            ],
+                                            as: "user",
+                                        },
+                                    },
+                                    { $unwind: "$user" },
+                                    {
+                                        $lookup: {
+                                            from: "likes",
+                                            let: { postId: "$_id" },
+                                            pipeline: [
+                                                {
+                                                    $match: {
+                                                        $expr: {
+                                                            $eq: [
+                                                                "$postId",
+                                                                "$$postId",
+                                                            ],
+                                                        },
+                                                    },
+                                                },
+                                                {
+                                                    $project: {
+                                                        liked: 1,
+                                                    },
+                                                },
+                                            ],
+                                            as: "liked",
+                                        },
+                                    },
+                                    {
+                                        $unwind: {
+                                            path: "$liked",
+                                            preserveNullAndEmptyArrays: true,
+                                        },
+                                    },
+                                    {
+                                        $lookup: {
+                                            from: "comments",
+                                            let: {
+                                                postId: "$_id",
+                                            },
+                                            pipeline: [
+                                                {
+                                                    $match: {
+                                                        $expr: {
+                                                            $eq: [
+                                                                "$postId",
+                                                                "$$postId",
+                                                            ],
+                                                        },
+                                                    },
+                                                },
+                                                {
+                                                    $group: {
+                                                        _id: null,
+                                                        count: { $sum: 1 },
+                                                    },
+                                                },
+                                            ],
+                                            as: "comments",
+                                        },
+                                    },
+                                    {
+                                        $lookup: {
+                                            from: "likes",
+                                            let: {
+                                                postId: "$_id",
+                                            },
+                                            pipeline: [
+                                                {
+                                                    $match: {
+                                                        $expr: {
+                                                            $eq: [
+                                                                "$postId",
+                                                                "$$postId",
+                                                            ],
+                                                        },
+                                                    },
+                                                },
+                                                {
+                                                    $group: {
+                                                        _id: null,
+                                                        count: { $sum: 1 },
+                                                    },
+                                                },
+                                            ],
+                                            as: "likes",
+                                        },
+                                    },
+                                    {
+                                        $unwind: {
+                                            path: "$likes",
+                                            preserveNullAndEmptyArrays: true,
+                                        },
+                                    },
+                                    {
+                                        $unwind: {
+                                            path: "$comments",
+                                            preserveNullAndEmptyArrays: true,
+                                        },
+                                    },
+                                    {
+                                        $addFields: {
+                                            isLikedViewer: {
+                                                $cond: {
+                                                    if: {
+                                                        $eq: [
+                                                            "$liked.liked",
+                                                            true,
+                                                        ],
+                                                    },
+                                                    then: true,
+                                                    else: false,
+                                                },
+                                            },
+                                            likes: {
+                                                $cond: [
+                                                    {
+                                                        $ifNull: [
+                                                            "$likes",
+                                                            false,
+                                                        ],
+                                                    },
+                                                    "$likes.count",
+                                                    0,
+                                                ],
+                                            },
+                                            comments: {
+                                                $cond: [
+                                                    {
+                                                        $ifNull: [
+                                                            "$comments",
+                                                            false,
+                                                        ],
+                                                    },
+                                                    "$comments.count",
+                                                    0,
+                                                ],
+                                            },
+                                        },
+                                    },
+                                    {
+                                        $skip: (pageNumber - 1) * perPage,
+                                    },
+                                    { $limit: perPage },
+                                    {
+                                        $project: {
+                                            __v: 0,
+                                            liked: 0,
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                        {
+                            $unwind: {
+                                path: "$pageInfo",
+                            },
+                        },
+                    ],
+                    as: "posts",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$posts",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $unwind: {
+                    path: "$followOne",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $unwind: {
+                    path: "$followTwo",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $addFields: {
+                    blockedByViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followOne.status", 4],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    followedByViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followOne.status", 2],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    rejectedByViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 3],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    requestedByViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followOne.status", 1],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    followsViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 2],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    hasBlockedViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 4],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    hasRequestedViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 1],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    hasRejectedViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followOne.status", 3],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                },
+            },
+            {
+                $project: {
+                    blockedByViewer: 1,
+                    followedByViewer: 1,
+                    rejectedByViewer: 1,
+                    requestedByViewer: 1,
+                    followsViewer: 1,
+                    hasBlockedViewer: 1,
+                    hasRequestedViewer: 1,
+                    hasRejectedViewer: 1,
+                    posts: 1,
+                    isPrivate: 1,
+                    isOwner: 1,
+                },
+            },
+        ]);
+        user = user[0];
+
+        if (!user) {
+            throw createError.NotFound();
+        } else if (user.hasBlockedViewer) {
+            throw createError.NotFound();
+        } else if ((user.isPrivate && user.followedByViewer) || user.isOwner) {
+            let posts = user.posts?.data;
+            let pageInfo = user.posts?.pageInfo;
+            resp = {
+                posts: posts ? posts : [],
+                pageInfo: pageInfo ? pageInfo : [],
+            };
+            res.json(resp);
+        } else if (!user.isPrivate) {
+            let posts = user.posts?.data;
+            let pageInfo = user.posts?.pageInfo;
+            resp = {
+                posts: posts ? posts : [],
+                pageInfo: pageInfo ? pageInfo : [],
+            };
+            res.json(resp);
+        } else {
+            throw createError.Forbidden();
+        }
+        console.log(user);
+    } catch (err) {
+        next(err);
+    }
+};
+
 module.exports = {
     getUser,
     followUser,
@@ -1070,4 +1537,5 @@ module.exports = {
     unBlockUser,
     rejectUser,
     unRejectUser,
+    getUserPosts,
 };

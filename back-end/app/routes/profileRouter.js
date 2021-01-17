@@ -13,4 +13,5 @@ router.put("/blocks/:userName", profileController.blockUser);
 router.delete("/blocks/:userName", profileController.unBlockUser);
 router.put("/rejects/:userName", profileController.rejectUser);
 router.delete("/rejects/:userName", profileController.unRejectUser);
+router.get("/:userName/posts", profileController.getUserPosts);
 module.exports = router;
