@@ -143,9 +143,12 @@ export default {
         let userName = this.userInfo.userName;
         let res = await this.$http.put(`/users/following/${userName}`);
         if (res.status === 204) {
-          this.userInfo.followers++;
-          if (!this.userInfo.isPrivate) this.userInfo.followedByViewer = true;
-          else this.userInfo.requestedByViewer = true;
+          if (!this.userInfo.isPrivate) {
+            this.userInfo.followedByViewer = true;
+            this.userInfo.followers++;
+          } else {
+            this.userInfo.requestedByViewer = true;
+          }
         }
         this.followLoading = false;
 
@@ -161,9 +164,12 @@ export default {
         let userName = this.userInfo.userName;
         let res = await this.$http.delete(`/users/following/${userName}`);
         if (res.status === 204) {
-          this.userInfo.followers--;
-          if (!this.userInfo.isPrivate) this.userInfo.followedByViewer = false;
-          else this.userInfo.requestedByViewer = false;
+          if (!this.userInfo.isPrivate) {
+            this.userInfo.followedByViewer = false;
+            this.userInfo.followers--;
+          } else {
+            this.userInfo.requestedByViewer = false;
+          }
         }
 
         this.followLoading = false;

@@ -1,6 +1,5 @@
 <template>
   <div class="tabs mt-4 px-10">
-    {{ user }}
     <v-tabs v-model="tabs" centered grow background-color="bg">
       <v-tab>
         Posts
@@ -94,7 +93,6 @@ export default {
     else {
       this.getUserPosts();
     }
-    this.user.userName = "replaced";
   }
 };
 </script>
