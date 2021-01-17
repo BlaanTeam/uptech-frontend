@@ -40,25 +40,18 @@ const getUser = async (req, res, next) => {
                             },
                         },
                         {
+                            $group: {
+                                _id: null,
+                                count: { $sum: 1 },
+                            },
+                        },
+                        {
                             $project: {
-                                _id: 1,
+                                _id: 0,
                             },
                         },
                     ],
-                    as: "userPosts",
-                },
-            },
-            {
-                $addFields: {
-                    userOnwer: {
-                        $cond: {
-                            if: {
-                                $eq: ["$_id", req.currentUser._id],
-                            },
-                            then: true,
-                            else: false,
-                        },
-                    },
+                    as: "posts",
                 },
             },
             {
@@ -77,12 +70,18 @@ const getUser = async (req, res, next) => {
                             },
                         },
                         {
+                            $group: {
+                                _id: null,
+                                count: { $sum: 1 },
+                            },
+                        },
+                        {
                             $project: {
-                                _id: 1,
+                                _id: 0,
                             },
                         },
                     ],
-                    as: "followingCount",
+                    as: "following",
                 },
             },
             {
@@ -101,12 +100,20 @@ const getUser = async (req, res, next) => {
                             },
                         },
                         {
+                            $group: {
+                                _id: null,
+                                count: {
+                                    $sum: 1,
+                                },
+                            },
+                        },
+                        {
                             $project: {
-                                _id: 1,
+                                _id: 0,
                             },
                         },
                     ],
-                    as: "followersCount",
+                    as: "followers",
                 },
             },
             {
@@ -164,6 +171,24 @@ const getUser = async (req, res, next) => {
             {
                 $unwind: {
                     path: "$followTwo",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $unwind: {
+                    path: "$posts",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $unwind: {
+                    path: "$following",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $unwind: {
+                    path: "$followers",
                     preserveNullAndEmptyArrays: true,
                 },
             },
@@ -241,9 +266,6 @@ const getUser = async (req, res, next) => {
                             else: false,
                         },
                     },
-                    following: { $size: "$followingCount" },
-                    followers: { $size: "$followersCount" },
-                    posts: { $size: "$userPosts" },
                 },
             },
             {
@@ -256,7 +278,8 @@ const getUser = async (req, res, next) => {
                             "$$REMOVE",
                         ],
                     },
-                    profile: 1,
+                    profile: { $ifNull: ["$profile", {}] },
+                    createdAt: 1,
                     isPrivate: 1,
                     blockedByViewer: 1,
                     followedByViewer: 1,
@@ -266,9 +289,9 @@ const getUser = async (req, res, next) => {
                     hasBlockedViewer: 1,
                     hasRequestedViewer: 1,
                     hasRejectedViewer: 1,
-                    following: 1,
-                    followers: 1,
-                    posts: 1,
+                    following: { $ifNull: ["$following.count", 0] },
+                    followers: { $ifNull: ["$followers.count", 0] },
+                    posts: { $ifNull: ["$posts.count", 0] },
                     isOwner: 1,
                 },
             },
