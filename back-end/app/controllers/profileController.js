@@ -1368,10 +1368,10 @@ const getUserPosts = async (req, res, next) => {
                                             },
                                         },
                                     },
-                                    { $limit: perPage },
                                     {
                                         $skip: (pageNumber - 1) * perPage,
                                     },
+                                    { $limit: perPage },
                                     {
                                         $project: {
                                             __v: 0,
