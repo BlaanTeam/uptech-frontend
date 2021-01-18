@@ -1328,7 +1328,7 @@ const getUserPosts = async (req, res, next) => {
                                     },
                                     {
                                         $addFields: {
-                                            isLikedViewer: {
+                                            likedByViewer: {
                                                 $cond: {
                                                     if: {
                                                         $eq: [
@@ -1509,7 +1509,7 @@ const getUserPosts = async (req, res, next) => {
             let pageInfo = user.posts?.pageInfo;
             resp = {
                 posts: posts ? posts : [],
-                pageInfo: pageInfo ? pageInfo : [],
+                pageInfo: pageInfo ? pageInfo : {},
             };
             res.json(resp);
         } else if (!user.isPrivate) {
