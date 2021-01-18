@@ -1,71 +1,13 @@
 <template>
   <div class="menu">
+    <FollowUnfollow v-if="!blocked" :userInfo="userInfo" />
     <v-btn
-      v-if="!userInfo.followedByViewer && !userInfo.requestedByViewer"
-      :loading="followLoading"
-      @click="followUser"
-      class="text-capitalize me-3 mt-n2"
-      elevation="0"
-      dark
+      v-if="!blocked"
       color="primary"
-      rounded
-      height="30"
+      class="mt-n2 me-3"
+      icon
+      @click="log('message')"
     >
-      <v-icon small left>mdi-account-plus-outline</v-icon>
-      Follow
-    </v-btn>
-    <v-btn
-      v-else-if="userInfo.followedByViewer"
-      :loading="followLoading"
-      @click="unFollowUser"
-      class="text-capitalize me-3 mt-n2"
-      elevation="0"
-      dark
-      rounded
-      height="30"
-    >
-      <v-icon small left>mdi-account-minus-outline</v-icon>
-      Unfollow
-    </v-btn>
-    <v-menu
-      offset-y
-      left
-      transition="slide-y-transition"
-      :close-on-content-click="false"
-      attach=".profile"
-      :nudge-right="4"
-    >
-      <template v-slot:activator="{ on, attrs }">
-        <v-btn
-          v-show="userInfo.requestedByViewer"
-          class="text-capitalize me-3 mt-n2"
-          elevation="0"
-          dark
-          rounded
-          height="30"
-          v-bind="attrs"
-          v-on="on"
-        >
-          requested
-        </v-btn>
-      </template>
-      <div class="bg">
-        <v-btn
-          tile
-          text
-          block
-          color="red"
-          v-if="userInfo.requestedByViewer"
-          :loading="followLoading"
-          @click="unFollowUser"
-          class="text-capitalize"
-        >
-          <v-icon small left>mdi-account-minus-outline</v-icon>
-          Unfollow
-        </v-btn>
-      </div>
-    </v-menu>
-    <v-btn color="primary" class="mt-n2 me-3" icon @click="log('message')">
       <v-icon>mdi-email-outline</v-icon>
     </v-btn>
     <v-menu
@@ -127,58 +69,19 @@
 </template>
 
 <script>
+import FollowUnfollow from "./FollowUnfollow";
 export default {
+  components: { FollowUnfollow },
   props: {
     userInfo: { type: Object, required: false }
   },
   data: () => ({
     followLoading: false,
     blockLoading: false,
-    toggle_none: 0
+    toggle_none: 0,
+    blocked: false
   }),
   methods: {
-    async followUser() {
-      this.followLoading = true;
-      try {
-        let userName = this.userInfo.userName;
-        let res = await this.$http.put(`/users/following/${userName}`);
-        if (res.status === 204) {
-          if (!this.userInfo.isPrivate) {
-            this.userInfo.followedByViewer = true;
-            this.userInfo.followers++;
-          } else {
-            this.userInfo.requestedByViewer = true;
-          }
-        }
-        this.followLoading = false;
-
-        console.log(res);
-      } catch (err) {
-        this.followLoading = false;
-        console.log(err);
-      }
-    },
-    async unFollowUser() {
-      this.followLoading = true;
-      try {
-        let userName = this.userInfo.userName;
-        let res = await this.$http.delete(`/users/following/${userName}`);
-        if (res.status === 204) {
-          if (!this.userInfo.isPrivate) {
-            this.userInfo.followedByViewer = false;
-            this.userInfo.followers--;
-          } else {
-            this.userInfo.requestedByViewer = false;
-          }
-        }
-
-        this.followLoading = false;
-        console.log(res);
-      } catch (err) {
-        this.followLoading = false;
-        console.log(err);
-      }
-    },
     async blockUser() {
       this.blockLoading = true;
       try {
@@ -186,10 +89,14 @@ export default {
         let res = await this.$http.put(`/users/blocks/${userName}`);
         if (res.status === 204) {
           this.userInfo.blockedByViewer = true;
-        }
-        console.log(res);
+          this.blocked = true;
+          console.log("Menu.vue: User Blocked :)");
+        } else
+          console.log("Menu.vue(blockUser): No error but nothing changed :(");
+
         this.blockLoading = false;
       } catch (err) {
+        console.log("Something went wrong from:Menu.vue (blockUser)");
         this.blockLoading = false;
         console.log(err);
       }
@@ -201,22 +108,17 @@ export default {
         let res = await this.$http.delete(`/users/blocks/${userName}`);
         if (res.status === 204) {
           this.userInfo.blockedByViewer = false;
-        }
-        console.log(res);
+          this.blocked = false;
+          console.log("Menu.vue: User UnBlocked :)");
+        } else
+          console.log("Menu.vue(unBlockUser): No error but nothing changed :(");
         this.blockLoading = false;
       } catch (err) {
+        console.log("Something went wrong from:Menu.vue (unBlockUser)");
         this.blockLoading = false;
         console.log(err);
       }
-    },
-
-    log(e) {
-      this.loading = !this.loading;
-      console.log(e + " clicked");
     }
-  },
-  mounted() {
-    console.log("Menu Mounted");
   }
 };
 </script>
