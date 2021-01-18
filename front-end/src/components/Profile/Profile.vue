@@ -47,28 +47,48 @@
             <span>{{ new Date(userInfo.createdAt).toDateString() }}</span>
           </div>
         </div>
-        <div class="statistics">
+        <div class="statistics mt-4">
           <v-row>
             <v-col cols="2">
               <span class="font-weight-bold">{{ userInfo.posts }}</span> Posts
             </v-col>
-            <v-col cols="3" class="follows">
-              <Followers
-                :userName="userInfo.userName"
-                :followers="userInfo.followers"
-              >
+            <v-col
+              cols="3"
+              class="follows"
+              :class="{
+                'follows-disabled':
+                  userInfo.isPrivate && !userInfo.followedByViewer
+              }"
+            >
+              <a text @click="followers.value = true">
                 <span class="font-weight-bold">{{ userInfo.followers }}</span>
                 Followers
-              </Followers>
-            </v-col>
-            <v-col cols="3" class="follows">
-              <Following
+              </a>
+              <Followers
+                v-if="!userInfo.isPrivate || userInfo.followedByViewer"
                 :userName="userInfo.userName"
-                :following="userInfo.following"
-              >
+                :myInfo="myInfo"
+                :dialog="followers"
+              />
+            </v-col>
+            <v-col
+              cols="3"
+              class="follows"
+              :class="{
+                'follows-disabled':
+                  userInfo.isPrivate && !userInfo.followedByViewer
+              }"
+            >
+              <a text @click="following.value = true">
                 <span class="font-weight-bold">{{ userInfo.following }}</span>
                 Following
-              </Following>
+              </a>
+              <Following
+                v-if="!userInfo.isPrivate || userInfo.followedByViewer"
+                :userName="userInfo.userName"
+                :myInfo="myInfo"
+                :dialog="following"
+              />
             </v-col>
           </v-row>
         </div>
@@ -101,13 +121,24 @@
 </template>
 
 <script>
-import Following from "@/components/Profile/Following";
-import Followers from "@/components/Profile/Followers";
-
 export default {
   name: "Profile",
-  components: { Following, Followers },
-  props: { userInfo: { type: Object, required: true } }
+  components: {
+    Following: () => import("@/components/Profile/Following"),
+    Followers: () => import("@/components/Profile/Followers")
+  },
+  props: { userInfo: { type: Object, required: true } },
+  data: () => ({
+    following: { value: false },
+    followers: { value: false }
+  }),
+  computed: {
+    myInfo() {
+      let userName = this.$store.getters.getUserName;
+      if (this.userInfo.userName === userName) return this.userInfo;
+      else return false;
+    }
+  }
 };
 </script>
 
@@ -117,5 +148,8 @@ export default {
 }
 .profile .follows:hover {
   text-decoration: underline;
+}
+.profile .follows-disabled {
+  pointer-events: none;
 }
 </style>
