@@ -252,8 +252,6 @@ const addPost = async (req, res, next) => {
 
 const getPost = async (req, res, next) => {
     try {
-        let commentsLimit = 10;
-        let likesLimit = 10;
         let params = await postValidator(req.params, { postId: 1 });
         let post = await Post.aggregate([
             {
@@ -262,152 +260,28 @@ const getPost = async (req, res, next) => {
                 },
             },
             {
-                $lookup: {
-                    from: "likes",
-                    let: { postId: "$_id" },
-                    pipeline: [
-                        {
-                            $match: {
-                                $expr: {
-                                    $and: [
-                                        { $eq: ["$postId", "$$postId"] },
-                                        { $eq: ["$liked", true] },
-                                    ],
-                                },
-                            },
-                        },
-                        { $project: { __v: 0 } },
-                    ],
-                    as: "likes",
-                },
-            },
-            {
-                $lookup: {
-                    from: "likes",
-                    let: { userId: req.currentUser._id, postId: params.postId },
-                    pipeline: [
-                        {
-                            $match: {
-                                $expr: {
-                                    $and: [
-                                        {
-                                            $eq: ["$postId", "$$postId"],
-                                        },
-                                        {
-                                            $eq: ["$user", "$$userId"],
-                                        },
-                                        {
-                                            $eq: ["$liked", true],
-                                        },
-                                    ],
-                                },
-                            },
-                        },
-                    ],
-                    as: "liked",
-                },
-            },
-            {
-                $addFields: {
-                    totalComments: { $size: "$comments" },
-                    totalLikes: { $size: "$likes" },
-                    isLiked: {
-                        $cond: {
-                            if: { $eq: [{ $size: "$liked" }, 1] },
-                            then: true,
-                            else: false,
-                        },
+                $set: {
+                    isOwner: {
+                        $cond: [
+                            { $eq: ["$user", req.currentUser._id] },
+                            true,
+                            false,
+                        ],
                     },
-                },
-            },
-            {
-                $project: {
-                    liked: 0,
-                    comments: 0,
-                    likes: 0,
-                    tags: 0,
-                    __v: 0,
-                },
-            },
-
-            {
-                $lookup: {
-                    from: "comments",
-                    let: { postId: "$_id" },
-                    pipeline: [
-                        { $match: { $expr: { $eq: ["$postId", "$$postId"] } } },
-                        { $project: { __v: 0 } },
-                        {
-                            $lookup: {
-                                from: "users",
-                                let: { userId: "$user" },
-                                pipeline: [
-                                    {
-                                        $match: {
-                                            $expr: {
-                                                $eq: ["$_id", "$$userId"],
-                                            },
-                                        },
-                                    },
-                                    {
-                                        $project: {
-                                            userName: 1,
-                                            profile: 1,
-                                        },
-                                    },
-                                ],
-                                as: "user",
-                            },
-                        },
-                        { $unwind: "$user" },
-                        { $sort: { createdAt: -1 } },
-                        { $limit: commentsLimit },
-                    ],
-                    as: "comments",
-                },
-            },
-            {
-                $lookup: {
-                    from: "likes",
-                    let: { postId: "$_id" },
-                    pipeline: [
-                        { $match: { $expr: { $eq: ["$postId", "$$postId"] } } },
-                        { $project: { __v: 0 } },
-                        {
-                            $lookup: {
-                                from: "users",
-                                let: { userId: "$user" },
-                                pipeline: [
-                                    {
-                                        $match: {
-                                            $expr: {
-                                                $eq: ["$_id", "$$userId"],
-                                            },
-                                        },
-                                    },
-                                    {
-                                        $project: {
-                                            userName: 1,
-                                            profile: 1,
-                                        },
-                                    },
-                                ],
-                                as: "user",
-                            },
-                        },
-                        { $unwind: "$user" },
-                        { $limit: likesLimit },
-                    ],
-                    as: "likes",
                 },
             },
             {
                 $lookup: {
                     from: "users",
-                    let: { userId: req.currentUser._id },
+                    let: { userId: "$user" },
+                    as: "user",
                     pipeline: [
                         {
-                            $match: { $expr: { $eq: ["$_id", "$$userId"] } },
+                            $match: {
+                                $expr: {
+                                    $eq: ["$_id", "$$userId"],
+                                },
+                            },
                         },
                         {
                             $project: {
@@ -416,18 +290,60 @@ const getPost = async (req, res, next) => {
                             },
                         },
                     ],
-                    as: "user",
                 },
             },
             { $unwind: "$user" },
+            {
+                $lookup: {
+                    from: "likes",
+                    let: {
+                        postId: "$_id",
+                    },
+                    as: "like",
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ["$postId", "$$postId"] },
+                                        { $eq: ["$user", req.currentUser._id] },
+                                    ],
+                                },
+                            },
+                        },
+                        {
+                            $project: {
+                                liked: 1,
+                            },
+                        },
+                    ],
+                },
+            },
+            {
+                $unwind: "$like",
+            },
+            {
+                $addFields: {
+                    likedByViewer: {
+                        $cond: [{ $eq: ["$like.liked", true] }, true, false],
+                    },
+                    comments: { $size: "$comments" },
+                    likes: { $size: "$likes" },
+                },
+            },
+            {
+                $project: {
+                    __v: 0,
+                    like: 0,
+                    tags: 0,
+                },
+            },
         ]);
         post = post[0];
-        if (!post) throw new cE("Post Not Found", 1021, 404);
-        else if (
-            post.isPrivate === true &&
-            post.user._id.toString() !== req.currentUser._id.toString()
-        ) {
-            throw new cE("You don't have permission !", 1003, 403);
+        if (!post) {
+            throw createError.NotFound();
+        } else if (post.isPrivate === true && !user.isOwner) {
+            throw createError.Forbidden();
         }
         res.json(post);
     } catch (err) {
