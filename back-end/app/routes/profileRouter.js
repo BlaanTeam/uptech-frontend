@@ -15,4 +15,5 @@ router.put("/rejects/:userName", profileController.rejectUser);
 router.delete("/rejects/:userName", profileController.unRejectUser);
 router.get("/:userName/posts", profileController.getUserPosts);
 router.get("/:userName/following", profileController.getUserFollowing);
+router.get("/:userName/followers", profileController.getUserFollowers);
 module.exports = router;
