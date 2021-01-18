@@ -11,7 +11,8 @@ export default {
       !!state.accessToken &&
       !!state.accessToken.match(Vue.prototype.$pattern.jwtToken),
     getToken: state => state.accessToken,
-    getUserId: state => state.user._id
+    getUserId: state => state.user._id,
+    getUserName: state => state.user.userName
   },
   mutations: {
     AUTH_SUCCESS: (state, payload) => {
