@@ -1,36 +1,57 @@
 <template>
-  <v-dialog scrollable v-model="dialog" max-width="400px">
-    <template v-slot:activator="{ on, attrs }">
-      <span v-bind="attrs" v-on="on">
-        <slot></slot>
-      </span>
-    </template>
+  <v-dialog scrollable v-model="dialog.value" max-width="400px">
     <v-card class="bg edit-profile">
-      <v-card-title>
+      <v-card-title class="justify-center">
         <h1 class="title ms-2">Followers</h1>
-        <v-spacer></v-spacer>
-        <div>{{ followers }} User</div>
       </v-card-title>
-      <v-card-text style="height: 80vh;">
-        <h2 class="my-4" v-for="i in 50" :key="i">
-          testing
-        </h2>
+      <v-card-text style="height: 80vh;" class="ps-3 py-3 px-0">
+        <span v-for="user in users" :key="user._id">
+          <div class="d-flex py-1">
+            <div class="align-self-center">
+              <img src="@/assets/images/avatar.svg" width="36" alt="Avatar" />
+            </div>
+            <div cols="6" class="align-sefl-center mx-3">
+              <h3 class="text-capitilize">
+                {{ user.profile.firstName }}
+                {{ user.profile.lastName }}
+              </h3>
+              <h5 class="mt-n2">@{{ user.userName }}</h5>
+            </div>
+            <div class="align-self-center ms-auto me-1">
+              <FollowUnfollow :userInfo="user" :myInfo="myInfo" />
+            </div>
+          </div>
+        </span>
       </v-card-text>
     </v-card>
   </v-dialog>
 </template>
 
 <script>
+import FollowUnfollow from "./FollowUnfollow";
+
 export default {
-  props: {
-    userName: { type: String, required: true },
-    followers: { required: true }
-  },
+  components: { FollowUnfollow },
+  props: { userName: String, myInfo: { required: false }, dialog: Object },
   data: () => ({
-    dialog: false
+    users: []
   }),
+  methods: {
+    async getFollowing() {
+      let userName = this.userName;
+
+      try {
+        let res = await this.$http.get(`/users/${userName}/followers?page=1`);
+        if (res.status === 200) {
+          this.users = res.data.followers;
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  },
   mounted() {
-    console.log("edit post");
+    this.getFollowing();
   }
 };
 </script>
