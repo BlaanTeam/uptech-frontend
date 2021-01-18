@@ -1068,9 +1068,25 @@ const getUserPosts = async (req, res, next) => {
     try {
         let params = await profileValidator(req.params, { userName: 1 });
         let query = await profileValidator(req.query, { page: 2 });
-        console.log(query);
         let perPage = 50;
         let pageNumber = query.page;
+        let getPostsQuery;
+        if (params.userName === req.currentUser.userName) {
+            getPostsQuery = {
+                $eq: ["$user", "$$userId"],
+            };
+        } else {
+            getPostsQuery = {
+                $and: [
+                    {
+                        $eq: ["$user", "$$userId"],
+                    },
+                    {
+                        $eq: ["$isPrivate", false],
+                    },
+                ],
+            };
+        }
         let user = await User.aggregate([
             {
                 $match: {
@@ -1161,7 +1177,7 @@ const getUserPosts = async (req, res, next) => {
                         {
                             $match: {
                                 $expr: {
-                                    $eq: ["$user", "$$userId"],
+                                    getPostsQuery,
                                 },
                             },
                         },
