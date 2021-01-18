@@ -1195,25 +1195,11 @@ const getUserPosts = async (req, res, next) => {
                                             perPage: perPage,
                                             pageNumber: pageNumber,
                                             total: {
-                                                $cond: {
-                                                    if: {
-                                                        $gt: [
-                                                            {
-                                                                $divide: [
-                                                                    "$total",
-                                                                    perPage,
-                                                                ],
-                                                            },
-                                                            1,
-                                                        ],
-                                                    },
-                                                    then: {
-                                                        $divide: [
-                                                            "$total",
-                                                            perPage,
-                                                        ],
-                                                    },
-                                                    else: 1,
+                                                $ceil: {
+                                                    $divide: [
+                                                        "$total",
+                                                        perPage,
+                                                    ],
                                                 },
                                             },
                                         },
@@ -1382,10 +1368,10 @@ const getUserPosts = async (req, res, next) => {
                                             },
                                         },
                                     },
+                                    { $limit: perPage },
                                     {
                                         $skip: (pageNumber - 1) * perPage,
                                     },
-                                    { $limit: perPage },
                                     {
                                         $project: {
                                             __v: 0,
