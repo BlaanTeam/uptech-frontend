@@ -4,7 +4,7 @@ const postController = require("../controllers/postController.js");
 const { protectRouter } = require("../utils/middlewares");
 
 protectRouter(router);
-router.get("/posts", postController.feedPosts);
+router.get("/posts", postController.getFeedPosts);
 router.get("/posts/:postId", postController.getPost);
 router.post("/posts", postController.addPost);
 router.put("/posts/:postId", postController.updatePost);

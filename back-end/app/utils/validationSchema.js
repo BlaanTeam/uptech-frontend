@@ -86,8 +86,7 @@ const postValidator = async (credentials, select) => {
             }),
             content: joi.string().min(2).max(5000).trim(),
             isPrivate: joi.boolean().default(false),
-            offset: joi.number().default(0),
-            limit: joi.number().greater(0).less(101).default(50),
+            page: joi.number().greater(0).default(1),
         });
         postSchema = validator(postSchema, select);
         return await postSchema.validateAsync(credentials);

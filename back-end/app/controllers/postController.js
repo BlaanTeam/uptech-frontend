@@ -6,131 +6,220 @@ const {
 } = require("../utils/validationSchema");
 
 // This function will handle retrieving feed posts process
-const feedPosts = async (req, res, next) => {
+const getFeedPosts = async (req, res, next) => {
     try {
-        // let totalPages = await Post.countDocuments({ isPrivate: false });
-        let query = await postValidator(req.query, { offset: 2, limit: 2 });
-        // TODO : add per page options
-        // const perPage = 50;
-        // const page = 4;
-        let posts = await Post.aggregate([
-            { $match: { isPrivate: false } },
+        let query = await postValidator(req.query, { page: 2 });
+        let perPage = 20;
+        let pageNumber = query.page;
+        let results = await Post.aggregate([
             {
-                $lookup: {
-                    from: "comments",
-                    localField: "_id",
-                    foreignField: "postId",
-                    // let: { post_id: "_id" },
-                    // pipeline: [{ $match: { $expr: { $eq: ["$$post_id", "$postId"] } } }],
-                    as: "commentCount",
+                $match: {
+                    isPrivate: false,
                 },
             },
             {
-                $lookup: {
-                    from: "likes",
-                    // localField: "_id",
-                    // foreignField: "postId",
-                    let: { postId: "$_id" },
-                    pipeline: [
-                        {
-                            $match: {
-                                $expr: {
-                                    $and: [
-                                        {
-                                            $eq: ["$postId", "$$postId"],
-                                        },
-                                        {
-                                            $eq: ["$liked", true],
-                                        },
-                                    ],
-                                },
-                            },
-                        },
-                    ],
-                    as: "likesCount",
-                },
-            },
-            {
-                $lookup: {
-                    from: "users",
-                    let: { userId: "$user" },
-                    pipeline: [
-                        {
-                            $match: { $expr: { $eq: ["$_id", "$$userId"] } },
-                        },
-                        {
-                            $project: {
-                                userName: 1,
-                                profile: 1,
-                            },
-                        },
-                    ],
-                    as: "user",
-                },
-            },
-            { $unwind: "$user" },
-            {
-                $lookup: {
-                    from: "likes",
-                    // localField: "_id",
-                    // foreignField: "postId",
-                    let: { postId: "$_id", userId: req.currentUser._id },
-                    pipeline: [
-                        {
-                            $match: {
-                                $expr: {
-                                    $and: [
-                                        {
-                                            $eq: ["$postId", "$$postId"],
-                                        },
-                                        {
-                                            $eq: ["$user", "$$userId"],
-                                        },
-                                        {
-                                            $eq: ["$liked", true],
-                                        },
-                                    ],
-                                },
-                            },
-                        },
-                        { $project: { userName: 1, profile: 1 } },
-                    ],
-                    as: "liked",
-                },
-            },
-
-            {
-                $addFields: {
-                    totalComments: { $size: "$commentCount" },
-                    totalLikes: { $size: "$likesCount" },
-                    isLiked: {
-                        $cond: {
-                            if: {
-                                $eq: [{ $size: "$liked" }, 1],
-                            },
-                            then: true,
-                            else: false,
-                        },
+                $set: {
+                    isOwner: {
+                        $cond: [
+                            { $eq: ["$user", req.currentUser._id] },
+                            true,
+                            false,
+                        ],
                     },
                 },
             },
             {
-                $project: {
-                    liked: 0,
-                    comments: 0,
-                    likes: 0,
-                    tags: 0,
-                    __v: 0,
-                    commentCount: 0,
-                    likesCount: 0,
+                $lookup: {
+                    from: "follows",
+                    let: {
+                        userOne: req.currentUser._id,
+                        userTwo: "$user",
+                    },
+                    as: "followOne",
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ["$userOne", "$$userOne"] },
+                                        { $eq: ["$userTwo", "$$userTwo"] },
+                                    ],
+                                },
+                            },
+                        },
+                        {
+                            $project: {
+                                status: 1,
+                            },
+                        },
+                    ],
                 },
             },
-            { $sort: { createdAt: -1 } },
-            { $skip: query.offset },
-            { $limit: query.limit },
-        ]);
+            {
+                $lookup: {
+                    from: "follows",
+                    let: {
+                        userOne: "$user",
+                        userTwo: req.currentUser._id,
+                    },
+                    as: "followTwo",
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ["$userOne", "$$userOne"] },
+                                        { $eq: ["$userTwo", "$$userTwo"] },
+                                    ],
+                                },
+                            },
+                        },
+                        {
+                            $project: {
+                                status: 1,
+                            },
+                        },
+                    ],
+                },
+            },
+            {
+                $unwind: {
+                    path: "$followOne",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $unwind: {
+                    path: "$followTwo",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $match: {
+                    $expr: {
+                        $or: [
+                            {
+                                $and: [
+                                    { $eq: ["$followOne.status", 2] },
+                                    { $ne: ["$followTwo.status", 4] },
+                                ],
+                            },
+                            { $eq: ["$isOwner", true] },
+                        ],
+                    },
+                },
+            },
+            {
+                $sort: {
+                    createdAt: -1,
+                },
+            },
+            {
+                $facet: {
+                    pageInfo: [
+                        { $count: "total" },
+                        {
+                            $addFields: {
+                                perPage: perPage,
+                                pageNumber: pageNumber,
+                                total: {
+                                    $ceil: {
+                                        $divide: ["$total", perPage],
+                                    },
+                                },
+                            },
+                        },
+                    ],
+                    posts: [
+                        {
+                            $lookup: {
+                                from: "users",
+                                let: {
+                                    userId: "$user",
+                                },
+                                as: "user",
+                                pipeline: [
+                                    {
+                                        $match: {
+                                            $expr: {
+                                                $eq: ["$_id", "$$userId"],
+                                            },
+                                        },
+                                    },
+                                    {
+                                        $project: {
+                                            userName: 1,
+                                            profile: 1,
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                        { $unwind: "$user" },
+                        {
+                            $lookup: {
+                                from: "likes",
+                                let: {
+                                    postId: "$_id",
+                                },
+                                as: "like",
+                                pipeline: [
+                                    {
+                                        $match: {
+                                            $expr: {
+                                                $eq: ["$postId", "$$postId"],
+                                            },
+                                        },
+                                    },
+                                    {
+                                        $project: {
+                                            liked: 1,
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                        {
+                            $unwind: {
+                                path: "$like",
+                                preserveNullAndEmptyArrays: true,
+                            },
+                        },
 
-        res.json(posts);
+                        {
+                            $addFields: {
+                                likes: { $size: "$likes" },
+                                comments: { $size: "$comments" },
+                                likedByViewer: {
+                                    $cond: [
+                                        { $eq: ["$like.liked", true] },
+                                        true,
+                                        false,
+                                    ],
+                                },
+                            },
+                        },
+                        { $skip: (pageNumber - 1) * perPage },
+                        { $limit: perPage },
+                        {
+                            $project: {
+                                like: 0,
+                                tags: 0,
+                                follow: 0,
+                            },
+                        },
+                    ],
+                },
+            },
+        ]);
+        let result = results[0];
+        let posts = result.posts ? result.posts : [];
+        let pageInfo = result.pageInfo ? result.pageInfo : {};
+
+        res.json({
+            posts,
+            pageInfo,
+        });
     } catch (err) {
         next(err);
     }
@@ -755,7 +844,7 @@ const likePost = async (req, res, next) => {
 };
 
 module.exports = {
-    feedPosts,
+    getFeedPosts,
     addPost,
     getPost,
     deletePost,

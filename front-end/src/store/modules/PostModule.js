@@ -37,7 +37,7 @@ export default {
           .get("/feed/posts")
           .then(res => {
             if (res.status === 200) {
-              context.commit("INIT_POSTS", res.data);
+              context.commit("INIT_POSTS", res.data.posts);
               resolve(res);
             }
           })
