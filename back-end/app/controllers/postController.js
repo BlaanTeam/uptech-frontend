@@ -1,4 +1,5 @@
-const { createError } = require("../utils/globals");
+const { createError: cE } = require("../utils/globals");
+const createError = require("http-errors");
 const { Post, Comment, Like, Tag } = require("../models/postModel");
 const {
     postValidator,
@@ -421,12 +422,12 @@ const getPost = async (req, res, next) => {
             { $unwind: "$user" },
         ]);
         post = post[0];
-        if (!post) throw new createError("Post Not Found", 1021, 404);
+        if (!post) throw new cE("Post Not Found", 1021, 404);
         else if (
             post.isPrivate === true &&
             post.user._id.toString() !== req.currentUser._id.toString()
         ) {
-            throw new createError("You don't have permission !", 1003, 403);
+            throw new cE("You don't have permission !", 1003, 403);
         }
         res.json(post);
     } catch (err) {
@@ -443,14 +444,14 @@ const deletePost = async (req, res, next) => {
             { _id: params.postId },
             { __v: 0, comments: 0, likes: 0, tags: 0 }
         );
-        if (!post) throw new createError("Post Not Found !", 1021, 404);
+        if (!post) throw new cE("Post Not Found !", 1021, 404);
         else if (post.user.toString() !== req.currentUser._id.toString()) {
-            throw new createError("You don't have permission !", 1003, 403);
+            throw new cE("You don't have permission !", 1003, 403);
         } else if (
             post.isPrivate === true &&
             post.user.toString() !== req.currentUser._id.toString()
         ) {
-            throw new createError("You don't have permission !", 1003, 403);
+            throw new cE("You don't have permission !", 1003, 403);
         }
         await post.remove();
         res.status(204);
@@ -471,11 +472,11 @@ const updatePost = async (req, res, next) => {
             { __v: 0, comments: 0, likes: 0, tags: 0 }
         );
         console.log(post);
-        if (!post) throw new createError("Post Not Found !", 1021, 404);
+        if (!post) throw new cE("Post Not Found !", 1021, 404);
         else if (post.user.toString() !== req.currentUser._id.toString()) {
-            throw new createError("You don't have permission !", 1003, 403);
+            throw new cE("You don't have permission !", 1003, 403);
         } else if (post.user.toString() !== req.currentUser._id.toString()) {
-            throw new createError("You don't have permission !", 1003, 403);
+            throw new cE("You don't have permission !", 1003, 403);
         }
         // update documments
         post.content = data.content;
@@ -495,10 +496,9 @@ const getComments = async (req, res, next) => {
         let params = await commentValidator(req.params, {
             postId: 1,
         });
-        let query = await commentValidator(req.query, {
-            offset: 2,
-            limit: 2,
-        });
+        let query = await commentValidator(req.query, { page: 2 });
+        let perPage = 10;
+        let pageNumber = query.page;
         let post = await Post.aggregate([
             {
                 $match: {
@@ -506,79 +506,118 @@ const getComments = async (req, res, next) => {
                 },
             },
             {
+                $set: {
+                    isOwner: {
+                        $cond: [
+                            { $eq: ["$user", req.currentUser._id] },
+                            true,
+                            false,
+                        ],
+                    },
+                },
+            },
+            {
                 $lookup: {
                     from: "comments",
                     let: { postId: "$_id" },
+                    as: "comments",
                     pipeline: [
                         {
                             $match: {
-                                $expr: { $eq: ["$postId", "$$postId"] },
+                                $expr: {
+                                    $eq: ["$postId", "$$postId"],
+                                },
                             },
                         },
                         {
-                            $lookup: {
-                                from: "users",
-                                let: { userId: "$user" },
-                                pipeline: [
+                            $facet: {
+                                pageInfo: [
                                     {
-                                        $match: {
-                                            $expr: {
-                                                $eq: ["$_id", "$$userId"],
+                                        $count: "total",
+                                    },
+                                    {
+                                        $addFields: {
+                                            perPage,
+                                            pageNumber,
+                                            total: {
+                                                $ceil: {
+                                                    $divide: [
+                                                        "$total",
+                                                        perPage,
+                                                    ],
+                                                },
                                             },
                                         },
                                     },
+                                ],
+                                data: [
+                                    {
+                                        $lookup: {
+                                            from: "users",
+                                            let: {
+                                                userId: "$user",
+                                            },
+                                            as: "user",
+                                            pipeline: [
+                                                {
+                                                    $match: {
+                                                        $expr: {
+                                                            $eq: [
+                                                                "$_id",
+                                                                "$$userId",
+                                                            ],
+                                                        },
+                                                    },
+                                                },
+                                                {
+                                                    $project: {
+                                                        userName: 1,
+                                                        profile: 1,
+                                                    },
+                                                },
+                                            ],
+                                        },
+                                    },
+                                    { $unwind: "$user" },
+                                    { $skip: (pageNumber - 1) * perPage },
+                                    {
+                                        $limit: perPage,
+                                    },
                                     {
                                         $project: {
-                                            userName: 1,
-                                            profile: 1,
+                                            __v: 0,
                                         },
                                     },
                                 ],
-                                as: "user",
                             },
                         },
-                        { $unwind: "$user" },
-                        { $project: { __v: 0 } },
-                        { $sort: { createdAt: -1 } },
-                        { $limit: query.limit },
-                        { $skip: query.offset },
+                        { $unwind: "$pageInfo" },
                     ],
-                    as: "comments",
                 },
             },
             {
-                $lookup: {
-                    from: "users",
-                    let: { userId: "$user" },
-                    pipeline: [
-                        {
-                            $match: {
-                                $expr: { $eq: ["$_id", "$$userId"] },
-                            },
-                        },
-                        { $project: { userName: 1, profile: 1 } },
-                    ],
-                    as: "user",
+                $unwind: {
+                    path: "$comments",
+                    preserveNullAndEmptyArrays: true,
                 },
             },
-            { $unwind: "$user" },
             {
                 $project: {
-                    __v: 0,
-                    likes: 0,
-                    tags: 0,
+                    isPrivate: 1,
+                    comments: 1,
+                    isOwner: 1,
                 },
             },
         ]);
         post = post[0];
-        if (!post) throw new createError("Post Not Found !", 1021, 404);
-        else if (
-            post.isPrivate === true &&
-            post.user._id.toString() !== req.currentUser._id.toString()
-        ) {
-            throw new createError("You don't have permission !", 1003, 403);
+        if (!post) {
+            throw createError.NotFound();
+        } else if (post.isPrivate === true && !post.isOwner) {
+            throw createError.Forbidden();
         }
-        res.json({ comments: post.comments });
+        let comments = post.comments ? post.comments.data : [];
+        let pageInfo = post.comments ? post.comments.pageInfo : {};
+        res.json({ comments, pageInfo });
     } catch (err) {
         next(err);
     }
@@ -595,12 +634,12 @@ const addComment = async (req, res, next) => {
             content: 1,
         });
         let post = await Post.findOne({ _id: params.postId }, { __v: 0 });
-        if (!post) throw new createError("Post Not Found !", 1021, 404);
+        if (!post) throw new cE("Post Not Found !", 1021, 404);
         else if (
             post.isPrivate === true &&
             post.user.toString() !== req.currentUser._id.toString()
         ) {
-            throw new createError("You don't have permission !", 1003, 403);
+            throw new cE("You don't have permission !", 1003, 403);
         }
         let comment = new Comment({
             content: data.content,
@@ -640,12 +679,12 @@ const getComment = async (req, res, next) => {
             path: "user",
             select: "_id",
         });
-        if (!post) throw new createError("Post Not Found !", 1021, 404);
+        if (!post) throw new cE("Post Not Found !", 1021, 404);
         else if (
             post.isPrivate === true &&
             post.user._id.toString() !== req.currentUser._id.toString()
         ) {
-            throw new createError("You don't have permission !", 1003, 403);
+            throw new cE("You don't have permission !", 1003, 403);
         }
         let comment = await Comment.findOne(
             { _id: params.commentId },
@@ -659,9 +698,9 @@ const getComment = async (req, res, next) => {
                 path: "user",
                 select: "userName profile",
             });
-        if (!comment) throw new createError("Comment Not Found !", 1022, 404);
+        if (!comment) throw new cE("Comment Not Found !", 1022, 404);
         // else if (comment.postId._id.toString() !== post._id.toString()) {
-        //   throw new createError("You don't have permission !", 1003, 403);
+        //   throw new cE("You don't have permission !", 1003, 403);
         // }
         res.json(comment);
     } catch (err) {
@@ -691,12 +730,12 @@ const updateComment = async (req, res, next) => {
             path: "user",
             select: "_id",
         });
-        if (!post) throw new createError("Post Not Found !", 1021, 404);
+        if (!post) throw new cE("Post Not Found !", 1021, 404);
         else if (
             post.isPrivate === true &&
             post.user._id.toString() !== req.currentUser._id.toString()
         ) {
-            throw new createError("You don't have permission !", 1003, 403);
+            throw new cE("You don't have permission !", 1003, 403);
         }
         let comment = await Comment.findOne(
             { _id: params.commentId },
@@ -705,14 +744,14 @@ const updateComment = async (req, res, next) => {
             path: "user",
             select: "userName profile",
         });
-        if (!comment) throw new createError("Comment Not Found !", 1022, 404);
+        if (!comment) throw new cE("Comment Not Found !", 1022, 404);
         else if (comment.postId.toString() !== post._id.toString()) {
-            throw new createError("You don't have permission !", 1003, 403);
+            throw new cE("You don't have permission !", 1003, 403);
         } else if (
             req.currentUser._id.toString() !== post.user._id.toString() &&
             req.currentUser._id.toString() !== comment.user._id.toString()
         ) {
-            throw new createError("You don't have permission !", 1003, 403);
+            throw new cE("You don't have permission !", 1003, 403);
         }
         comment.content = data.content;
         comment.updatedAt = Date.now();
@@ -747,12 +786,12 @@ const deleteComment = async (req, res, next) => {
                 path: "user",
                 select: "_id userName",
             });
-        if (!post) throw new createError("Post Not Found !", 1021, 404);
+        if (!post) throw new cE("Post Not Found !", 1021, 404);
         else if (
             post.isPrivate === true &&
             post.user._id.toString() !== req.currentUser._id.toString()
         ) {
-            throw new createError("You don't have permission !", 1003, 403);
+            throw new cE("You don't have permission !", 1003, 403);
         }
         let comment = await Comment.findOne(
             { _id: params.commentId },
@@ -761,14 +800,14 @@ const deleteComment = async (req, res, next) => {
             path: "user",
             select: "userName profile",
         });
-        if (!comment) throw new createError("Comment Not Found !", 1022, 404);
+        if (!comment) throw new cE("Comment Not Found !", 1022, 404);
         else if (comment.postId.toString() !== post._id.toString()) {
-            throw new createError("You don't have permission !", 1003, 403);
+            throw new cE("You don't have permission !", 1003, 403);
         } else if (
             req.currentUser._id.toString() !== post.user._id.toString() &&
             req.currentUser._id.toString() !== comment.user._id.toString()
         ) {
-            throw new createError("You don't have permission !", 1003, 403);
+            throw new cE("You don't have permission !", 1003, 403);
         }
         let deletedComment = await Post.findOneAndUpdate(
             { _id: params.postId },
@@ -798,12 +837,12 @@ const likePost = async (req, res, next) => {
             path: "user",
             select: "userName profile",
         });
-        if (!post) throw new createError("Post Not Found !", 1021, 404);
+        if (!post) throw new cE("Post Not Found !", 1021, 404);
         else if (
             post.isPrivate === true &&
             post.user._id.toString() !== req.currentUser._id.toString()
         ) {
-            throw new createError("You don't have permission !", 1003, 403);
+            throw new cE("You don't have permission !", 1003, 403);
         }
         // check if user like the post
 
