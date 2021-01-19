@@ -22,6 +22,9 @@
             </div>
           </div>
         </span>
+        <infinite-loading @infinite="infiniteHandler">
+          <!-- Todo: add custom messages -->
+        </infinite-loading>
       </v-card-text>
     </v-card>
   </v-dialog>
@@ -34,24 +37,29 @@ export default {
   components: { FollowUnfollow },
   props: { userName: String, myInfo: { required: false }, dialog: Object },
   data: () => ({
-    users: []
+    users: [],
+    page: 1
   }),
   methods: {
-    async getFollowing() {
+    async infiniteHandler($state) {
       let userName = this.userName;
-
+      const api = `/users/${userName}/following?page=${this.page}`;
       try {
-        let res = await this.$http.get(`/users/${userName}/following?page=1`);
+        let res = await this.$http.get(api);
         if (res.status === 200) {
-          this.users = res.data.following;
+          if (res.data.following.length) {
+            this.page += 1;
+            this.users.push(...res.data.following);
+            $state.loaded();
+          } else {
+            $state.complete();
+          }
         }
       } catch (err) {
+        $state.error();
         console.log(err);
       }
     }
-  },
-  mounted() {
-    this.getFollowing();
   }
 };
 </script>
