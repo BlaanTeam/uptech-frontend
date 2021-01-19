@@ -861,7 +861,6 @@ const unBlockUser = async (req, res, next) => {
             },
         ]);
         user = user[0];
-        console.log(user);
         if (!user) {
             throw createError.NotFound();
         } else if (user.alreadyUnblocked) {
@@ -2075,8 +2074,6 @@ const getUserFollowing = async (req, res, next) => {
             },
         ]);
         user = user[0];
-        console.log("from following !");
-        console.log(user);
         if (!user) {
             throw createError.NotFound();
         } else if (user.hasBlockedViewer) {
