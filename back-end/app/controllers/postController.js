@@ -292,7 +292,12 @@ const getPost = async (req, res, next) => {
                     ],
                 },
             },
-            { $unwind: "$user" },
+            {
+                $unwind: {
+                    path: "$user",
+                    preserveNullAndEmptyArrays: false,
+                },
+            },
             {
                 $lookup: {
                     from: "likes",
@@ -320,8 +325,10 @@ const getPost = async (req, res, next) => {
                 },
             },
             {
-                $unwind: "$like",
-            },
+                $unwind: {
+                    path: "$like",
+                    preserveNullAndEmptyArrays: true,
+                },
             {
                 $addFields: {
                     likedByViewer: {
