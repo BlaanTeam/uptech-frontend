@@ -775,53 +775,134 @@ const likePost = async (req, res, next) => {
         let params = await postValidator(req.params, {
             postId: 1,
         });
-        let post = await Post.findOne(
-            { _id: params.postId },
-            { likes: 1, isPrivate: 1 }
-        ).populate({
-            path: "user",
-            select: "userName profile",
-        });
-        if (!post) throw new cE("Post Not Found !", 1021, 404);
-        else if (
-            post.isPrivate === true &&
-            post.user._id.toString() !== req.currentUser._id.toString()
-        ) {
-            throw new cE("You don't have permission !", 1003, 403);
-        }
-        // check if user like the post
-
-        let like = await Like.findOne({
-            user: req.currentUser._id.toString(),
-            postId: params.postId,
-        });
-        if (!like) {
-            let newLike = new Like({
-                user: req.currentUser._id,
-                postId: params.postId,
-                liked: true,
-            });
-            await newLike.save();
-            post.likes.push(newLike._id);
-            await post.save();
-        } else {
-            like.liked = !like.liked;
-            let deletedLike = await Post.findOneAndUpdate(
-                {
+        let post = await Post.aggregate([
+            {
+                $match: {
                     _id: params.postId,
                 },
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    let: { userId: "$user" },
+                    as: "user",
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $eq: ["$_id", "$$userId"],
+                                },
+                            },
+                        },
+                        {
+                            $project: {
+                                userName: 1,
+                                profile: 1,
+                            },
+                        },
+                    ],
+                },
+            },
+            { $unwind: "$user" },
+            {
+                $lookup: {
+                    from: "likes",
+                    let: { postId: "$_id" },
+                    as: "like",
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $eq: ["$postId", "$$postId"],
+                                },
+                            },
+                        },
+                        { $limit: 1 },
+                        {
+                            $project: {
+                                liked: 1,
+                            },
+                        },
+                    ],
+                },
+            },
+            {
+                $unwind: {
+                    path: "$like",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $addFields: {
+                    likedByViewer: {
+                        $cond: [{ $eq: ["$like.liked", true] }, true, false],
+                    },
+                },
+            },
+            {
+                $project: {
+                    comments: 0,
+                    likes: 0,
+                    tags: 0,
+                    __v: 0,
+                },
+            },
+        ]);
+        post = post[0];
+        if (!post) {
+            throw createError.NotFound();
+        } else if (post.isPrivate && !post.isOwner) {
+            throw createError.Forbidden();
+        } else if (!post.like) {
+            let like = new Like({
+                user: req.currentUser._id,
+                postId: post._id,
+                liked: true,
+            });
+            await like.save();
+            let pushLikeIntoPost = await Post.findOneAndUpdate(
                 {
-                    $pull: { likes: like._id },
+                    _id: post._id,
                 },
                 {
-                    new: true,
+                    $push: { likes: like._id },
                 }
             );
+        } else if (post.likedByViewer) {
+            let like = await Like.findOne({
+                _id: post.like._id,
+            });
+            like.liked = !like.liked;
             await like.save();
+            let pullLikeFromPost = await Post.findOneAndUpdate(
+                {
+                    _id: post._id,
+                },
+                {
+                    $pull: {
+                        likes: like._id,
+                    },
+                }
+            );
+        } else if (!post.likedByViewer) {
+            let like = await Like.findOne({
+                _id: post.like._id,
+            });
+            like.liked = !like.liked;
+            await like.save();
+            let pushLikeIntoPost = await Post.findOneAndUpdate(
+                {
+                    _id: post._id,
+                },
+                {
+                    $push: {
+                        likes: like._id,
+                    },
+                }
+            );
         }
-        res.json({
-            status: "success",
-        });
+        res.status(204);
+        res.end();
     } catch (err) {
         next(err);
     }
