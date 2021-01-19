@@ -1,5 +1,10 @@
 <template>
-  <v-dialog scrollable v-model="dialog.value" max-width="400px">
+  <v-dialog
+    scrollable
+    v-model="dialog.value"
+    max-width="400px"
+    class="followers"
+  >
     <v-card class="bg edit-profile">
       <v-card-title class="justify-center">
         <h1 class="title ms-2">Followers</h1>
@@ -22,6 +27,9 @@
             </div>
           </div>
         </span>
+        <infinite-loading @infinite="infiniteHandler">
+          <!-- Todo: add custom messages -->
+        </infinite-loading>
       </v-card-text>
     </v-card>
   </v-dialog>
@@ -34,24 +42,29 @@ export default {
   components: { FollowUnfollow },
   props: { userName: String, myInfo: { required: false }, dialog: Object },
   data: () => ({
-    users: []
+    users: [],
+    page: 1
   }),
   methods: {
-    async getFollowing() {
+    async infiniteHandler($state) {
       let userName = this.userName;
-
+      const api = `/users/${userName}/followers?page=${this.page}`;
       try {
-        let res = await this.$http.get(`/users/${userName}/followers?page=1`);
+        let res = await this.$http.get(api);
         if (res.status === 200) {
-          this.users = res.data.followers;
+          if (res.data.followers.length) {
+            this.page += 1;
+            this.users.push(...res.data.followers);
+            $state.loaded();
+          } else {
+            $state.complete();
+          }
         }
       } catch (err) {
+        $state.error();
         console.log(err);
       }
     }
-  },
-  mounted() {
-    this.getFollowing();
   }
 };
 </script>
