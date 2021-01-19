@@ -30,12 +30,39 @@ const getUser = async (req, res, next) => {
             {
                 $lookup: {
                     from: "posts",
-                    let: { userId: "$_id" },
+                    let: { userId: "$_id", isOwner: "$isOwner" },
                     pipeline: [
                         {
                             $match: {
                                 $expr: {
-                                    $eq: ["$user", "$$userId"],
+                                    $function: {
+                                        body: `function (
+                                            isPrivate,
+                                            user,
+                                            userId,
+                                            isOwner
+                                        ) {
+                                            if (isOwner) {
+                                                return (
+                                                    user.valueOf() ===
+                                                    userId.valueOf()
+                                                );
+                                            } else {
+                                                return (
+                                                    user.valueOf() ===
+                                                        userId.valueOf() &&
+                                                    !isPrivate
+                                                );
+                                            }
+                                        }`,
+                                        args: [
+                                            "$isPrivate",
+                                            "$user",
+                                            "$$userId",
+                                            "$$isOwner",
+                                        ],
+                                        lang: "js",
+                                    },
                                 },
                             },
                         },
@@ -1068,7 +1095,7 @@ const getUserPosts = async (req, res, next) => {
     try {
         let params = await profileValidator(req.params, { userName: 1 });
         let query = await profileValidator(req.query, { page: 2 });
-        let perPage = 50;
+        let perPage = 20;
         let pageNumber = query.page;
         let user = await User.aggregate([
             {
@@ -1155,15 +1182,39 @@ const getUserPosts = async (req, res, next) => {
             {
                 $lookup: {
                     from: "posts",
-                    let: { userId: "$_id" },
+                    let: { userId: "$_id", isOwner: "$isOwner" },
                     pipeline: [
                         {
                             $match: {
                                 $expr: {
-                                    $and: [
-                                        { $eq: ["$user", "$$userId"] },
-                                        { $eq: ["$isPrivate", false] },
-                                    ],
+                                    $function: {
+                                        body: `function (
+                                            isPrivate,
+                                            user,
+                                            userId,
+                                            isOwner
+                                        ) {
+                                            if (isOwner) {
+                                                return (
+                                                    user.valueOf() ===
+                                                    userId.valueOf()
+                                                );
+                                            } else {
+                                                return (
+                                                    user.valueOf() ===
+                                                        userId.valueOf() &&
+                                                    !isPrivate
+                                                );
+                                            }
+                                        }`,
+                                        args: [
+                                            "$isPrivate",
+                                            "$user",
+                                            "$$userId",
+                                            "$$isOwner",
+                                        ],
+                                        lang: "js",
+                                    },
                                 },
                             },
                         },
