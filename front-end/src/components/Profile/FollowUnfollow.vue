@@ -46,7 +46,7 @@
         </v-row>
         <v-row class="text-center py-1 px-6" no-gutters>
           <p>
-            your are going to unfollow <strong>{{ userInfo.userName }}</strong>
+            your are going to unfollow <strong>@{{ userInfo.userName }}</strong>
           </p>
         </v-row>
         <v-divider></v-divider>
