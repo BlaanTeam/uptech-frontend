@@ -325,12 +325,15 @@ const getUser = async (req, res, next) => {
         ]);
 
         user = user[0];
-        console.log(user);
 
         if (!user) {
             throw createError.NotFound();
         } else if (user.hasBlockedViewer) {
             throw createError.NotFound();
+        } else if (user.blockedByViewer) {
+            user.following = 0;
+            user.followers = 0;
+            user.posts = 0;
         }
 
         res.json(user);
