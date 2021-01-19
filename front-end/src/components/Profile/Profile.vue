@@ -57,7 +57,9 @@
               class="follows"
               :class="{
                 'follows-disabled':
-                  userInfo.isPrivate && !userInfo.followedByViewer
+                  userInfo.isPrivate &&
+                  !userInfo.followedByViewer &&
+                  !userInfo.isOwner
               }"
             >
               <a text @click="followers.value = true">
@@ -76,7 +78,9 @@
               class="follows"
               :class="{
                 'follows-disabled':
-                  userInfo.isPrivate && !userInfo.followedByViewer
+                  userInfo.isPrivate &&
+                  !userInfo.followedByViewer &&
+                  !userInfo.isOwner
               }"
             >
               <a text @click="following.value = true">
