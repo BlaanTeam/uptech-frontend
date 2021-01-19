@@ -1,13 +1,7 @@
 <template>
   <div class="menu">
     <FollowUnfollow v-if="!blocked" :userInfo="userInfo" />
-    <v-btn
-      v-if="!blocked"
-      color="primary"
-      class="mt-n2 me-3"
-      icon
-      @click="log('message')"
-    >
+    <v-btn v-if="!blocked" color="primary" class="mt-n2 me-3" icon>
       <v-icon>mdi-email-outline</v-icon>
     </v-btn>
     <v-menu
@@ -34,6 +28,7 @@
           tile
           block
           text
+          color="red"
           :loading="blockLoading"
           @click="blockUser"
           class="text-capitalize justify-start "
@@ -53,13 +48,7 @@
           <v-icon small left>mdi-cancel</v-icon>
           unblock
         </v-btn>
-        <v-btn
-          tile
-          block
-          text
-          @click="log('report')"
-          class="text-capitalize justify-start"
-        >
+        <v-btn tile block text class="text-capitalize justify-start">
           <v-icon small left>mdi-flag-outline</v-icon>
           Report
         </v-btn>
@@ -108,6 +97,8 @@ export default {
         let res = await this.$http.delete(`/users/blocks/${userName}`);
         if (res.status === 204) {
           this.userInfo.blockedByViewer = false;
+          this.userInfo.followedByViewer = false;
+          this.userInfo.requestedByViewer = false;
           this.blocked = false;
           console.log("Menu.vue: User UnBlocked :)");
         } else
