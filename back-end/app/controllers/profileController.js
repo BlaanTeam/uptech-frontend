@@ -1965,7 +1965,98 @@ const getUserFollowing = async (req, res, next) => {
                 },
             },
             {
-                $unwind: "$following",
+                $unwind: {
+                    path: "$following",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $unwind: {
+                    path: "$followOne",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $unwind: {
+                    path: "$followTwo",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $addFields: {
+                    blockedByViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followOne.status", 4],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    followedByViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followOne.status", 2],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    rejectedByViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 3],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    requestedByViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followOne.status", 1],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    followsViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 2],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    hasBlockedViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 4],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    hasRequestedViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 1],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    hasRejectedViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followOne.status", 3],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                },
             },
             {
                 $project: {
@@ -1984,10 +2075,14 @@ const getUserFollowing = async (req, res, next) => {
             },
         ]);
         user = user[0];
+        console.log("from following !");
+        console.log(user);
         if (!user) {
             throw createError.NotFound();
         } else if (user.hasBlockedViewer) {
             throw createError.NotFound();
+        } else if (user.blockedByViewer) {
+            throw createError.Forbidden();
         } else if ((user.isPrivate && user.followedByViewer) || user.isOwner) {
             let following = user.following?.data;
             let pageInfo = user.following?.pageInfo;
@@ -2406,7 +2501,98 @@ const getUserFollowers = async (req, res, next) => {
                 },
             },
             {
-                $unwind: "$followers",
+                $unwind: {
+                    path: "$followers",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $unwind: {
+                    path: "$followOne",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $unwind: {
+                    path: "$followTwo",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $addFields: {
+                    blockedByViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followOne.status", 4],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    followedByViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followOne.status", 2],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    rejectedByViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 3],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    requestedByViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followOne.status", 1],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    followsViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 2],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    hasBlockedViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 4],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    hasRequestedViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 1],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    hasRejectedViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followOne.status", 3],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                },
             },
             {
                 $project: {
@@ -2429,6 +2615,8 @@ const getUserFollowers = async (req, res, next) => {
             throw createError.NotFound();
         } else if (user.hasBlockedViewer) {
             throw createError.NotFound();
+        } else if (user.blockedByViewer) {
+            throw createError.Forbidden();
         } else if ((user.isPrivate && user.followedByViewer) || user.isOwner) {
             let followers = user.followers?.data;
             let pageInfo = user.followers?.pageInfo;
