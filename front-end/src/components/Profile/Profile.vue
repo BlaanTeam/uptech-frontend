@@ -57,9 +57,10 @@
               class="follows"
               :class="{
                 'follows-disabled':
-                  userInfo.isPrivate &&
-                  !userInfo.followedByViewer &&
-                  !userInfo.isOwner
+                  (userInfo.isPrivate &&
+                    !userInfo.followedByViewer &&
+                    !userInfo.isOwner) ||
+                  userInfo.blockedByViewer
               }"
             >
               <a text @click="followers.value = true">
@@ -67,7 +68,10 @@
                 Followers
               </a>
               <Followers
-                v-if="!userInfo.isPrivate || userInfo.followedByViewer"
+                v-if="
+                  (!userInfo.isPrivate || userInfo.followedByViewer) &&
+                    !userInfo.blockedByViewer
+                "
                 :userName="userInfo.userName"
                 :myInfo="myInfo"
                 :dialog="followers"
@@ -78,9 +82,10 @@
               class="follows"
               :class="{
                 'follows-disabled':
-                  userInfo.isPrivate &&
-                  !userInfo.followedByViewer &&
-                  !userInfo.isOwner
+                  (userInfo.isPrivate &&
+                    !userInfo.followedByViewer &&
+                    !userInfo.isOwner) ||
+                  userInfo.blockedByViewer
               }"
             >
               <a text @click="following.value = true">
@@ -88,7 +93,10 @@
                 Following
               </a>
               <Following
-                v-if="!userInfo.isPrivate || userInfo.followedByViewer"
+                v-if="
+                  (!userInfo.isPrivate || userInfo.followedByViewer) &&
+                    !userInfo.blockedByViewer
+                "
                 :userName="userInfo.userName"
                 :myInfo="myInfo"
                 :dialog="following"
