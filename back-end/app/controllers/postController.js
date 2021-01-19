@@ -329,6 +329,28 @@ const getPost = async (req, res, next) => {
                     path: "$like",
                     preserveNullAndEmptyArrays: true,
                 },
+            },
+            {
+                $lookup: {
+                    from: "follows",
+                    let: { userOne: "$user", userTwo: req.currentUser._id },
+                    as: "follow",
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ["$userOne", "$$userOne"] },
+                                        { $eq: ["$userOne", "$$userTwo"] },
+                                        { $ne: ["$status", 4] },
+                                    ],
+                                },
+                            },
+                        },
+                    ],
+                },
+            },
+            { $unwind: "$follow" },
             {
                 $addFields: {
                     likedByViewer: {
