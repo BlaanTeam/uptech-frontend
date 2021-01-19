@@ -1,7 +1,12 @@
 <template>
   <div class="menu">
-    <FollowUnfollow v-if="!blocked" :userInfo="userInfo" />
-    <v-btn v-if="!blocked" color="primary" class="mt-n2 me-3" icon>
+    <FollowUnfollow v-if="!userInfo.blockedByViewer" :userInfo="userInfo" />
+    <v-btn
+      v-if="!userInfo.blockedByViewer"
+      color="primary"
+      class="mt-n2 me-3"
+      icon
+    >
       <v-icon>mdi-email-outline</v-icon>
     </v-btn>
     <v-menu
@@ -45,7 +50,7 @@
           @click="unBlockUser"
           class="text-capitalize justify-start "
         >
-          <v-icon small left>mdi-cancel</v-icon>
+          <v-icon small left>mdi-lock-open-variant-outline</v-icon>
           unblock
         </v-btn>
         <v-btn tile block text class="text-capitalize justify-start">
@@ -67,8 +72,7 @@ export default {
   data: () => ({
     followLoading: false,
     blockLoading: false,
-    toggle_none: 0,
-    blocked: false
+    toggle_none: 0
   }),
   methods: {
     async blockUser() {
@@ -78,7 +82,6 @@ export default {
         let res = await this.$http.put(`/users/blocks/${userName}`);
         if (res.status === 204) {
           this.userInfo.blockedByViewer = true;
-          this.blocked = true;
           console.log("Menu.vue: User Blocked :)");
         } else
           console.log("Menu.vue(blockUser): No error but nothing changed :(");
