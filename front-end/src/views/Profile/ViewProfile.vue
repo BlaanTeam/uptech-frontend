@@ -39,18 +39,11 @@ export default {
       if (res.status === 200) this.exist = true;
       this.userInfo = res.data;
       this.loaded = true;
-      console.log(res);
     } catch (err) {
       this.loaded = true;
       console.log(err);
     }
   }
-
-  // mounted() {
-  //   if (this.$route.params.username === this.profile.userName)
-  //     this.owned = true;
-  //   else this.notOwned = true;
-  // }
 };
 </script>
 
