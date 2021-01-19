@@ -13,6 +13,12 @@ import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/vue-loading.css";
 import VEmojiPicker from "v-emoji-picker";
 import parseBody from "./plugins/parsePost";
+import InfiniteLoading from "vue-infinite-loading";
+
+Vue.use(InfiniteLoading, {
+  props: { spinner: "spiral" }
+  //Todo: custom errors
+});
 
 Vue.mixin({
   methods: {
