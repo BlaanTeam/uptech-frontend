@@ -1543,6 +1543,8 @@ const getUserPosts = async (req, res, next) => {
             throw createError.NotFound();
         } else if (user.hasBlockedViewer) {
             throw createError.NotFound();
+        } else if (user.blockedByViewer) {
+            throw createError.Forbidden();
         } else if ((user.isPrivate && user.followedByViewer) || user.isOwner) {
             let posts = user.posts?.data;
             let pageInfo = user.posts?.pageInfo;
