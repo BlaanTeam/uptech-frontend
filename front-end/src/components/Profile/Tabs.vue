@@ -30,15 +30,34 @@
     </v-tabs-items>
 
     <v-tabs-items
+      class="bg"
+      v-model="tabs"
+      v-else-if="userInfo.blockedByViewer"
+    >
+      <div class="mt-4 text-center bg">
+        <h2>You have been blocked this user</h2>
+        <h4>Unblock to see other info</h4>
+        <v-btn
+          elevation="0"
+          :loading="blockLoading"
+          @click="unBlockUser"
+          class="text-capitalize mt-4"
+          color="red"
+          dark
+        >
+          <v-icon small left>mdi-lock-open-variant-outline</v-icon>
+          unblock
+        </v-btn>
+      </div>
+    </v-tabs-items>
+
+    <v-tabs-items
       v-else
       v-model="tabs"
       class="px-1"
       :class="{ bg: !posts.length, 'auth-bg': posts.length }"
     >
       <v-tab-item>
-        <div v-if="!loaded">
-          <PostSkeletonVue v-for="i in 4" :key="i" />
-        </div>
         <div v-if="loaded && posts.length" class="auth-bg pt-4 px-1">
           <span v-for="(post, index) in posts" :key="post._id">
             <Post
@@ -49,10 +68,17 @@
             />
           </span>
         </div>
-        <div v-if="loaded && !posts.length" class="text-center py-4 bg">
-          <v-icon size="80" color="#b68d06">mdi-database-alert-outline</v-icon>
-          <h2>This user doesn't have any posts yet</h2>
-        </div>
+        <infinite-loading @infinite="infiniteHandler">
+          <template slot="no-results">
+            <div class="text-center py-4 bg">
+              <v-icon size="80" color="#b68d06">
+                mdi-database-alert-outline
+              </v-icon>
+              <h2>This user doesn't have any posts yet</h2>
+            </div>
+          </template>
+          <!-- Todo: add custom messages -->
+        </infinite-loading>
       </v-tab-item>
       <v-tab-item>
         <div class="auth-bg">
@@ -73,8 +99,7 @@ export default {
   name: "Tabs",
   components: {
     Post: () => import("@/components/Post/Post"),
-    PrivateSvg: () => import("@/components/svg/PrivateSvg"),
-    PostSkeletonVue: () => import("@/components/Skeletons/PostSkeleton")
+    PrivateSvg: () => import("@/components/svg/PrivateSvg")
   },
   props: {
     userInfo: { type: Object, required: true }
@@ -82,35 +107,58 @@ export default {
   data: () => ({
     tabs: null,
     posts: [],
+    page: 1,
     pageInfo: {},
-    loaded: false
+    loaded: false,
+    blockLoading: false
   }),
+
   methods: {
-    async getUserPosts() {
+    log() {
+      console.log("from tabs components");
+    },
+    async infiniteHandler($state) {
       try {
         let userName = this.userInfo.userName;
-        let res = await this.$http.get(`/users/${userName}/posts`);
-        if (res.status === 200) {
-          this.posts = res.data.posts;
-          this.pageInfo = res.data.pageInfo;
-          this.loaded = true;
+        const api = `/users/${userName}/posts?page=${this.page}`;
 
-          return res.data.posts;
+        let res = await this.$http.get(api);
+        if (res.status === 200) {
+          if (res.data.posts.length) {
+            this.page += 1;
+            this.posts.push(...res.data.posts);
+            $state.loaded();
+            this.loaded = true;
+          } else {
+            this.loaded = true;
+            $state.complete();
+          }
         }
       } catch (err) {
+        this.loaded = true;
+        $state.error();
         console.log(err);
       }
-    }
-  },
-  mounted() {
-    if (
-      this.userInfo.isPrivate &&
-      !this.userInfo.followedByViewer &&
-      !this.userInfo.isOwner
-    )
-      return;
-    else {
-      this.getUserPosts();
+    },
+    async unBlockUser() {
+      this.blockLoading = true;
+      try {
+        let userName = this.userInfo.userName;
+        let res = await this.$http.delete(`/users/blocks/${userName}`);
+        if (res.status === 204) {
+          this.userInfo.blockedByViewer = false;
+          this.userInfo.followedByViewer = false;
+          this.userInfo.requestedByViewer = false;
+          this.blocked = false;
+          console.log("Menu.vue: User UnBlocked :)");
+        } else
+          console.log("Menu.vue(unBlockUser): No error but nothing changed :(");
+        this.blockLoading = false;
+      } catch (err) {
+        console.log("Something went wrong from:Menu.vue (unBlockUser)");
+        this.blockLoading = false;
+        console.log(err);
+      }
     }
   }
 };
