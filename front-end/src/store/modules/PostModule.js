@@ -14,12 +14,6 @@ export default {
     INIT_POSTS(state, payload) {
       state.posts.push(...payload);
     },
-    ADD_POST(state, payload) {
-      payload.comments = 0;
-      payload.likes = 0;
-      payload.like = false;
-      state.posts.unshift(payload);
-    },
     EDIT_POST(state, payload) {
       state.posts[payload.index] = payload;
     },
@@ -29,7 +23,7 @@ export default {
       el.style.transition = "all 0.5s ease-in-out";
       setTimeout(() => {
         el.remove();
-        state.posts.splice(payload.index, 1);
+        if (state.posts.length) state.posts.splice(payload.index, 1);
       }, 500);
     }
   },
@@ -59,7 +53,6 @@ export default {
           })
           .then(res => {
             if (res.status === 201) {
-              context.commit("ADD_POST", res.data);
               resolve(res);
             }
           })
