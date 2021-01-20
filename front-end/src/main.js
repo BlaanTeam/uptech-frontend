@@ -16,8 +16,11 @@ import parseBody from "./plugins/parsePost";
 import InfiniteLoading from "vue-infinite-loading";
 
 Vue.use(InfiniteLoading, {
-  props: { spinner: "spiral" }
-  //Todo: custom errors
+  props: { spinner: "spiral" },
+  slots: {
+    noMore: "",
+    error: "Oops, Something went wrong please try again "
+  }
 });
 
 Vue.mixin({
@@ -56,7 +59,7 @@ Vue.prototype.$pattern = patterns;
 Vue.config.productionTip = false;
 new Vue({
   computed: {
-    isLoggedIn: _ => store.getters.isLoggedIn
+    isLoggedIn: () => store.getters.isLoggedIn
   },
   router,
   store,
