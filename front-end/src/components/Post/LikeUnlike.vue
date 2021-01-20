@@ -36,7 +36,7 @@ export default {
       const api = `/feed/posts/${this.post._id}/likes`;
       try {
         const res = await this.$http.put(api);
-        if (res.status === 200) {
+        if (res.status === 204) {
           if (this.liked) {
             console.log("Unliked :(");
             this.post.likes--;
