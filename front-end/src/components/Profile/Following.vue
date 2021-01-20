@@ -1,8 +1,11 @@
 <template>
   <v-dialog scrollable v-model="dialog.value" max-width="400px">
     <v-card class="bg edit-profile">
-      <v-card-title class="justify-center">
-        <h1 class="title ms-2">Following</h1>
+      <v-card-title>
+        <h1 class="title d-inline-block float-left">Following</h1>
+        <v-icon @click="dialog.value = false" class="ms-auto">
+          mdi-close
+        </v-icon>
       </v-card-title>
       <v-card-text style="height: 80vh;" class="ps-3 py-3 px-0">
         <span v-for="user in users" :key="user._id">
@@ -23,7 +26,11 @@
           </div>
         </span>
         <infinite-loading @infinite="infiniteHandler">
-          <!-- Todo: add custom messages -->
+          <template slot="no-results">
+            <h2 class="mt-4 ps-2 pe-6 font-weight-regular">
+              This account doesn't follow any other accounts yet
+            </h2>
+          </template>
         </infinite-loading>
       </v-card-text>
     </v-card>
@@ -51,6 +58,7 @@ export default {
             this.page += 1;
             this.users.push(...res.data.following);
             $state.loaded();
+            if (res.data.following.length < 10) $state.complete();
           } else {
             $state.complete();
           }
