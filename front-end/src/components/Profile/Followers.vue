@@ -6,8 +6,9 @@
     class="followers"
   >
     <v-card class="bg edit-profile">
-      <v-card-title class="justify-center">
-        <h1 class="title ms-2">Followers</h1>
+      <v-card-title>
+        <h1 class="title d-inline-block float-left">Followers</h1>
+        <v-icon @click="dialog.value = false" class="ms-auto">mdi-close</v-icon>
       </v-card-title>
       <v-card-text style="height: 80vh;" class="ps-3 py-3 px-0">
         <span v-for="user in users" :key="user._id">
@@ -16,9 +17,13 @@
               <img src="@/assets/images/avatar.svg" width="36" alt="Avatar" />
             </div>
             <div cols="6" class="align-sefl-center mx-3">
-              <h3 class="text-capitilize">
-                {{ user.profile.firstName }}
-                {{ user.profile.lastName }}
+              <h3 v-if="user.profile" class="text-capitilize">
+                <span v-if="user.profile.firstName">
+                  {{ user.profile.firstName }}
+                </span>
+                <span v-if="user.profile.lastName">
+                  {{ user.profile.lastName }}
+                </span>
               </h3>
               <h5 class="mt-n2">@{{ user.userName }}</h5>
             </div>
@@ -28,7 +33,11 @@
           </div>
         </span>
         <infinite-loading @infinite="infiniteHandler">
-          <!-- Todo: add custom messages -->
+          <template slot="no-results">
+            <h2 class="mt-4 px-2 font-weight-regular">
+              This account doesn't have any followers yet
+            </h2>
+          </template>
         </infinite-loading>
       </v-card-text>
     </v-card>
@@ -56,6 +65,7 @@ export default {
             this.page += 1;
             this.users.push(...res.data.followers);
             $state.loaded();
+            if (res.data.followers.length < 10) $state.complete();
           } else {
             $state.complete();
           }
