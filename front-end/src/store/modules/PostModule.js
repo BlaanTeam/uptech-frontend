@@ -8,8 +8,11 @@ export default {
     getPosts: state => state.posts
   },
   mutations: {
+    DESTROY_POSTS(state) {
+      state.posts.length = 0;
+    },
     INIT_POSTS(state, payload) {
-      state.posts = payload;
+      state.posts.push(...payload);
     },
     ADD_POST(state, payload) {
       payload.comments = 0;
@@ -31,10 +34,13 @@ export default {
     }
   },
   actions: {
-    getFeedPosts(context) {
+    destroyPosts(context) {
+      context.commit("DESTROY_POSTS");
+    },
+    getFeedPosts(context, payload) {
       return new Promise((resolve, reject) => {
         Vue.prototype.$http
-          .get("/feed/posts")
+          .get(`/feed/posts?page=${payload.page}`)
           .then(res => {
             if (res.status === 200) {
               context.commit("INIT_POSTS", res.data.posts);

@@ -2,11 +2,8 @@
   <div class="feeds">
     <CreatePost @creating="handleLoading" />
     <div class="posts">
-      <span v-if="!loaded">
-        <PostSkeleton v-for="n in 5" :key="n" />
-      </span>
       <PostSkeleton v-if="loading.value" />
-      <span v-if="loaded">
+      <div>
         <Post
           v-for="(post, index) in posts"
           :key="post._id"
@@ -14,7 +11,12 @@
           :index="index"
           transition="scale-transition"
         />
-      </span>
+        <infinite-loading @infinite="infiniteHandler">
+          <template slot="spinner">
+            <PostSkeleton />
+          </template>
+        </infinite-loading>
+      </div>
     </div>
   </div>
 </template>
@@ -27,8 +29,8 @@ import PostSkeleton from "@/components/Skeletons/PostSkeleton";
 export default {
   components: { CreatePost, Post, PostSkeleton },
   data: () => ({
-    loaded: false,
-    loading: { value: false }
+    loading: { value: false },
+    page: 1
   }),
   computed: {
     posts() {
@@ -36,19 +38,30 @@ export default {
     }
   },
   methods: {
+    async infiniteHandler($state) {
+      try {
+        let res = await this.$store.dispatch("getFeedPosts", {
+          page: this.page
+        });
+        if (res.status === 200) {
+          if (res.data.posts.length) {
+            this.page += 1;
+            $state.loaded();
+          } else {
+            $state.complete();
+          }
+        }
+      } catch (err) {
+        $state.error();
+        console.log(err);
+      }
+    },
     handleLoading(loading) {
       this.loading = loading;
     }
   },
-
-  async mounted() {
-    try {
-      await this.$store.dispatch("getFeedPosts");
-      this.loaded = true;
-    } catch (err) {
-      this.loaded = true;
-      console.log(err);
-    }
+  async destroyed() {
+    await this.$store.dispatch("destroyPosts");
   }
 };
 </script>
