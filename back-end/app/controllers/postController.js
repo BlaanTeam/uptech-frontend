@@ -350,7 +350,7 @@ const getPost = async (req, res, next) => {
                     ],
                 },
             },
-            { $unwind: "$follow" },
+            { $unwind: { path: "$follow", preserveNullAndEmptyArrays: true } },
             {
                 $addFields: {
                     likedByViewer: {
