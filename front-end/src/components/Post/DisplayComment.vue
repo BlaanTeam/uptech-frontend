@@ -162,10 +162,10 @@ export default {
           // el.style.opacity = "0";
           // setTimeout(() => {
           // el.remove();
-          this.post.comments = this.post.comments.filter(
+          this.post.commentsData = this.post.commentsData.filter(
             comment => comment._id !== this.comment._id
           );
-          this.post.totalComments--;
+          this.post.comments--;
           // }, 300);
         }
       } catch (err) {
