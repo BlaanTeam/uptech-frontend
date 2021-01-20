@@ -1,6 +1,6 @@
 <template>
   <div class="feeds">
-    <CreatePost @creating="handleLoading" />
+    <CreatePost @creating="handleLoading" @created="addPost" />
     <div class="posts">
       <PostSkeleton v-if="loading.value" />
       <div>
@@ -14,6 +14,21 @@
         <infinite-loading @infinite="infiniteHandler">
           <template slot="spinner">
             <PostSkeleton />
+          </template>
+          <template slot="no-results">
+            <div>
+              <v-icon size="80" color="#b68d06">
+                mdi-database-alert-outline
+              </v-icon>
+              <h2 class="mt-4 px-2 font-weight-regular">
+                It's quiet here nothing to show for you
+              </h2>
+              <h3 class="font-weight-light">
+                Find accounts that you're interested in
+                <br />
+                And make sure to follow them to get some noise out here
+              </h3>
+            </div>
           </template>
         </infinite-loading>
       </div>
@@ -47,6 +62,7 @@ export default {
           if (res.data.posts.length) {
             this.page += 1;
             $state.loaded();
+            if (res.data.posts.length < 20) $state.complete();
           } else {
             $state.complete();
           }
@@ -58,6 +74,12 @@ export default {
     },
     handleLoading(loading) {
       this.loading = loading;
+    },
+    addPost({ content, isPrivate, payload }) {
+      payload.comments = 0;
+      payload.likes = 0;
+      payload.like = false;
+      this.posts.unshift(payload);
     }
   },
   async destroyed() {
