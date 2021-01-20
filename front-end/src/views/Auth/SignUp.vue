@@ -9,7 +9,7 @@
         <SignupSvg width="400" />
       </v-col>
       <v-col class="px-2 align-self-start mt-4">
-        <v-form ref="signup">
+        <v-form ref="signup" v-model="validity">
           <v-text-field
             prepend-icon="mdi-account"
             class="my-6"
@@ -81,11 +81,13 @@
           <v-btn
             @click="handleSubmit"
             color="primary"
-            dark
+            :dark="!loading"
             class="ml-2 my-4 px-10"
             elevation="0"
             rounded
-            :disabled="disabled"
+            type="submit"
+            :loading="loading"
+            :disabled="loading || !validity"
           >
             {{ $t("signup.name") }}
           </v-btn>
@@ -120,7 +122,9 @@ export default {
     email: "",
     password: "",
     repeatPassword: "",
-    agree: false
+    agree: false,
+    validity: false,
+    loading: false
   }),
   computed: {
     usernameRules() {
@@ -170,7 +174,7 @@ export default {
     },
     handleSubmit() {
       if (this.valid) {
-        let loader = this.$loading.show({ container: null, canCancel: false });
+        this.loading = true;
         this.$store
           .dispatch("signUp", {
             username: this.username,
@@ -178,21 +182,18 @@ export default {
             password: this.password
           })
           .then(res => {
-            loader.hide();
+            this.loading = false;
             if (res.status === 201 && res.data.code === 2062) {
               this.$router.push({ name: "SignIn" });
               this.successNotification(this.$t("signup.success.registred"));
             }
           })
           .catch(({ response }) => {
-            this.password = "";
-            this.repeatPassword = "";
-            loader.hide();
+            this.loading = false;
             if (
               response?.status === 409 &&
               response?.data?.error?.code === 1092
             ) {
-              console.log("already signed up");
               this.errorNotification(
                 this.$t("signup.errors.usernameAlreadyRegistred")
               );

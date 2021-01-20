@@ -2,7 +2,7 @@
   <v-container fluid class="pa-0">
     <v-card max-width="600" class="mt-10 mx-auto pb-10 bg px-4 py-4">
       <h1 class="display-3 my-10 ms-1">{{ $t("resetPassword.h1") }}</h1>
-      <v-form ref="resetPassword">
+      <v-form ref="resetPassword" v-model="validity">
         <h3 class="mb-6">{{ $t("resetPassword.h2") }}</h3>
         <v-text-field
           prepend-icon="mdi-lock"
@@ -34,6 +34,9 @@
           rounded
           color="primary"
           dark
+          :loading="loading"
+          :disabled="loading || !validity"
+          type="submit"
           elevation="0"
         >
           {{ $t("resetPassword.change") }}
@@ -52,7 +55,9 @@ export default {
       show1: false,
       show2: false,
       password: "",
-      repeatPassword: ""
+      repeatPassword: "",
+      loading: false,
+      validity: false
     };
   },
   computed: {
@@ -73,7 +78,7 @@ export default {
   methods: {
     handleSubmit() {
       if (this.$refs.resetPassword.validate()) {
-        let loader = this.$loading.show({ container: null, canCancel: false });
+        this.loading = true;
         this.$store
           .dispatch("resetPassword", {
             token: this.$route.params.token,
@@ -81,7 +86,7 @@ export default {
             password: this.password
           })
           .then(res => {
-            loader.hide();
+            this.loading = false;
             if (res.status === 200 && res.data.code === 2029) {
               this.$notify({
                 group: "success",
@@ -93,7 +98,7 @@ export default {
             }
           })
           .catch(err => {
-            loader.hide();
+            this.loading = false;
             if (err.response) {
               this.$router.push({ name: "NotFound" });
             }

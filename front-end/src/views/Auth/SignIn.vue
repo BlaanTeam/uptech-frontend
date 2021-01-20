@@ -47,7 +47,7 @@
         </v-btn>
       </v-card-subtitle> -->
       <v-card-text>
-        <v-form ref="signin">
+        <v-form ref="signin" v-model="validity">
           <v-text-field
             name="username"
             autocomplete="false"
@@ -71,12 +71,19 @@
             :label="$t('signin.form.rememberMe')"
           >
           </v-checkbox>
-          <router-link class="my-2 d-block" to="forgot_password">
-            {{ $t("signin.form.forgotPassword") }}
-          </router-link>
-          <router-link class="my-2 d-block" block to="resend_confirmation">
-            {{ $t("signin.form.resendConfirmation") }}
-          </router-link>
+          <v-row no-gutters>
+            <router-link
+              class="mb-1 d-inline primary--text"
+              to="forgot_password"
+            >
+              {{ $t("signin.form.forgotPassword") }}
+            </router-link>
+          </v-row>
+          <v-row no-gutters>
+            <router-link class="primary--text" block to="resend_confirmation">
+              {{ $t("signin.form.resendConfirmation") }}
+            </router-link>
+          </v-row>
         </v-form>
       </v-card-text>
       <v-btn
@@ -84,7 +91,10 @@
         block
         class="py-6"
         color="primary"
-        dark
+        :dark="!loading"
+        type="submit"
+        :loading="loading"
+        :disabled="loading || !validity"
         elevation="0"
       >
         {{ $t("signin.name") }}
@@ -108,7 +118,9 @@ export default {
       // models
       username: "",
       password: "",
-      rememberMe: false
+      rememberMe: false,
+      validity: false,
+      loading: false
     };
   },
   computed: {
@@ -144,10 +156,7 @@ export default {
     },
     handlesubmit() {
       if (this.valid) {
-        let loader = this.$loading.show({
-          container: null,
-          canCancel: false
-        });
+        this.loading = true;
         this.$store
           .dispatch("signIn", {
             username: this.username,
@@ -155,7 +164,8 @@ export default {
             rememberMe: this.rememberMe
           })
           .then(res => {
-            loader.hide();
+            this.loading = false;
+
             if (res.status === 200 && res.data.code === 2032) {
               if (this.$route.query.nextPath) {
                 this.$router
@@ -167,7 +177,7 @@ export default {
             }
           })
           .catch(({ response }) => {
-            loader.hide();
+            this.loading = false;
             this.password = "";
             if (
               response?.status === 404 &&
