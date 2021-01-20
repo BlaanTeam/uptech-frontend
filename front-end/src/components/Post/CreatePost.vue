@@ -94,6 +94,11 @@ export default {
         });
         if (res.status === 201) {
           console.log("Post Created");
+          this.$emit("created", {
+            content: temptext,
+            isPrivate: this.isPrivate,
+            payload: res.data
+          });
           temptext = "";
           this.loading.value = false;
         }
