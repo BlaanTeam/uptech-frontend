@@ -113,13 +113,13 @@
 
     <v-divider></v-divider>
     <v-card-actions class="px-4 py-0">
-      <v-row class="text-center py-0">
+      <v-row class="text-center py-0" no-gutters>
         <v-col class="pa-2">
           <LikeUnlike :post="post" />
         </v-col>
         <v-col class="pa-2">
           <div>
-            <span class="caption">{{ post.totalComments }}</span>
+            <span class="caption">{{ post.comments }}</span>
             <v-btn
               class="ml-2 caption"
               @click="commentExpanded = !commentExpanded"
@@ -143,7 +143,7 @@
       <AddComment :display="commentExpanded" :post="post" />
       <template v-if="post.comments && post.comments.length">
         <DisplayComment
-          v-for="(comment, i) in post.comments"
+          v-for="(comment, i) in post.commentsData"
           :key="i"
           :comment="comment"
           :post="post"
