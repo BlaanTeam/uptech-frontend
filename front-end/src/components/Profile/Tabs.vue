@@ -58,7 +58,13 @@
       :class="{ bg: !posts.length, 'auth-bg': posts.length }"
     >
       <v-tab-item>
-        <div v-if="loaded && posts.length" class="auth-bg pt-4 px-1">
+        <CreatePost
+          @creating="handleLoading"
+          @created="addPost"
+          v-if="userInfo.isOwner"
+        />
+        <div v-if="loaded && posts.length" class="auth-bg px-1">
+          <PostSkeleton v-if="loading.value" />
           <span v-for="(post, index) in posts" :key="post._id">
             <Post
               :post="post"
@@ -77,7 +83,6 @@
               <h2>This user doesn't have any posts yet</h2>
             </div>
           </template>
-          <!-- Todo: add custom messages -->
         </infinite-loading>
       </v-tab-item>
       <v-tab-item>
@@ -99,7 +104,9 @@ export default {
   name: "Tabs",
   components: {
     Post: () => import("@/components/Post/Post"),
-    PrivateSvg: () => import("@/components/svg/PrivateSvg")
+    PrivateSvg: () => import("@/components/svg/PrivateSvg"),
+    CreatePost: () => import("@/components/Post/CreatePost"),
+    PostSkeleton: () => import("@/components/Skeletons/PostSkeleton")
   },
   props: {
     userInfo: { type: Object, required: true }
@@ -110,13 +117,11 @@ export default {
     page: 1,
     pageInfo: {},
     loaded: false,
-    blockLoading: false
+    blockLoading: false,
+    loading: false
   }),
 
   methods: {
-    log() {
-      console.log("from tabs components");
-    },
     async infiniteHandler($state) {
       try {
         let userName = this.userInfo.userName;
@@ -128,6 +133,7 @@ export default {
             this.page += 1;
             this.posts.push(...res.data.posts);
             $state.loaded();
+            if (res.data.posts.length < 20) $state.complete();
             this.loaded = true;
           } else {
             this.loaded = true;
@@ -159,6 +165,15 @@ export default {
         this.blockLoading = false;
         console.log(err);
       }
+    },
+    handleLoading(loading) {
+      this.loading = loading;
+    },
+    addPost({ content, isPrivate, payload }) {
+      payload.comments = 0;
+      payload.likes = 0;
+      payload.like = false;
+      this.posts.unshift(payload);
     }
   }
 };
