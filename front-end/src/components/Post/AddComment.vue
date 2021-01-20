@@ -70,9 +70,9 @@ export default {
 
         if (res.status === 200) {
           console.log("Comment added successfully");
-          this.post.totalComments++;
-          if (!this.post.comments) this.post.comments = [];
-          this.post.comments.unshift(res.data.comment);
+          this.post.comments++;
+          if (!this.post.commentsData) this.post.commentsData = [];
+          this.post.commentsData.unshift(res.data.comment);
           this.comment.value = "";
         }
       } catch (err) {
