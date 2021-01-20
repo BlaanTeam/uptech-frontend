@@ -1,6 +1,6 @@
 <template>
   <div class="toggle-like-unlike">
-    <span class="caption">{{ post.totalLikes }}</span>
+    <span class="caption">{{ post.likes }}</span>
     <v-btn
       class="ml-2 px-4 py-0  text-lowercase body-2"
       elevation="0"
@@ -24,7 +24,7 @@ export default {
     post: Object
   },
   data: props => ({
-    liked: props.post.isLiked
+    liked: props.post.likedByViewer
   }),
   computed: {
     toggleLikeUnlike() {
@@ -39,10 +39,10 @@ export default {
         if (res.status === 200) {
           if (this.liked) {
             console.log("Unliked :(");
-            this.post.totalLikes--;
+            this.post.likes--;
           } else {
             console.log("Liked :)");
-            this.post.totalLikes++;
+            this.post.likes++;
           }
 
           this.liked = !this.liked;
