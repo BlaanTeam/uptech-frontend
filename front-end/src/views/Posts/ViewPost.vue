@@ -41,6 +41,9 @@ export default {
   height: 92vh;
   padding: 16px 10px 40px 10px;
   overflow-y: auto;
+  .view-post-btn {
+    display: none;
+  }
   .container-emoji {
     height: 250px !important;
   }
