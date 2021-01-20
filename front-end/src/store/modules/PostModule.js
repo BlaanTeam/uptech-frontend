@@ -12,8 +12,8 @@ export default {
       state.posts = payload;
     },
     ADD_POST(state, payload) {
-      payload.totalComments = 0;
-      payload.totalLikes = 0;
+      payload.comments = 0;
+      payload.likes = 0;
       payload.like = false;
       state.posts.unshift(payload);
     },
