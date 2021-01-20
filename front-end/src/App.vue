@@ -13,9 +13,9 @@
 
     <AuthLayout v-else :style="authBackground">
       <v-main>
-        <keep-alive :max="5" :exclude="excludedComponents">
-          <router-view :key="$route.fullPath"></router-view>
-        </keep-alive>
+        <!-- <keep-alive :max="5" :include="include"> -->
+        <router-view :key="$route.fullPath"></router-view>
+        <!-- </keep-alive> -->
       </v-main>
     </AuthLayout>
   </div>
@@ -31,7 +31,7 @@ export default {
     AuthLayout
   },
   data: () => ({
-    excludedComponents: ["ViewProfile", "ViewPost"]
+    inlcude: ["CreatePost"]
   }),
   computed: {
     unAuthBackground() {
