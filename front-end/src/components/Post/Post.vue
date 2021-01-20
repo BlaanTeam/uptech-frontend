@@ -35,6 +35,18 @@
           </p>
         </v-col>
         <v-spacer></v-spacer>
+        <router-link :to="{ name: 'ViewPost', params: { postId: post._id } }">
+          <v-btn
+            height="28"
+            width="94"
+            class="me-2 text-capitalize caption view-post-btn"
+            text
+            dense
+          >
+            <v-icon left small>mdi-eye</v-icon>
+            view post
+          </v-btn>
+        </router-link>
         <v-col lg="1" md="1" sm="2" class="pa-0 ma-0 text-center">
           <v-menu
             :attach="'.card-title' + index"
@@ -55,14 +67,6 @@
               </v-btn>
             </template>
             <v-list-item-group class="auth-secondarybg">
-              <router-link
-                :to="{ name: 'ViewPost', params: { postId: post._id } }"
-              >
-                <v-list-item dense>
-                  <v-icon left small>mdi-eye</v-icon>
-                  <v-list-item-title>view</v-list-item-title>
-                </v-list-item>
-              </router-link>
               <v-list-item dense @click="copyPostLink">
                 <v-icon left small>mdi-content-copy</v-icon>
                 <v-list-item-title>Copy</v-list-item-title>
@@ -71,21 +75,13 @@
                 <v-icon left small>mdi-content-save</v-icon>
                 <v-list-item-title>Save</v-list-item-title>
               </v-list-item>
-              <EditPost
-                :post="post"
-                :index="index"
-                v-if="post.user._id === userId"
-              >
+              <EditPost :post="post" :index="index" v-if="post.isOwner">
                 <v-list-item dense>
                   <v-icon left small>mdi-square-edit-outline</v-icon>
                   <v-list-item-title>Edit</v-list-item-title>
                 </v-list-item>
               </EditPost>
-              <DeletePost
-                :post="post"
-                :index="index"
-                v-if="post.user._id === userId"
-              >
+              <DeletePost :post="post" :index="index" v-if="post.isOwner">
                 <v-list-item dense class="text-start">
                   <v-icon left color="red" small>mdi-delete</v-icon>
                   <v-list-item-title class="red--text">
@@ -110,7 +106,6 @@
       >
       </a>
     </div>
-
     <v-divider></v-divider>
     <v-card-actions class="px-4 py-0">
       <v-row class="text-center py-0" no-gutters>
@@ -139,17 +134,18 @@
         </v-col>
       </v-row>
     </v-card-actions>
-    <div>
-      <AddComment :display="commentExpanded" :post="post" />
-      <template v-if="post.comments && post.comments.length">
-        <DisplayComment
-          v-for="(comment, i) in post.commentsData"
-          :key="i"
-          :comment="comment"
-          :post="post"
-        />
-      </template>
-    </div>
+
+    <transition name="slide">
+      <AddComment v-if="commentExpanded" :post="post" />
+    </transition>
+    <template v-if="post.commentsData && post.commentsData.length">
+      <DisplayComment
+        v-for="(comment, i) in post.commentsData"
+        :key="i"
+        :comment="comment"
+        :post="post"
+      />
+    </template>
     <v-snackbar
       v-model="snackbar"
       color="#22a56a"
@@ -219,3 +215,18 @@ export default {
   }
 };
 </script>
+<style lang="scss">
+.post {
+  .slide-enter-active {
+    transition: all 0.4s linear;
+  }
+  .slide-leave-active {
+    transition: all 0.4s linear;
+  }
+  .slide-enter,
+  .slide-leave-to {
+    transform: translateX(15px);
+    opacity: 0;
+  }
+}
+</style>
