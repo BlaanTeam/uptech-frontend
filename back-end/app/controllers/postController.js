@@ -603,80 +603,308 @@ const getComments = async (req, res, next) => {
                                 },
                             },
                         },
+                        { $sort: { createdAt: -1 } },
                         {
-                            $facet: {
-                                pageInfo: [
+                            $lookup: {
+                                from: "users",
+                                let: {
+                                    userId: "$user",
+                                },
+                                as: "user",
+                                pipeline: [
                                     {
-                                        $count: "total",
-                                    },
-                                    {
-                                        $addFields: {
-                                            perPage,
-                                            pageNumber,
-                                            total: {
-                                                $ceil: {
-                                                    $divide: [
-                                                        "$total",
-                                                        perPage,
-                                                    ],
-                                                },
+                                        $match: {
+                                            $expr: {
+                                                $eq: ["$_id", "$$userId"],
                                             },
                                         },
-                                    },
-                                ],
-                                data: [
-                                    {
-                                        $lookup: {
-                                            from: "users",
-                                            let: {
-                                                userId: "$user",
-                                            },
-                                            as: "user",
-                                            pipeline: [
-                                                {
-                                                    $match: {
-                                                        $expr: {
-                                                            $eq: [
-                                                                "$_id",
-                                                                "$$userId",
-                                                            ],
-                                                        },
-                                                    },
-                                                },
-                                                {
-                                                    $project: {
-                                                        userName: 1,
-                                                        profile: 1,
-                                                    },
-                                                },
-                                            ],
-                                        },
-                                    },
-                                    { $unwind: "$user" },
-                                    { $skip: (pageNumber - 1) * perPage },
-                                    {
-                                        $limit: perPage,
                                     },
                                     {
                                         $project: {
-                                            __v: 0,
+                                            userName: 1,
+                                            profile: 1,
                                         },
                                     },
                                 ],
                             },
                         },
-                        { $unwind: "$pageInfo" },
+                        { $unwind: "$user" },
+                        {
+                            $lookup: {
+                                from: "follows",
+                                let: {
+                                    userOne: req.currentUser._id,
+                                    userTwo: "$user._id",
+                                },
+                                pipeline: [
+                                    {
+                                        $match: {
+                                            $expr: {
+                                                $and: [
+                                                    {
+                                                        $eq: [
+                                                            "$userOne",
+                                                            "$$userOne",
+                                                        ],
+                                                    },
+                                                    {
+                                                        $eq: [
+                                                            "$userTwo",
+                                                            "$$userTwo",
+                                                        ],
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    },
+                                    {
+                                        $project: {
+                                            status: 1,
+                                        },
+                                    },
+                                ],
+                                as: "followOne",
+                            },
+                        },
+                        {
+                            $lookup: {
+                                from: "follows",
+                                let: {
+                                    userOne: "$user._id",
+                                    userTwo: req.currentUser._id,
+                                },
+                                pipeline: [
+                                    {
+                                        $match: {
+                                            $expr: {
+                                                $and: [
+                                                    {
+                                                        $eq: [
+                                                            "$userOne",
+                                                            "$$userOne",
+                                                        ],
+                                                    },
+                                                    {
+                                                        $eq: [
+                                                            "$userTwo",
+                                                            "$$userTwo",
+                                                        ],
+                                                    },
+                                                ],
+                                            },
+                                        },
+                                    },
+                                    {
+                                        $project: {
+                                            status: 1,
+                                        },
+                                    },
+                                ],
+                                as: "followTwo",
+                            },
+                        },
+                        {
+                            $unwind: {
+                                path: "$followOne",
+                                preserveNullAndEmptyArrays: true,
+                            },
+                        },
+                        {
+                            $unwind: {
+                                path: "$followTwo",
+                                preserveNullAndEmptyArrays: true,
+                            },
+                        },
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $ne: ["$followOne.status", 4],
+                                        },
+
+                                        {
+                                            $ne: ["$followTwo.status", 4],
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+
+                        { $skip: (pageNumber - 1) * perPage },
+                        {
+                            $limit: perPage,
+                        },
+                        {
+                            $project: {
+                                __v: 0,
+                                followOne: 0,
+                                followTwo: 0,
+                            },
+                        },
                     ],
                 },
             },
             {
+                $lookup: {
+                    from: "follows",
+                    let: {
+                        userOne: req.currentUser._id,
+                        userTwo: "$user",
+                    },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ["$userOne", "$$userOne"],
+                                        },
+                                        {
+                                            $eq: ["$userTwo", "$$userTwo"],
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                        {
+                            $project: {
+                                status: 1,
+                            },
+                        },
+                    ],
+                    as: "followOne",
+                },
+            },
+            {
+                $lookup: {
+                    from: "follows",
+                    let: {
+                        userOne: "$user",
+                        userTwo: req.currentUser._id,
+                    },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ["$userOne", "$$userOne"],
+                                        },
+                                        {
+                                            $eq: ["$userTwo", "$$userTwo"],
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                        {
+                            $project: {
+                                status: 1,
+                            },
+                        },
+                    ],
+                    as: "followTwo",
+                },
+            },
+            {
                 $unwind: {
-                    path: "$comments",
+                    path: "$followOne",
                     preserveNullAndEmptyArrays: true,
                 },
             },
             {
+                $unwind: {
+                    path: "$followTwo",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $addFields: {
+                    blockedByViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followOne.status", 4],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    followedByViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followOne.status", 2],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    rejectedByViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 3],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    requestedByViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followOne.status", 1],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    followsViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 2],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    hasBlockedViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 4],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    hasRequestedViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 1],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    hasRejectedViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followOne.status", 3],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                },
+            },
+            {
                 $project: {
+                    blockedByViewer: 1,
+                    followedByViewer: 1,
+                    rejectedByViewer: 1,
+                    requestedByViewer: 1,
+                    followsViewer: 1,
+                    hasBlockedViewer: 1,
+                    hasRequestedViewer: 1,
+                    hasRejectedViewer: 1,
                     isPrivate: 1,
                     comments: 1,
                     isOwner: 1,
@@ -686,12 +914,13 @@ const getComments = async (req, res, next) => {
         post = post[0];
         if (!post) {
             throw createError.NotFound();
+        } else if (post.blockedByViewer || post.hasBlockedViewer) {
+            throw createError.Forbidden();
         } else if (post.isPrivate === true && !post.isOwner) {
             throw createError.Forbidden();
         }
-        let comments = post.comments ? post.comments.data : [];
-        let pageInfo = post.comments ? post.comments.pageInfo : {};
-        res.json({ comments, pageInfo });
+        let comments = post.comments ? post.comments : [];
+        res.json({ comments });
     } catch (err) {
         next(err);
     }
