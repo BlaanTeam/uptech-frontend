@@ -3,7 +3,7 @@
     <v-card-title :class="'ma-0 pt-2 pb-3 card-title' + index">
       <v-row no-gutters>
         <v-col lg="1" md="1" sm="2" class="pa-0 ma-0 ms-2">
-          <PopoverProfile :index="index">
+          <PopoverProfile :index="index" :user="post.user">
             <router-link
               :to="{
                 name: 'ViewProfile',
@@ -136,15 +136,16 @@
     </v-card-actions>
 
     <transition name="slide">
-      <AddComment v-if="commentExpanded" :post="post" />
+      <AddComment v-if="commentExpanded" :post="post" :comments="comments" />
     </transition>
-    <template v-if="post.commentsData && post.commentsData.length">
+    <template v-if="comments && comments.length">
       <DisplayComment
-        v-for="(comment, i) in post.commentsData"
+        v-for="(comment, i) in comments"
         :key="i"
         :comment="comment"
         :post="post"
       />
+      <slot name="commentsLoading" />
     </template>
     <v-snackbar
       v-model="snackbar"
@@ -180,6 +181,8 @@ export default {
   },
   props: {
     post: { type: Object, required: true },
+    comments: { type: Array, required: false, default: () => [] },
+
     index: { type: Number, required: false, default: 0 }
   },
   data: props => ({

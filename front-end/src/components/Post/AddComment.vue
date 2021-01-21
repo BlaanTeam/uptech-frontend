@@ -49,7 +49,7 @@
 import Emojis from "@/components/Emojis";
 export default {
   components: { Emojis },
-  props: { post: Object },
+  props: { post: Object, comments: Array },
   data: () => ({
     comment: { value: "" },
     loading: false
@@ -66,8 +66,8 @@ export default {
         if (res.status === 200) {
           console.log("Comment added successfully");
           this.post.comments++;
-          if (!this.post.commentsData) this.post.commentsData = [];
-          this.post.commentsData.unshift(res.data.comment);
+          if (!this.comments) this.comments = [];
+          this.comments.unshift(res.data.comment);
           this.comment.value = "";
           this.loading = false;
         }
