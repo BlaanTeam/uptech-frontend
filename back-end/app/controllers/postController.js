@@ -333,26 +333,151 @@ const getPost = async (req, res, next) => {
             {
                 $lookup: {
                     from: "follows",
-                    let: { userOne: "$user", userTwo: req.currentUser._id },
-                    as: "follow",
+                    let: {
+                        userOne: req.currentUser._id,
+                        userTwo: "$user._id",
+                    },
                     pipeline: [
                         {
                             $match: {
                                 $expr: {
                                     $and: [
-                                        { $eq: ["$userOne", "$$userOne"] },
-                                        { $eq: ["$userOne", "$$userTwo"] },
-                                        { $ne: ["$status", 4] },
+                                        {
+                                            $eq: ["$userOne", "$$userOne"],
+                                        },
+                                        {
+                                            $eq: ["$userTwo", "$$userTwo"],
+                                        },
                                     ],
                                 },
                             },
                         },
+                        {
+                            $project: {
+                                status: 1,
+                            },
+                        },
                     ],
+                    as: "followOne",
                 },
             },
-            { $unwind: { path: "$follow", preserveNullAndEmptyArrays: true } },
+            {
+                $lookup: {
+                    from: "follows",
+                    let: {
+                        userOne: "$user._id",
+                        userTwo: req.currentUser._id,
+                    },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ["$userOne", "$$userOne"],
+                                        },
+                                        {
+                                            $eq: ["$userTwo", "$$userTwo"],
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                        {
+                            $project: {
+                                status: 1,
+                            },
+                        },
+                    ],
+                    as: "followTwo",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$followOne",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $unwind: {
+                    path: "$followTwo",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
             {
                 $addFields: {
+                    blockedByViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followOne.status", 4],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    followedByViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followOne.status", 2],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    rejectedByViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 3],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    requestedByViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followOne.status", 1],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    followsViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 2],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    hasBlockedViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 4],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    hasRequestedViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 1],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    hasRejectedViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followOne.status", 3],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
                     likedByViewer: {
                         $cond: [{ $eq: ["$like.liked", true] }, true, false],
                     },
@@ -365,11 +490,15 @@ const getPost = async (req, res, next) => {
                     __v: 0,
                     like: 0,
                     tags: 0,
+                    followOne: 0,
+                    followTwo: 0,
                 },
             },
         ]);
         post = post[0];
         if (!post) {
+            throw createError.NotFound();
+        } else if (post.blockedByViewer || post.hasBlockedViewer) {
             throw createError.NotFound();
         } else if (post.isPrivate === true && !user.isOwner) {
             throw createError.Forbidden();
