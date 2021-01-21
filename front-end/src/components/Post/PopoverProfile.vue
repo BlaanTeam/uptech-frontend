@@ -14,24 +14,40 @@
         </span>
       </template>
 
-      <v-card class="text-center">
-        <v-list class="auth-secondarybg">
-          <v-list-item>
-            <v-list-item-avatar>
-              <img src="@/assets/images/avatar.svg" alt="avatar" width="30" />
-            </v-list-item-avatar>
-
-            <v-list-item-content>
-              <v-list-item-title>John doe</v-list-item-title>
-              <v-list-item-subtitle>some info</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-        <v-list class="auth-secondarybg">
-          <v-list-item>
-            <v-list-item-title>Some other info</v-list-item-title>
-          </v-list-item>
-        </v-list>
+      <v-card class="auth-secondarybg">
+        <v-card-title>
+          <img
+            src="@/assets/images/avatar.svg"
+            alt="avatar"
+            width="40"
+            class="justify-self-start"
+          />
+          <div class="ms-4 justify-self-center">
+            <h3 class="title mt-n1">
+              {{ user.profile.firstName }} {{ user.profile.lastName }}
+            </h3>
+            <h5 class="caption mt-n2">@{{ user.userName }}</h5>
+          </div>
+        </v-card-title>
+        <v-divider />
+        <v-card-subtitle class="d-flex text-center">
+          <div class="ps-1">
+            <div class="font-weight-bold">Posts</div>
+            100
+          </div>
+          <div class="mx-6">
+            <div class="font-weight-bold">Followers</div>
+            22
+          </div>
+          <div class="pe-1">
+            <div class="font-weight-bold">Following</div>
+            200
+          </div>
+        </v-card-subtitle>
+        <v-divider />
+        <v-card-actions class="justify-center">
+          <FollowUnfollow v-if="!isOwner" :userInfo="user" />
+        </v-card-actions>
       </v-card>
     </v-menu>
   </div>
@@ -39,13 +55,23 @@
 
 <script>
 export default {
-  props: ["index"],
+  props: {
+    index: { type: [String, Number], required: true },
+    user: { type: Object, required: true }
+  },
+  components: { FollowUnfollow: () => import("../Profile/FollowUnfollow") },
+
   data: () => ({
     fav: true,
     menu: false,
     message: false,
     hints: true
-  })
+  }),
+  computed: {
+    isOwner() {
+      return this.$store.getters.getUserName === this.user.userName;
+    }
+  }
 };
 </script>
 
