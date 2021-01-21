@@ -117,20 +117,6 @@ const getFeedPosts = async (req, res, next) => {
             },
             {
                 $facet: {
-                    pageInfo: [
-                        { $count: "total" },
-                        {
-                            $addFields: {
-                                perPage: perPage,
-                                pageNumber: pageNumber,
-                                total: {
-                                    $ceil: {
-                                        $divide: ["$total", perPage],
-                                    },
-                                },
-                            },
-                        },
-                    ],
                     posts: [
                         {
                             $lookup: {
@@ -213,14 +199,8 @@ const getFeedPosts = async (req, res, next) => {
                 },
             },
         ]);
-        let result = results[0];
-        let posts = result.posts ? result.posts : [];
-        let pageInfo = result.pageInfo ? result.pageInfo : {};
-
-        res.json({
-            posts,
-            pageInfo,
-        });
+        let posts = results[0];
+        res.json(posts);
     } catch (err) {
         next(err);
     }
