@@ -56,9 +56,8 @@ export default {
   }),
   methods: {
     async addComment() {
-      this.loading = true;
       if (!this.comment.value.trim()) return (this.comment.value = "");
-
+      this.loading = true;
       const api = `/feed/posts/${this.post._id}/comments`;
       const data = { content: this.comment.value };
       try {
