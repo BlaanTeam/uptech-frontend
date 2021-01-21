@@ -1187,6 +1187,19 @@ const getUserPosts = async (req, res, next) => {
                     let: { userId: "$_id", isOwner: "$isOwner" },
                     pipeline: [
                         {
+                            $set: {
+                                isOwner: {
+                                    $cond: [
+                                        {
+                                            $eq: ["$$isOwner", true],
+                                        },
+                                        true,
+                                        false,
+                                    ],
+                                },
+                            },
+                        },
+                        {
                             $match: {
                                 $expr: {
                                     $function: {
@@ -1227,23 +1240,6 @@ const getUserPosts = async (req, res, next) => {
                         },
                         {
                             $facet: {
-                                pageInfo: [
-                                    { $count: "total" },
-                                    {
-                                        $addFields: {
-                                            perPage: perPage,
-                                            pageNumber: pageNumber,
-                                            total: {
-                                                $ceil: {
-                                                    $divide: [
-                                                        "$total",
-                                                        perPage,
-                                                    ],
-                                                },
-                                            },
-                                        },
-                                    },
-                                ],
                                 data: [
                                     {
                                         $lookup: {
@@ -1418,11 +1414,6 @@ const getUserPosts = async (req, res, next) => {
                                         },
                                     },
                                 ],
-                            },
-                        },
-                        {
-                            $unwind: {
-                                path: "$pageInfo",
                             },
                         },
                     ],
