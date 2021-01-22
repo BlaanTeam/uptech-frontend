@@ -27,7 +27,7 @@
               </h3>
               <h5 class="mt-n2">@{{ user.userName }}</h5>
             </div>
-            <div class="align-self-center ms-auto me-1">
+            <div v-if="!user.isOwner" class="align-self-center ms-auto me-1">
               <FollowUnfollow :userInfo="user" :myInfo="myInfo" />
             </div>
           </div>
