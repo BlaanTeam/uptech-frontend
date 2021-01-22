@@ -138,12 +138,14 @@
     <transition name="slide">
       <AddComment v-if="commentExpanded" :post="post" :comments="comments" />
     </transition>
-    <template v-if="comments && comments.length">
+    <template v-show="comments.length">
       <DisplayComment
         v-for="(comment, i) in comments"
-        :key="i"
+        :key="comment._id"
         :comment="comment"
         :post="post"
+        :comments="comments"
+        :index="i"
       />
       <slot name="commentsLoading" />
     </template>
@@ -181,8 +183,7 @@ export default {
   },
   props: {
     post: { type: Object, required: true },
-    comments: { type: Array, required: false, default: () => [] },
-
+    comments: { type: Array, required: true },
     index: { type: Number, required: false, default: 0 }
   },
   data: props => ({

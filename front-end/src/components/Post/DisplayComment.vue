@@ -58,6 +58,7 @@
           nudge-right="25"
           offset-y
           :close-on-content-click="false"
+          v-if="!deleting"
           left
           transition="slide-y-transition"
         >
@@ -137,12 +138,15 @@ export default {
   components: { Emojis },
   props: {
     comment: { type: Object, required: true },
+    comments: { type: Array, required: true },
+    index: { type: Number, required: true },
     post: { type: Object, required: true }
   },
   data: props => ({
     editMode: false,
     content: { value: props.comment.content },
-    loading: false
+    loading: false,
+    deleting: false
   }),
   computed: {
     userId() {
@@ -177,21 +181,17 @@ export default {
         const res = await this.$http.delete(api);
         if (res.status === 204) {
           console.log("Comment deleted successfully");
-
-          // let el = document.getElementById("comment" + this.comment._id);
-          // console.log(el);
-          // el.style.transition = "all 0.4s";
-          // el.style.transform = "translateX(-100vh";
-          // el.style.opacity = "0";
-          // setTimeout(() => {
-          // el.remove();
-          this.post.commentsData = this.post.commentsData.filter(
-            comment => comment._id !== this.comment._id
-          );
-          this.post.comments--;
-          this.loading = false;
-
-          // }, 300);
+          this.deleting = true;
+          let el = document.querySelector("#comment" + this.comment._id);
+          el.style.transition = "all 0.6s";
+          el.style.transform = "translateX(-100vh";
+          el.style.opacity = "0";
+          setTimeout(() => {
+            el.remove();
+            this.comments.splice(this.index, 1);
+            this.post.comments--;
+            this.loading = false;
+          }, 600);
         }
       } catch (err) {
         console.log("Something went wrong from:DeleteComment");

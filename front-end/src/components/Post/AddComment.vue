@@ -66,7 +66,6 @@ export default {
         if (res.status === 200) {
           console.log("Comment added successfully");
           this.post.comments++;
-          if (!this.comments) this.comments = [];
           this.comments.unshift(res.data.comment);
           this.comment.value = "";
           this.loading = false;
