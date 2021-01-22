@@ -35,18 +35,18 @@
           </p>
         </v-col>
         <v-spacer></v-spacer>
+
         <router-link :to="{ name: 'ViewPost', params: { postId: post._id } }">
-          <v-btn
-            height="28"
-            width="94"
-            class="me-2 text-capitalize caption view-post-btn"
-            text
-            dense
-          >
-            <v-icon left small>mdi-eye</v-icon>
-            view post
-          </v-btn>
+          <v-tooltip bottom color="#2F3136" nudge-top="8">
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn v-bind="attrs" v-on="on" class="view-post-btn" icon>
+                <v-icon>mdi-eye</v-icon>
+              </v-btn>
+            </template>
+            <span>View Post</span>
+          </v-tooltip>
         </router-link>
+
         <v-col lg="1" md="1" sm="2" class="pa-0 ma-0 text-center">
           <v-menu
             :attach="'.card-title' + index"
@@ -138,12 +138,14 @@
     <transition name="slide">
       <AddComment v-if="commentExpanded" :post="post" :comments="comments" />
     </transition>
-    <template v-if="comments && comments.length">
+    <template v-show="comments.length">
       <DisplayComment
         v-for="(comment, i) in comments"
-        :key="i"
+        :key="comment._id"
         :comment="comment"
         :post="post"
+        :comments="comments"
+        :index="i"
       />
       <slot name="commentsLoading" />
     </template>
@@ -181,8 +183,7 @@ export default {
   },
   props: {
     post: { type: Object, required: true },
-    comments: { type: Array, required: false, default: () => [] },
-
+    comments: { type: Array, required: true },
     index: { type: Number, required: false, default: 0 }
   },
   data: props => ({

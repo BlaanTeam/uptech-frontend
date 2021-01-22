@@ -30,8 +30,6 @@ export default {
   methods: {
     async infiniteHandler($state) {
       if (this.comments.length < 10) {
-        console.log("hi");
-        console.log(this.comments);
         $state.loaded();
         $state.complete();
         return;

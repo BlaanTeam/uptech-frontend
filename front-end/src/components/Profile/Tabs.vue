@@ -68,6 +68,7 @@
           <span v-for="(post, index) in posts" :key="post._id">
             <Post
               :post="post"
+              :comments="comments"
               :index="index"
               class="my-6"
               transition="scale-transition"
@@ -114,6 +115,7 @@ export default {
   data: () => ({
     tabs: null,
     posts: [],
+    comments: [],
     page: 1,
     pageInfo: {},
     loaded: false,

@@ -9,6 +9,7 @@
           :key="post._id"
           :post="post"
           :index="index"
+          :comments="comments"
           transition="scale-transition"
         />
         <infinite-loading @infinite="infiniteHandler">
@@ -45,6 +46,7 @@ export default {
   components: { CreatePost, Post, PostSkeleton },
   data: () => ({
     loading: { value: false },
+    comments: [],
     page: 1
   }),
   computed: {
