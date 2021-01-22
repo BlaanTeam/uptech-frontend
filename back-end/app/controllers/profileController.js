@@ -1275,9 +1275,21 @@ const getUserPosts = async (req, res, next) => {
                                                 {
                                                     $match: {
                                                         $expr: {
-                                                            $eq: [
-                                                                "$postId",
-                                                                "$$postId",
+                                                            $and: [
+                                                                {
+                                                                    $eq: [
+                                                                        "$postId",
+                                                                        "$$postId",
+                                                                    ],
+                                                                },
+                                                                {
+                                                                    $eq: [
+                                                                        "$user",
+                                                                        req
+                                                                            .currentUser
+                                                                            ._id,
+                                                                    ],
+                                                                },
                                                             ],
                                                         },
                                                     },
@@ -1298,72 +1310,6 @@ const getUserPosts = async (req, res, next) => {
                                         },
                                     },
                                     {
-                                        $lookup: {
-                                            from: "comments",
-                                            let: {
-                                                postId: "$_id",
-                                            },
-                                            pipeline: [
-                                                {
-                                                    $match: {
-                                                        $expr: {
-                                                            $eq: [
-                                                                "$postId",
-                                                                "$$postId",
-                                                            ],
-                                                        },
-                                                    },
-                                                },
-                                                {
-                                                    $group: {
-                                                        _id: null,
-                                                        count: { $sum: 1 },
-                                                    },
-                                                },
-                                            ],
-                                            as: "comments",
-                                        },
-                                    },
-                                    {
-                                        $lookup: {
-                                            from: "likes",
-                                            let: {
-                                                postId: "$_id",
-                                            },
-                                            pipeline: [
-                                                {
-                                                    $match: {
-                                                        $expr: {
-                                                            $eq: [
-                                                                "$postId",
-                                                                "$$postId",
-                                                            ],
-                                                        },
-                                                    },
-                                                },
-                                                {
-                                                    $group: {
-                                                        _id: null,
-                                                        count: { $sum: 1 },
-                                                    },
-                                                },
-                                            ],
-                                            as: "likes",
-                                        },
-                                    },
-                                    {
-                                        $unwind: {
-                                            path: "$likes",
-                                            preserveNullAndEmptyArrays: true,
-                                        },
-                                    },
-                                    {
-                                        $unwind: {
-                                            path: "$comments",
-                                            preserveNullAndEmptyArrays: true,
-                                        },
-                                    },
-                                    {
                                         $addFields: {
                                             likedByViewer: {
                                                 $cond: {
@@ -1377,30 +1323,8 @@ const getUserPosts = async (req, res, next) => {
                                                     else: false,
                                                 },
                                             },
-                                            likes: {
-                                                $cond: [
-                                                    {
-                                                        $ifNull: [
-                                                            "$likes",
-                                                            false,
-                                                        ],
-                                                    },
-                                                    "$likes.count",
-                                                    0,
-                                                ],
-                                            },
-                                            comments: {
-                                                $cond: [
-                                                    {
-                                                        $ifNull: [
-                                                            "$comments",
-                                                            false,
-                                                        ],
-                                                    },
-                                                    "$comments.count",
-                                                    0,
-                                                ],
-                                            },
+                                            comments: { $size: "$comments" },
+                                            likes: { $size: "$likes" },
                                         },
                                     },
                                     {

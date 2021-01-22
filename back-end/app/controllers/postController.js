@@ -148,13 +148,27 @@ const getFeedPosts = async (req, res, next) => {
                                 from: "likes",
                                 let: {
                                     postId: "$_id",
+                                    userId: "$user._id",
                                 },
                                 as: "like",
                                 pipeline: [
                                     {
                                         $match: {
                                             $expr: {
-                                                $eq: ["$postId", "$$postId"],
+                                                $and: [
+                                                    {
+                                                        $eq: [
+                                                            "$postId",
+                                                            "$$postId",
+                                                        ],
+                                                    },
+                                                    {
+                                                        $eq: [
+                                                            "$user",
+                                                            "$$userId",
+                                                        ],
+                                                    },
+                                                ],
                                             },
                                         },
                                     },
@@ -1151,11 +1165,13 @@ const likePost = async (req, res, next) => {
                         {
                             $match: {
                                 $expr: {
-                                    $eq: ["$postId", "$$postId"],
+                                    $and: [
+                                        { $eq: ["$postId", "$$postId"] },
+                                        { $eq: ["$user", req.currentUser._id] },
+                                    ],
                                 },
                             },
                         },
-                        { $limit: 1 },
                         {
                             $project: {
                                 liked: 1,
@@ -1204,11 +1220,15 @@ const likePost = async (req, res, next) => {
                 },
                 {
                     $push: { likes: like._id },
+                },
+                {
+                    new: true,
                 }
             );
         } else if (post.likedByViewer) {
             let like = await Like.findOne({
-                _id: post.like._id,
+                postId: post._id,
+                user: req.currentUser._id,
             });
             like.liked = !like.liked;
             await like.save();
