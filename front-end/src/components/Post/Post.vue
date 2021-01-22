@@ -10,11 +10,7 @@
                 params: { userName: post.user.userName }
               }"
             >
-              <v-avatar width="40" color="red">
-                <span class="white--text caption">
-                  {{ post.user.userName.slice(0, 4) }}
-                </span>
-              </v-avatar>
+              <img src="@/assets/images/avatar.svg" width="44" />
             </router-link>
           </PopoverProfile>
         </v-col>

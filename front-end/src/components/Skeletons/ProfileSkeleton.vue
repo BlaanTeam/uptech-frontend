@@ -2,11 +2,12 @@
   <div class="profile-skeleton">
     <v-row class="my-10" width="200px">
       <v-col cols="3" class="px-4 lighten-1 text-center ms-4 align-self-center">
-        <v-avatar
+        <img
+          src="@/assets/images/avatar.svg"
           width="150"
           height="150"
           :color="$vuetify.theme.isDark ? '#3D3E41' : '#C4C2C2'"
-        ></v-avatar>
+        />
       </v-col>
       <v-col cols="8">
         <v-skeleton-loader type="text" width="400"> </v-skeleton-loader>

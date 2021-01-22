@@ -1,11 +1,9 @@
 <template>
-  <v-row :class="'me-2 ms-12 ma-0 pa-0 add-comment' + post._id">
+  <v-row :class="'justify-end add-comment' + post._id" no-gutters>
     <v-col cols="1" class=" pa-0 ma-0">
-      <v-avatar width="20" color="green" class="mt-3">
-        <span class="white--text headline">me</span>
-      </v-avatar>
+      <img src="@/assets/images/avatar.svg" width="44" class="mt-3" />
     </v-col>
-    <v-col cols="8" class="pa-0 ma-0 ms-2">
+    <v-col cols="8" class="pa-0 ma-0">
       <v-row no-gutters>
         <v-col>
           <v-textarea

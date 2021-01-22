@@ -1,14 +1,10 @@
 <template>
   <div class="display-comments py-2" :id="'comment' + comment._id">
-    <v-row class="ms-10" no-gutters>
-      <v-col cols="1" class="">
-        <v-avatar width="20" color="green">
-          <span class="white--text caption">
-            {{ comment.user.userName.slice(0, 4) }}
-          </span>
-        </v-avatar>
+    <v-row class="justify-center" no-gutters>
+      <v-col cols="1">
+        <img class="ms-2" src="@/assets/images/avatar.svg" width="36" />
       </v-col>
-      <v-col cols="9" class="auth-bg rounded-lg ps-3 pe-2 mx-1 pt-1 pb-2">
+      <v-col cols="9" class="auth-bg rounded-lg ps-3 pe-2 me-1 pt-1 pb-2">
         <v-row no-gutters>
           <span text class="body-2 font-weight-bold">
             {{ comment.user.userName }}
