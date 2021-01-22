@@ -3,7 +3,7 @@
     <v-card-title :class="'ma-0 pt-2 pb-3 card-title' + index">
       <v-row no-gutters>
         <v-col lg="1" md="1" sm="2" class="pa-0 ma-0 ms-2">
-          <PopoverProfile :index="index" :userName="post.user.userName">
+          <PopoverProfile :index="post._id" :userName="post.user.userName">
             <router-link
               :to="{
                 name: 'ViewProfile',

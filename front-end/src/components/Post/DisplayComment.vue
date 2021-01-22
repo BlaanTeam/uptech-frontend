@@ -2,13 +2,30 @@
   <div class="display-comments py-2" :id="'comment' + comment._id">
     <v-row class="justify-center" no-gutters>
       <v-col cols="1">
-        <img class="ms-2" src="@/assets/images/avatar.svg" width="36" />
+        <PopoverProfile :index="comment._id" :userName="comment.user.userName">
+          <router-link
+            :to="{
+              name: 'ViewProfile',
+              params: { userName: comment.user.userName }
+            }"
+          >
+            <img class="ms-2" src="@/assets/images/avatar.svg" width="36" />
+          </router-link>
+        </PopoverProfile>
       </v-col>
+
       <v-col cols="9" class="auth-bg rounded-lg ps-3 pe-2 me-1 pt-1 pb-2">
         <v-row no-gutters>
-          <span text class="body-2 font-weight-bold">
-            {{ comment.user.userName }}
-          </span>
+          <router-link
+            :to="{
+              name: 'ViewProfile',
+              params: { userName: comment.user.userName }
+            }"
+          >
+            <span text class="body-2 font-weight-bold">
+              {{ comment.user.userName }}
+            </span>
+          </router-link>
         </v-row>
         <v-row no-gutters>
           <v-row v-if="editMode" no-gutters>
@@ -130,8 +147,10 @@
 
 <script>
 import Emojis from "@/components/Emojis.vue";
+import PopoverProfile from "./PopoverProfile";
+
 export default {
-  components: { Emojis },
+  components: { Emojis, PopoverProfile },
   props: {
     comment: { type: Object, required: true },
     comments: { type: Array, required: true },

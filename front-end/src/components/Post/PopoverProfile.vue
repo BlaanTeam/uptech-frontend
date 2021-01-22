@@ -3,6 +3,7 @@
     <v-menu
       v-model="menu"
       offset-x
+      right
       :open-on-hover="hover"
       :close-on-content-click="false"
       :attach="'#profile__popover' + index"
@@ -51,8 +52,8 @@
               {{ user.following }}
             </div>
           </v-card-subtitle>
-          <v-divider v-if="!isOwner" />
-          <v-card-actions v-if="!isOwner">
+          <v-divider v-if="!user.isOwner" />
+          <v-card-actions v-if="!user.isOwner">
             <FollowUnfollow
               @popDialog="hover = !hover"
               class="ms-1"
@@ -88,11 +89,6 @@ export default {
     user: {},
     hover: true
   }),
-  computed: {
-    isOwner() {
-      return this.$store.getters.getUserName === this.user.userName;
-    }
-  },
 
   watch: {
     async menu(newVal, oldVal) {
