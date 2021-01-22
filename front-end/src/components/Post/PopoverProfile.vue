@@ -40,15 +40,15 @@
           <v-card-subtitle class="d-flex text-center">
             <div class="ps-1">
               <div class="font-weight-bold">Posts</div>
-              100
+              {{ user.posts }}
             </div>
             <div class="mx-6">
               <div class="font-weight-bold">Followers</div>
-              22
+              {{ user.followers }}
             </div>
             <div class="pe-1">
               <div class="font-weight-bold">Following</div>
-              200
+              {{ user.following }}
             </div>
           </v-card-subtitle>
           <v-divider v-if="!isOwner" />
