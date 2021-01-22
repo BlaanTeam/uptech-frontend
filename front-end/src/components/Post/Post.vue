@@ -3,7 +3,7 @@
     <v-card-title :class="'ma-0 pt-2 pb-3 card-title' + index">
       <v-row no-gutters>
         <v-col lg="1" md="1" sm="2" class="pa-0 ma-0 ms-2">
-          <PopoverProfile :index="index" :user="post.user">
+          <PopoverProfile :index="index" :userName="post.user.userName">
             <router-link
               :to="{
                 name: 'ViewProfile',
@@ -37,10 +37,16 @@
         <v-spacer></v-spacer>
 
         <router-link :to="{ name: 'ViewPost', params: { postId: post._id } }">
-          <v-tooltip bottom color="#2F3136" nudge-top="8">
+          <v-tooltip
+            :attach="'.card-title' + index"
+            :close-delay="100"
+            bottom
+            color="#2F3136"
+            nudge-top="8"
+          >
             <template v-slot:activator="{ on, attrs }">
               <v-btn v-bind="attrs" v-on="on" class="view-post-btn" icon>
-                <v-icon>mdi-eye</v-icon>
+                <v-icon size="20">mdi-eye</v-icon>
               </v-btn>
             </template>
             <span>View Post</span>
