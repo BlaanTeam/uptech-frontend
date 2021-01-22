@@ -510,20 +510,41 @@ const getPost = async (req, res, next) => {
 const deletePost = async (req, res, next) => {
     try {
         let params = await postValidator(req.params, { postId: 1 });
-        let post = await Post.findOne(
-            { _id: params.postId },
-            { __v: 0, comments: 0, likes: 0, tags: 0 }
-        );
-        if (!post) throw new cE("Post Not Found !", 1021, 404);
-        else if (post.user.toString() !== req.currentUser._id.toString()) {
-            throw new cE("You don't have permission !", 1003, 403);
-        } else if (
-            post.isPrivate === true &&
-            post.user.toString() !== req.currentUser._id.toString()
-        ) {
-            throw new cE("You don't have permission !", 1003, 403);
+        let post = await Post.aggregate([
+            {
+                $match: {
+                    _id: params.postId,
+                },
+            },
+            {
+                $set: {
+                    isOwner: {
+                        $cond: [
+                            { $eq: ["$user", req.currentUser._id] },
+                            true,
+                            false,
+                        ],
+                    },
+                },
+            },
+            {
+                $project: {
+                    isPrivate: 1,
+                    isOwner: 1,
+                },
+            },
+        ]);
+        post = post[0];
+        if (!post) {
+            throw createError.NotFound();
+        } else if (!post.isOwner) {
+            throw createError.Forbidden();
+        } else if (post.isPrivate && !post.isOwner) {
+            throw createError.Forbidden();
         }
-        await post.remove();
+        await Post.findOneAndRemove({
+            _id: post._id,
+        });
         res.status(204);
         res.end();
     } catch (err) {
