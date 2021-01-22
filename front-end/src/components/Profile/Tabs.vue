@@ -16,7 +16,10 @@
       class="bg"
       v-model="tabs"
       v-if="
-        userInfo.isPrivate && !userInfo.followedByViewer && !userInfo.isOwner
+        userInfo.isPrivate &&
+          !userInfo.followedByViewer &&
+          !userInfo.isOwner &&
+          !userInfo.blockedByViewer
       "
     >
       <div class="mt-4 text-center bg">
