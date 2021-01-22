@@ -30,6 +30,10 @@ const postSchema = new Schema({
     tags: [{ type: Schema.Types.ObjectId, ref: "tags" }],
 });
 
+postSchema.index({
+    createdAt: -1,
+});
+
 const commentSchema = new Schema({
     content: {
         type: String,

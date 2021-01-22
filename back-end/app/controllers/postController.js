@@ -19,6 +19,11 @@ const getFeedPosts = async (req, res, next) => {
                 },
             },
             {
+                $sort: {
+                    createdAt: -1,
+                },
+            },
+            {
                 $set: {
                     isOwner: {
                         $cond: [
@@ -108,11 +113,6 @@ const getFeedPosts = async (req, res, next) => {
                             { $eq: ["$isOwner", true] },
                         ],
                     },
-                },
-            },
-            {
-                $sort: {
-                    createdAt: -1,
                 },
             },
             {
@@ -207,6 +207,8 @@ const getFeedPosts = async (req, res, next) => {
                                 like: 0,
                                 tags: 0,
                                 follow: 0,
+                                followOne: 0,
+                                followTwo: 0,
                             },
                         },
                     ],
