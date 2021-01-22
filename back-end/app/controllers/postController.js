@@ -238,6 +238,10 @@ const addPost = async (req, res, next) => {
                 select: "userName profile",
             })
             .execPopulate();
+        newPost._doc.isOwner =
+            req.currentUser._id.toString() === newPost.user._id.toString()
+                ? true
+                : false;
         res.status(201);
         res.json(newPost);
     } catch (err) {
