@@ -24,6 +24,7 @@
             elevation="0"
             rounded
             height="30"
+            @click="$emit('popDialog')"
           >
             Following
           </v-btn>
@@ -33,8 +34,7 @@
             elevation="0"
             rounded
             height="30"
-            v-bind="attrs"
-            v-on="on"
+            @click="$emit('popDialog')"
           >
             requested
           </v-btn>
@@ -71,7 +71,7 @@
             text
             tile
             class="text-capitalize justify-center"
-            @click="dialog = false"
+            @click="closeDialog"
           >
             Cancel
           </v-btn>
@@ -122,6 +122,7 @@ export default {
     },
     async unFollowUser() {
       this.followLoading = true;
+      this.$emit("popDialog");
       try {
         let userName = this.userInfo.userName;
         let res = await this.$http.delete(`/users/following/${userName}`);
@@ -148,6 +149,10 @@ export default {
         this.followLoading = false;
         console.log(err);
       }
+    },
+    closeDialog() {
+      this.dialog = false;
+      this.$emit("popDialog");
     }
   }
 };
