@@ -497,7 +497,7 @@ const getPost = async (req, res, next) => {
         } else if (post.blockedByViewer || post.hasBlockedViewer) {
             throw createError.NotFound();
         } else if (post.isPrivate === true && !post.isOwner) {
-            throw createError.Forbidden();
+            throw createError.NotFound();
         }
         res.json(post);
     } catch (err) {
