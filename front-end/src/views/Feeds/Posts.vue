@@ -9,7 +9,7 @@
           :key="post._id"
           :post="post"
           :index="index"
-          :comments="comments"
+          :comments="(post.commentsData = [])"
           transition="scale-transition"
         />
         <infinite-loading @infinite="infiniteHandler">
