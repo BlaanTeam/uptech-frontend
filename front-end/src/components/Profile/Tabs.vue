@@ -72,7 +72,7 @@
             <span v-for="(post, index) in posts" :key="post._id">
               <Post
                 :post="post"
-                :comments="comments"
+                :comments="(post.commentsData = [])"
                 :index="index"
                 class="my-6"
                 transition="scale-transition"
