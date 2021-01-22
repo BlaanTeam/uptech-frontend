@@ -558,23 +558,58 @@ const updatePost = async (req, res, next) => {
     try {
         let params = await postValidator(req.params, { postId: 1 });
         let data = await postValidator(req.body, { content: 1, isPrivate: 2 });
-        let post = await Post.findOne(
-            { _id: params.postId },
-            { __v: 0, comments: 0, likes: 0, tags: 0 }
-        );
-        console.log(post);
-        if (!post) throw new cE("Post Not Found !", 1021, 404);
-        else if (post.user.toString() !== req.currentUser._id.toString()) {
-            throw new cE("You don't have permission !", 1003, 403);
-        } else if (post.user.toString() !== req.currentUser._id.toString()) {
-            throw new cE("You don't have permission !", 1003, 403);
+        let post = await Post.aggregate([
+            {
+                $match: {
+                    _id: params.postId,
+                },
+            },
+            {
+                $set: {
+                    isOwner: {
+                        $cond: [
+                            { $eq: ["$user", req.currentUser._id] },
+                            true,
+                            false,
+                        ],
+                    },
+                },
+            },
+            {
+                $project: {
+                    _id: 1,
+                    isOwner: 1,
+                },
+            },
+        ]);
+        post = post[0];
+        if (!post) {
+            throw createError.NotFound();
+        } else if (!post.isOwner) {
+            throw createError.Forbidden();
         }
-        // update documments
-        post.content = data.content;
-        post.isPrivate = data.isPrivate;
-        post.updatedAt = Date.now();
-        await post.save();
-        res.json(post);
+        let updatedPost = await Post.findOneAndUpdate(
+            {
+                _id: post._id,
+            },
+            {
+                content: data.content,
+                isPrivate: data.isPrivate,
+                updatedAt: Date.now(),
+            },
+            {
+                projection: {
+                    likes: 0,
+                    tags: 0,
+                    comments: 0,
+                    __v: 0,
+                },
+            }
+        ).populate({
+            path: "user",
+            select: "userName profile",
+        });
+        res.json(updatedPost);
     } catch (err) {
         next(err);
     }
