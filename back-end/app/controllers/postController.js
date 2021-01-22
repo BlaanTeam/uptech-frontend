@@ -1192,6 +1192,17 @@ const likePost = async (req, res, next) => {
                 },
             },
             {
+                $set: {
+                    isOwner: {
+                        $cond: [
+                            { $eq: ["$user", req.currentUser._id] },
+                            true,
+                            false,
+                        ],
+                    },
+                },
+            },
+            {
                 $lookup: {
                     from: "users",
                     let: { userId: "$user" },
