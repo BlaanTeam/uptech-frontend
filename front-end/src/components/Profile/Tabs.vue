@@ -66,21 +66,24 @@
           @created="addPost"
           v-if="userInfo.isOwner"
         />
-        <div v-if="loaded && posts.length" class="auth-bg px-1">
+        <div class="auth-bg px-1">
           <PostSkeleton v-if="loading.value" />
-          <span v-for="(post, index) in posts" :key="post._id">
-            <Post
-              :post="post"
-              :comments="comments"
-              :index="index"
-              class="my-6"
-              transition="scale-transition"
-            />
-          </span>
+          <div v-if="loaded && posts.length">
+            <span v-for="(post, index) in posts" :key="post._id">
+              <Post
+                :post="post"
+                :comments="comments"
+                :index="index"
+                class="my-6"
+                transition="scale-transition"
+              />
+            </span>
+          </div>
         </div>
         <infinite-loading @infinite="infiniteHandler">
           <template slot="no-results">
-            <div class="text-center py-4 bg">
+            <span></span>
+            <div v-if="!posts.length" class="text-center py-4 bg">
               <v-icon size="80" color="#b68d06">
                 mdi-database-alert-outline
               </v-icon>
@@ -123,7 +126,7 @@ export default {
     pageInfo: {},
     loaded: false,
     blockLoading: false,
-    loading: false
+    loading: { value: false }
   }),
 
   methods: {
@@ -173,6 +176,7 @@ export default {
     },
     handleLoading(loading) {
       this.loading = loading;
+      console.log(this.loading);
     },
     addPost({ content, isPrivate, payload }) {
       payload.comments = 0;

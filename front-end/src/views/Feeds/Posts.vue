@@ -17,7 +17,8 @@
             <PostSkeleton />
           </template>
           <template slot="no-results">
-            <div>
+            <span></span>
+            <div v-if="!posts.length">
               <v-icon size="80" color="#b68d06">
                 mdi-database-alert-outline
               </v-icon>
