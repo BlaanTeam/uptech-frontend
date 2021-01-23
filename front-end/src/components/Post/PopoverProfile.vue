@@ -93,7 +93,7 @@ export default {
 
   watch: {
     async menu(newVal, oldVal) {
-      if (newVal === true && !Object.keys(this.user).length) {
+      if (newVal === true && !this.userInfo) {
         try {
           let res = await this.$http.get(`/users/${this.userName}`);
           if (res.status === 200) {
