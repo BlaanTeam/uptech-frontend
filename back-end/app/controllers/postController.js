@@ -16,6 +16,7 @@ const getFeedPosts = async (req, res, next) => {
             userOne: req.currentUser._id,
             status: 2,
         }).distinct("userTwo");
+        following.push(req.currentUser._id);
         let matchQuery = {};
         if (query.createdAt) {
             matchQuery = {
