@@ -10,11 +10,7 @@
       <div class="bg ps-3 pb-3 px-0 pt-16">
         <div v-for="user in users" :key="user._id" class="d-flex py-1">
           <div class="align-self-center">
-            <PopoverProfile
-              :userInfo="user"
-              :index="user._id"
-              :userName="user.userName"
-            >
+            <PopoverProfile :index="user._id" :userName="user.userName">
               <router-link
                 :to="{
                   name: 'ViewProfile',

@@ -80,22 +80,20 @@
 export default {
   props: {
     index: { type: [String, Number], required: true },
-    userName: { type: String, required: true },
-    userInfo: { type: Object, required: false }
+    userName: { type: String, required: true }
   },
   components: { FollowUnfollow: () => import("../Profile/FollowUnfollow") },
 
-  data: props => ({
+  data: () => ({
     menu: false,
     loading: true,
     error: false,
-    user: props.userInfo,
     hover: true
   }),
 
   watch: {
     async menu(newVal, oldVal) {
-      if (newVal === true && !this.userInfo) {
+      if (newVal === true) {
         try {
           let res = await this.$http.get(`/users/${this.userName}`);
           if (res.status === 200) {
@@ -106,9 +104,7 @@ export default {
           this.error = true;
           console.log(err);
         }
-        return;
       }
-      if (this.userInfo) this.loading = false;
     }
   }
 };
