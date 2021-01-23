@@ -20,7 +20,8 @@
           width="250"
           height="200"
         >
-          <v-btn text :loading="true"></v-btn>
+          <h3 v-if="error">Sorry, Something went wrong :(</h3>
+          <v-btn v-else text :loading="true"></v-btn>
         </v-card>
         <v-card v-else class="auth-secondarybg">
           <v-card-title>
@@ -87,6 +88,7 @@ export default {
   data: props => ({
     menu: false,
     loading: true,
+    error: false,
     user: props.userInfo,
     hover: true
   }),
@@ -101,10 +103,12 @@ export default {
             this.loading = false;
           }
         } catch (err) {
-          this.loading = false;
+          this.error = true;
           console.log(err);
         }
-      } else this.loading = false;
+        return;
+      }
+      if (this.userInfo) this.loading = false;
     }
   }
 };
