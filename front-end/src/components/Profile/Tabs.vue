@@ -66,7 +66,7 @@
           @created="addPost"
           v-if="userInfo.isOwner"
         />
-        <div class="auth-bg px-1 pb-10">
+        <div class="px-1 pb-10">
           <PostSkeleton v-if="loading.value" />
           <div v-if="loaded && posts.length">
             <span v-for="(post, index) in posts" :key="post._id">
