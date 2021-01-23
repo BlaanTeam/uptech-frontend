@@ -1,6 +1,7 @@
 const { createError: cE } = require("../utils/globals");
 const createError = require("http-errors");
 const { Post, Comment, Like, Tag } = require("../models/postModel");
+const { Follow } = require("../models/authModel");
 const {
     postValidator,
     commentValidator,
@@ -9,110 +10,50 @@ const {
 // This function will handle retrieving feed posts process
 const getFeedPosts = async (req, res, next) => {
     try {
-        let query = await postValidator(req.query, { page: 2 });
+        let query = await postValidator(req.query, { createdAt: 2 });
         let perPage = 20;
-        let pageNumber = query.page;
-        let results = await Post.aggregate([
-            {
-                $match: {
-                    isPrivate: false,
+        let following = await Follow.find({
+            userOne: req.currentUser._id,
+            status: 2,
+        }).distinct("userTwo");
+        let matchQuery = {};
+        if (query.createdAt) {
+            matchQuery = {
+                $expr: {
+                    $and: [
+                        {
+                            $lt: ["$createdAt", query.createdAt],
+                        },
+                        {
+                            $eq: ["$isPrivate", false],
+                        },
+                        {
+                            $in: ["$user", following],
+                        },
+                    ],
                 },
+            };
+        } else {
+            matchQuery = {
+                $expr: {
+                    $and: [
+                        {
+                            $eq: ["$isPrivate", false],
+                        },
+                        {
+                            $in: ["$user", following],
+                        },
+                    ],
+                },
+            };
+        }
+        let posts = await Post.aggregate([
+            {
+                $match: matchQuery,
             },
             {
                 $sort: {
                     createdAt: -1,
-                },
-            },
-            {
-                $set: {
-                    isOwner: {
-                        $cond: [
-                            { $eq: ["$user", req.currentUser._id] },
-                            true,
-                            false,
-                        ],
-                    },
-                },
-            },
-            {
-                $lookup: {
-                    from: "follows",
-                    let: {
-                        userOne: req.currentUser._id,
-                        userTwo: "$user",
-                    },
-                    as: "followOne",
-                    pipeline: [
-                        {
-                            $match: {
-                                $expr: {
-                                    $and: [
-                                        { $eq: ["$userOne", "$$userOne"] },
-                                        { $eq: ["$userTwo", "$$userTwo"] },
-                                    ],
-                                },
-                            },
-                        },
-                        {
-                            $project: {
-                                status: 1,
-                            },
-                        },
-                    ],
-                },
-            },
-            {
-                $lookup: {
-                    from: "follows",
-                    let: {
-                        userOne: "$user",
-                        userTwo: req.currentUser._id,
-                    },
-                    as: "followTwo",
-                    pipeline: [
-                        {
-                            $match: {
-                                $expr: {
-                                    $and: [
-                                        { $eq: ["$userOne", "$$userOne"] },
-                                        { $eq: ["$userTwo", "$$userTwo"] },
-                                    ],
-                                },
-                            },
-                        },
-                        {
-                            $project: {
-                                status: 1,
-                            },
-                        },
-                    ],
-                },
-            },
-            {
-                $unwind: {
-                    path: "$followOne",
-                    preserveNullAndEmptyArrays: true,
-                },
-            },
-            {
-                $unwind: {
-                    path: "$followTwo",
-                    preserveNullAndEmptyArrays: true,
-                },
-            },
-            {
-                $match: {
-                    $expr: {
-                        $or: [
-                            {
-                                $and: [
-                                    { $eq: ["$followOne.status", 2] },
-                                    { $ne: ["$followTwo.status", 4] },
-                                ],
-                            },
-                            { $eq: ["$isOwner", true] },
-                        ],
-                    },
                 },
             },
             {
@@ -121,9 +62,7 @@ const getFeedPosts = async (req, res, next) => {
                         {
                             $lookup: {
                                 from: "users",
-                                let: {
-                                    userId: "$user",
-                                },
+                                let: { userId: "$user" },
                                 as: "user",
                                 pipeline: [
                                     {
@@ -158,14 +97,14 @@ const getFeedPosts = async (req, res, next) => {
                                                 $and: [
                                                     {
                                                         $eq: [
-                                                            "$postId",
-                                                            "$$postId",
+                                                            "$user",
+                                                            "$$userId",
                                                         ],
                                                     },
                                                     {
                                                         $eq: [
-                                                            "$user",
-                                                            "$$userId",
+                                                            "$postId",
+                                                            "$$postId",
                                                         ],
                                                     },
                                                 ],
@@ -186,36 +125,34 @@ const getFeedPosts = async (req, res, next) => {
                                 preserveNullAndEmptyArrays: true,
                             },
                         },
-
                         {
                             $addFields: {
-                                likes: { $size: "$likes" },
-                                comments: { $size: "$comments" },
                                 likedByViewer: {
                                     $cond: [
-                                        { $eq: ["$like.liked", true] },
+                                        {
+                                            $eq: ["$like.liked", true],
+                                        },
                                         true,
                                         false,
                                     ],
                                 },
+                                comments: { $size: "$comments" },
+                                likes: { $size: "$likes" },
                             },
                         },
-                        { $skip: (pageNumber - 1) * perPage },
                         { $limit: perPage },
                         {
                             $project: {
-                                like: 0,
+                                __v: 0,
                                 tags: 0,
-                                follow: 0,
-                                followOne: 0,
-                                followTwo: 0,
+                                like: 0,
                             },
                         },
                     ],
                 },
             },
         ]);
-        let posts = results[0];
+        posts = posts[0];
         res.json(posts);
     } catch (err) {
         next(err);
