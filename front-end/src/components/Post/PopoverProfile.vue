@@ -20,7 +20,7 @@
           width="250"
           height="200"
         >
-          <h3 v-if="error">Sorry, Something went wrong :(</h3>
+          <h6 v-if="error">Sorry, Something went wrong :(</h6>
           <v-btn v-else text :loading="true"></v-btn>
         </v-card>
         <v-card v-else class="auth-secondarybg">
