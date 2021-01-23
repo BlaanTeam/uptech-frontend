@@ -1,12 +1,11 @@
 <template>
   <div class="profile-skeleton">
-    <v-row class="my-10" width="200px">
+    <v-row class="py-10" width="200px">
       <v-col cols="3" class="px-4 lighten-1 text-center ms-4 align-self-center">
-        <img
-          src="@/assets/images/avatar.svg"
+        <v-avatar
           width="150"
           height="150"
-          :color="$vuetify.theme.isDark ? '#3D3E41' : '#C4C2C2'"
+          :color="$vuetify.theme.isDark ? '#3D3E41' : '#E0E0E0'"
         />
       </v-col>
       <v-col cols="8">
@@ -17,7 +16,7 @@
         <v-skeleton-loader
           class="my-4 rounded-lg"
           type="card"
-          width="480"
+          width="450"
           height="80"
         >
         </v-skeleton-loader>
