@@ -100,7 +100,7 @@ export default {
   max-width: 50vw;
   height: 92vh;
   padding: 16px 10px 40px 10px;
-  overflow-y: auto;
+  overflow-x: hidden;
 }
 .posts {
   .theme--light {

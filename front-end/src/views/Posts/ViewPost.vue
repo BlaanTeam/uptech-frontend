@@ -80,6 +80,7 @@ export default {
   height: 92vh;
   padding: 16px 10px 40px 10px;
   overflow-y: auto;
+  overflow-x: hidden;
   .view-post-btn {
     display: none;
   }
