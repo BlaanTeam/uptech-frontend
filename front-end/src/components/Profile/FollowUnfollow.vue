@@ -97,7 +97,7 @@ export default {
       try {
         let userName = this.userInfo.userName;
         let res = await this.$http.put(`/users/following/${userName}`);
-        if (res.status === 204) {
+        if (res.status === 204 || res.status === 304) {
           if (!this.userInfo.isPrivate) {
             this.userInfo.followedByViewer = true;
             this.userInfo.followers++;
@@ -126,7 +126,7 @@ export default {
       try {
         let userName = this.userInfo.userName;
         let res = await this.$http.delete(`/users/following/${userName}`);
-        if (res.status === 204) {
+        if (res.status === 204 || res.status === 304) {
           if (!this.userInfo.isPrivate || this.userInfo.followedByViewer) {
             this.userInfo.followedByViewer = false;
             this.userInfo.followers--;
