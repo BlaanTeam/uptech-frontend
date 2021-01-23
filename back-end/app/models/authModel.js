@@ -66,6 +66,7 @@ const userSchema = new Schema({
 userSchema.index(
     {
         userName: 1,
+        userMail: 1,
     },
     { unique: true }
 );
@@ -94,6 +95,7 @@ const followSchema = new Schema({
 followSchema.index({
     userOne: 1,
     userTwo: 1,
+    status: 1,
 });
 
 // Iniatialize Methods To userSchema

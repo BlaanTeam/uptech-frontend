@@ -31,7 +31,10 @@ const postSchema = new Schema({
 });
 
 postSchema.index({
+    _id: 1,
+    user: 1,
     createdAt: -1,
+    isPrivate: 1,
 });
 
 const commentSchema = new Schema({
@@ -51,6 +54,12 @@ const commentSchema = new Schema({
     user: { type: Schema.Types.ObjectId, ref: "users" },
     postId: { type: Schema.Types.ObjectId, ref: "posts" },
 });
+
+commentSchema.index({
+    createdAt: -1,
+    user: 1,
+    postId: 1,
+});
 const likeSchema = new Schema({
     liked: {
         type: Boolean,
@@ -59,6 +68,12 @@ const likeSchema = new Schema({
     user: { type: Schema.Types.ObjectId, ref: "users" },
     postId: { type: Schema.Types.ObjectId, ref: "posts" },
 });
+
+likeSchema.index({
+    user: 1,
+    postId: 1,
+});
+
 const tagSchema = new Schema({
     name: {
         type: String,
