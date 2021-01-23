@@ -95,6 +95,9 @@ export default {
 </script>
 
 <style>
+.followers {
+  min-height: 80vh;
+}
 .followers .header {
   box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.2);
   z-index: 205;

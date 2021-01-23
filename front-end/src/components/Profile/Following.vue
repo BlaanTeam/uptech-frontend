@@ -92,6 +92,9 @@ export default {
 </script>
 
 <style>
+.following {
+  min-height: 80vh;
+}
 .following .header {
   box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.2);
   z-index: 205;
@@ -99,6 +102,7 @@ export default {
   margin: 0 auto;
   width: 400px;
 }
+
 @media (max-width: 450px) {
   .following .header {
     width: 86vw;
