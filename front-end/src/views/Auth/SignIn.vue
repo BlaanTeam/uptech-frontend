@@ -10,14 +10,11 @@
       :fillColor="$theme.currentTheme.secondarybg"
     /> -->
     <v-card class="mx-auto bg lighten-1" width="550">
-      <img
-        src="@/assets/images/avatar.svg"
-        class=" pa-0 ma-0 d-block mx-auto primary"
-        width="60px"
-      />
-      <v-icon dark>
-        mdi-account-circle
-      </v-icon>
+      <v-avatar class=" pa-0 ma-0 d-block mx-auto primary" width="60px">
+        <v-icon dark>
+          mdi-account-circle
+        </v-icon>
+      </v-avatar>
 
       <v-card-title class="pt-0 mt-3 mb-2 display-1 justify-center">
         {{ $t("signin.h1") }}
