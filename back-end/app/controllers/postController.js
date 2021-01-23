@@ -148,7 +148,7 @@ const getFeedPosts = async (req, res, next) => {
                                 from: "likes",
                                 let: {
                                     postId: "$_id",
-                                    userId: "$user._id",
+                                    userId: req.currentUser._id,
                                 },
                                 as: "like",
                                 pipeline: [
