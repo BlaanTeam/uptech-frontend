@@ -50,5 +50,6 @@ export default {
 <style lang="scss">
 .view-profile {
   width: 60vw;
+  min-height: 93vh;
 }
 </style>
