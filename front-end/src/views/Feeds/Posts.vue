@@ -48,7 +48,7 @@ export default {
   data: () => ({
     loading: { value: false },
     comments: [],
-    page: 1
+    createdAt: null
   }),
   computed: {
     posts() {
@@ -59,13 +59,17 @@ export default {
     async infiniteHandler($state) {
       try {
         let res = await this.$store.dispatch("getFeedPosts", {
-          page: this.page
+          createdAt: this.createdAt
         });
         if (res.status === 200) {
           if (res.data.posts.length) {
-            this.page += 1;
+            let lastPost = res.data.posts[res.data.posts.length - 1];
+            this.createdAt = lastPost.createdAt;
             $state.loaded();
-            if (res.data.posts.length < 20) $state.complete();
+            if (res.data.posts.length < 20) {
+              $state.complete();
+              this.createdAt = null;
+            }
           } else {
             $state.complete();
           }

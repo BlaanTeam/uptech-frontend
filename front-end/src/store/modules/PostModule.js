@@ -33,8 +33,12 @@ export default {
     },
     getFeedPosts(context, payload) {
       return new Promise((resolve, reject) => {
+        let path = "/feed/posts";
+        if (payload.createdAt) {
+          path += `?createdAt=${payload.createdAt}`;
+        }
         Vue.prototype.$http
-          .get(`/feed/posts?page=${payload.page}`)
+          .get(path)
           .then(res => {
             if (res.status === 200) {
               context.commit("INIT_POSTS", res.data.posts);
