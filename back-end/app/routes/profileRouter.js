@@ -5,6 +5,7 @@ const router = express.Router();
 protectRouter(router);
 
 router.get("/:userName", profileController.getUser);
+router.patch("/", profileController.updateUser);
 
 router.put("/following/:userName", profileController.followUser);
 router.delete("/following/:userName", profileController.unFollowUser);

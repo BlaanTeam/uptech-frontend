@@ -342,6 +342,44 @@ const getUser = async (req, res, next) => {
     }
 };
 
+// update user info
+const updateUser = async (req, res, next) => {
+    try {
+        let user = req.currentUser;
+        let data = await profileValidator(req.body, {
+            isPrivate: 2,
+            userPass: 2,
+            profile: 2,
+        });
+        if (Object.keys(data).length <= 1) {
+            // return not modified if the data doesn't contain any fields
+            res.status(304);
+            res.end();
+            return;
+        }
+        if (typeof data.isPrivate !== "undefined") {
+            user.isPrivate = data.isPrivate;
+        }
+        if (typeof data.userPass !== "undefined") {
+            // change password and hash it
+            user.userPass = data.userPass;
+            await user.hashPassword();
+        }
+        if (typeof data.profile !== "undefined") {
+            user.profile = Object.assign(
+                {},
+                req.currentUser.profile,
+                data.profile
+            );
+        }
+        await user.save(); // update exist document
+        res.status(204);
+        res.end();
+    } catch (err) {
+        next(err);
+    }
+};
+
 /* 
 
 There're five types of follow status :
@@ -2573,4 +2611,5 @@ module.exports = {
     getUserPosts,
     getUserFollowing,
     getUserFollowers,
+    updateUser,
 };
