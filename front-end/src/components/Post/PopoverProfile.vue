@@ -6,6 +6,7 @@
       right
       :open-on-hover="hover"
       :close-on-content-click="false"
+      :open-delay="1000"
       :attach="'#profile__popover' + index"
     >
       <template v-slot:activator="{ on, attrs }">
@@ -88,12 +89,14 @@ export default {
     menu: false,
     loading: true,
     error: false,
+    funcInvocked: false,
     hover: true
   }),
 
   watch: {
     async menu(newVal, oldVal) {
-      if (newVal === true) {
+      if (newVal === true && !this.funcInvocked) {
+        this.funcInvocked = true;
         try {
           let res = await this.$http.get(`/users/${this.userName}`);
           if (res.status === 200) {
