@@ -32,6 +32,11 @@ const signUp = async (req, res, next) => {
             userMail: data.email,
             userPass: data.password,
             mailConfirmed: true, // TODO: set false in production
+            profile: {
+                firstName: "Unknown",
+                lastName: "Unknown",
+                bio: "The bio wrote by UpTech! Please Change it asap.",
+            },
         });
         newUser.externalURL = req.externalURL;
         await newUser.hashPassword();
