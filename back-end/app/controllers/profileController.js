@@ -778,6 +778,15 @@ const blockUser = async (req, res, next) => {
                             : null,
                 }
             );
+            let unFollow = await Follow.findOneAndUpdate(
+                {
+                    userOne: user._id,
+                    userTwo: req.currentUser._id,
+                },
+                {
+                    status: 0,
+                }
+            );
         }
         res.status(204); // no content
         res.end();
