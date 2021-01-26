@@ -437,15 +437,15 @@ const followUser = async (req, res, next) => {
                             },
                         },
                     ],
-                    as: "follow",
+                    as: "followOne",
                 },
             },
             {
                 $lookup: {
                     from: "follows",
                     let: {
-                        userOne: req.currentUser._id,
-                        userTwo: "$_id",
+                        userOne: "$_id",
+                        userTwo: req.currentUser._id,
                     },
                     pipeline: [
                         {
@@ -453,10 +453,10 @@ const followUser = async (req, res, next) => {
                                 $expr: {
                                     $and: [
                                         {
-                                            $eq: ["$userOne", "$$userTwo"],
+                                            $eq: ["$userOne", "$$userOne"],
                                         },
                                         {
-                                            $eq: ["$userTwo", "$$userOne"],
+                                            $eq: ["$userTwo", "$$userTwo"],
                                         },
                                     ],
                                 },
@@ -468,39 +468,90 @@ const followUser = async (req, res, next) => {
                             },
                         },
                     ],
-                    as: "block",
+                    as: "followTwo",
                 },
             },
             {
                 $unwind: {
-                    path: "$follow",
+                    path: "$followOne",
                     preserveNullAndEmptyArrays: true,
                 },
             },
             {
                 $unwind: {
-                    path: "$block",
+                    path: "$followTwo",
                     preserveNullAndEmptyArrays: true,
                 },
             },
             {
                 $addFields: {
-                    alreadyFollowed: {
+                    blockedByViewer: {
                         $cond: {
                             if: {
-                                $or: [
-                                    { $eq: ["$follow.status", 1] },
-                                    { $eq: ["$follow.status", 2] },
-                                ],
+                                $eq: ["$followOne.status", 4],
                             },
                             then: true,
                             else: false,
                         },
                     },
-                    blockedMe: {
+                    followedByViewer: {
                         $cond: {
                             if: {
-                                $eq: ["$block.status", 4],
+                                $eq: ["$followOne.status", 2],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    rejectedByViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 3],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    requestedByViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followOne.status", 1],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    followsViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 2],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    hasBlockedViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 4],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    hasRequestedViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 1],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    hasRejectedViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followOne.status", 3],
                             },
                             then: true,
                             else: false,
@@ -510,10 +561,14 @@ const followUser = async (req, res, next) => {
             },
             {
                 $project: {
-                    follow: 1,
-                    alreadyFollowed: 1,
-                    isPrivate: 1,
-                    blockedMe: 1,
+                    followTwo: 0,
+                    profile: 0,
+                    userPass: 0,
+                    createdAt: 0,
+                    userName: 0,
+                    userMail: 0,
+                    mailConfirmed: 0,
+                    __v: 0,
                 },
             },
         ]);
@@ -521,15 +576,15 @@ const followUser = async (req, res, next) => {
         // check if user exist
         if (!user) {
             throw createError.NotFound();
-        } else if (user.blockedMe) {
+        } else if (user.hasBlockedViewer || user.blockedByViewer) {
             throw createError.Forbidden();
-        } else if (user.alreadyFollowed) {
+        } else if (user.followedByViewer || user.requestedByViewer) {
             // check if the current user is already followed this user
             // return not modified
             res.status(304);
             res.end();
             return;
-        } else if (!user.follow) {
+        } else if (!user.followOne) {
             //  create new follow document
             let newFollow = new Follow({
                 userOne: req.currentUser._id,
@@ -537,7 +592,7 @@ const followUser = async (req, res, next) => {
                 status: user.isPrivate ? 1 : 2,
             });
             await newFollow.save();
-        } else if (user.follow.status === 0) {
+        } else if (user.followOne.status === 0) {
             // update exist document
             let follow = await Follow.findOneAndUpdate(
                 {
@@ -603,15 +658,15 @@ const unFollowUser = async (req, res, next) => {
                             },
                         },
                     ],
-                    as: "unFollow",
+                    as: "followOne",
                 },
             },
             {
                 $lookup: {
                     from: "follows",
                     let: {
-                        userOne: req.currentUser._id,
-                        userTwo: "$_id",
+                        userOne: "$_id",
+                        userTwo: req.currentUser._id,
                     },
                     pipeline: [
                         {
@@ -619,10 +674,10 @@ const unFollowUser = async (req, res, next) => {
                                 $expr: {
                                     $and: [
                                         {
-                                            $eq: ["$userOne", "$$userTwo"],
+                                            $eq: ["$userOne", "$$userOne"],
                                         },
                                         {
-                                            $eq: ["$userTwo", "$$userOne"],
+                                            $eq: ["$userTwo", "$$userTwo"],
                                         },
                                     ],
                                 },
@@ -634,36 +689,90 @@ const unFollowUser = async (req, res, next) => {
                             },
                         },
                     ],
-                    as: "block",
+                    as: "followTwo",
                 },
             },
             {
                 $unwind: {
-                    path: "$unFollow",
+                    path: "$followOne",
                     preserveNullAndEmptyArrays: true,
                 },
             },
             {
                 $unwind: {
-                    path: "$block",
+                    path: "$followTwo",
                     preserveNullAndEmptyArrays: true,
                 },
             },
             {
                 $addFields: {
-                    alreadyUnfollowed: {
+                    blockedByViewer: {
                         $cond: {
                             if: {
-                                $eq: ["$unFollow.status", 0],
+                                $eq: ["$followOne.status", 4],
                             },
                             then: true,
                             else: false,
                         },
                     },
-                    blockedMe: {
+                    followedByViewer: {
                         $cond: {
                             if: {
-                                $eq: ["$block.status", 4],
+                                $eq: ["$followOne.status", 2],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    rejectedByViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 3],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    requestedByViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followOne.status", 1],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    followsViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 2],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    hasBlockedViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 4],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    hasRequestedViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 1],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    hasRejectedViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followOne.status", 3],
                             },
                             then: true,
                             else: false,
@@ -673,28 +782,32 @@ const unFollowUser = async (req, res, next) => {
             },
             {
                 $project: {
-                    alreadyUnfollowed: 1,
-                    unFollow: 1,
-                    isPrivate: 1,
-                    testing: 1,
-                    blockedMe: 1,
+                    followTwo: 0,
+                    profile: 0,
+                    userPass: 0,
+                    createdAt: 0,
+                    userName: 0,
+                    userMail: 0,
+                    mailConfirmed: 0,
+                    __v: 0,
                 },
             },
         ]);
         user = user[0];
+        console.log(user);
         if (!user) {
             throw createError.NotFound();
-        } else if (user.blockedMe) {
+        } else if (user.hasBlockedViewer || user.blockedByViewer) {
             throw createError.Forbidden();
-        } else if (user.alreadyUnfollowed) {
+        } else if (!(user.followedByViewer || user.requestedByViewer)) {
             // check if the current user is already  unfollowed this user
             // return not modified
             res.status(304);
             res.end();
             return;
-        } else if (!user.unFollow) {
+        } else if (!user.followOne) {
             throw createError.Forbidden();
-        } else if (user.unFollow.status === 1 || user.unFollow.status === 2) {
+        } else if (user.followedByViewer || user.requestedByViewer) {
             // update exist document
             let unFollow = await Follow.findOneAndUpdate(
                 {
@@ -732,7 +845,10 @@ const blockUser = async (req, res, next) => {
             {
                 $lookup: {
                     from: "follows",
-                    let: { userOne: req.currentUser._id, userTwo: "$_id" },
+                    let: {
+                        userOne: req.currentUser._id,
+                        userTwo: "$_id",
+                    },
                     pipeline: [
                         {
                             $match: {
@@ -754,21 +870,121 @@ const blockUser = async (req, res, next) => {
                             },
                         },
                     ],
-                    as: "block",
+                    as: "followOne",
+                },
+            },
+            {
+                $lookup: {
+                    from: "follows",
+                    let: {
+                        userOne: "$_id",
+                        userTwo: req.currentUser._id,
+                    },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ["$userOne", "$$userOne"],
+                                        },
+                                        {
+                                            $eq: ["$userTwo", "$$userTwo"],
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                        {
+                            $project: {
+                                status: 1,
+                            },
+                        },
+                    ],
+                    as: "followTwo",
                 },
             },
             {
                 $unwind: {
-                    path: "$block",
+                    path: "$followOne",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $unwind: {
+                    path: "$followTwo",
                     preserveNullAndEmptyArrays: true,
                 },
             },
             {
                 $addFields: {
-                    alreadyBlocked: {
+                    blockedByViewer: {
                         $cond: {
                             if: {
-                                $eq: ["$block.status", 4],
+                                $eq: ["$followOne.status", 4],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    followedByViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followOne.status", 2],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    rejectedByViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 3],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    requestedByViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followOne.status", 1],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    followsViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 2],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    hasBlockedViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 4],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    hasRequestedViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 1],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    hasRejectedViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followOne.status", 3],
                             },
                             then: true,
                             else: false,
@@ -778,30 +994,35 @@ const blockUser = async (req, res, next) => {
             },
             {
                 $project: {
-                    alreadyBlocked: 1,
-                    block: 1,
-                    isPrivate: 1,
+                    profile: 0,
+                    userPass: 0,
+                    createdAt: 0,
+                    userName: 0,
+                    userMail: 0,
+                    mailConfirmed: 0,
+                    __v: 0,
                 },
             },
         ]);
 
         user = user[0];
+        console.log(user);
         if (!user) {
             throw createError.NotFound();
-        } else if (user.alreadyBlocked) {
-            // check if current user if is already blocked this user
-            // return not modified
-            res.status(304);
-            res.end();
-            return;
-        } else if (!user.block) {
+        } else if (!user.followOne) {
             let newBlock = new Follow({
                 userOne: req.currentUser._id,
                 userTwo: user._id,
                 status: 4,
             });
             await newBlock.save();
-        } else if (user.block.status !== 4) {
+        } else if (user.blockedByViewer) {
+            // check if current user if is already blocked this user
+            // return not modified
+            res.status(304);
+            res.end();
+            return;
+        } else if (user.followOne.status !== 4) {
             // update exist document
             let block = await Follow.findOneAndUpdate(
                 {
@@ -811,8 +1032,8 @@ const blockUser = async (req, res, next) => {
                 {
                     status: 4,
                     prevStatus:
-                        user.isPrivate && user.block.status === 3
-                            ? user.block.status
+                        user.isPrivate && user.followOne.status === 3
+                            ? user.followOne.status
                             : null,
                 }
             );
@@ -874,25 +1095,124 @@ const unBlockUser = async (req, res, next) => {
                         {
                             $project: {
                                 status: 1,
-                                prevStatus: 1,
                             },
                         },
                     ],
-                    as: "unBlock",
+                    as: "followOne",
+                },
+            },
+            {
+                $lookup: {
+                    from: "follows",
+                    let: {
+                        userOne: "$_id",
+                        userTwo: req.currentUser._id,
+                    },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ["$userOne", "$$userOne"],
+                                        },
+                                        {
+                                            $eq: ["$userTwo", "$$userTwo"],
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                        {
+                            $project: {
+                                status: 1,
+                            },
+                        },
+                    ],
+                    as: "followTwo",
                 },
             },
             {
                 $unwind: {
-                    path: "$unBlock",
+                    path: "$followOne",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $unwind: {
+                    path: "$followTwo",
                     preserveNullAndEmptyArrays: true,
                 },
             },
             {
                 $addFields: {
-                    alreadyUnblocked: {
+                    blockedByViewer: {
                         $cond: {
                             if: {
-                                $eq: ["$unBlock.status", 0],
+                                $eq: ["$followOne.status", 4],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    followedByViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followOne.status", 2],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    rejectedByViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 3],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    requestedByViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followOne.status", 1],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    followsViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 2],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    hasBlockedViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 4],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    hasRequestedViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 1],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    hasRejectedViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followOne.status", 3],
                             },
                             then: true,
                             else: false,
@@ -902,24 +1222,29 @@ const unBlockUser = async (req, res, next) => {
             },
             {
                 $project: {
-                    unBlock: 1,
-                    alreadyUnblocked: 1,
+                    profile: 0,
+                    userPass: 0,
+                    createdAt: 0,
+                    userName: 0,
+                    userMail: 0,
+                    mailConfirmed: 0,
+                    __v: 0,
                 },
             },
         ]);
         user = user[0];
         if (!user) {
             throw createError.NotFound();
-        } else if (user.alreadyUnblocked) {
+        } else if (!user.followOne) {
+            // prevent from unblocking user, not in their follow
+            throw createError.Forbidden();
+        } else if (!user.blockedByViewer) {
             // check the current user if is already unblocked this user
             // return not modified
             res.status(304);
             res.end();
             return;
-        } else if (!user.unBlock) {
-            // prevent from unblocking user, not in their follow
-            throw createError.Forbidden();
-        } else if (user.unBlock.status === 4) {
+        } else if (user.followOne.status === 4) {
             // update exist document
             let unBlock = await Follow.findOneAndUpdate(
                 {
@@ -928,12 +1253,12 @@ const unBlockUser = async (req, res, next) => {
                 },
                 {
                     status:
-                        typeof user.unBlock.prevStatus === "undefined" ||
-                        user.unBlock.prevStatus === null
+                        typeof user.followOne.prevStatus === "undefined" ||
+                        user.followOne.prevStatus === null
                             ? 0
-                            : user.unBlock.prevStatus,
+                            : user.followOne.prevStatus,
                     $unset: {
-                        prevStatus: user.unBlock.prevStatus === null ? 1 : 0,
+                        prevStatus: user.followOne.prevStatus === null ? 1 : 0,
                     },
                 }
             );
@@ -966,17 +1291,20 @@ const rejectUser = async (req, res, next) => {
             {
                 $lookup: {
                     from: "follows",
-                    let: { userOne: req.currentUser._id, userTwo: "$_id" },
+                    let: {
+                        userOne: req.currentUser._id,
+                        userTwo: "$_id",
+                    },
                     pipeline: [
                         {
                             $match: {
                                 $expr: {
                                     $and: [
                                         {
-                                            $eq: ["$userOne", "$$userTwo"],
+                                            $eq: ["$userOne", "$$userOne"],
                                         },
                                         {
-                                            $eq: ["$userTwo", "$$userOne"],
+                                            $eq: ["$userTwo", "$$userTwo"],
                                         },
                                     ],
                                 },
@@ -988,20 +1316,122 @@ const rejectUser = async (req, res, next) => {
                             },
                         },
                     ],
-                    as: "reject",
+                    as: "followOne",
+                },
+            },
+            {
+                $lookup: {
+                    from: "follows",
+                    let: {
+                        userOne: "$_id",
+                        userTwo: req.currentUser._id,
+                    },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ["$userOne", "$$userOne"],
+                                        },
+                                        {
+                                            $eq: ["$userTwo", "$$userTwo"],
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                        {
+                            $project: {
+                                status: 1,
+                            },
+                        },
+                    ],
+                    as: "followTwo",
                 },
             },
             {
                 $unwind: {
-                    path: "$reject",
+                    path: "$followOne",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $unwind: {
+                    path: "$followTwo",
                     preserveNullAndEmptyArrays: true,
                 },
             },
             {
                 $addFields: {
-                    alreadyRejected: {
+                    blockedByViewer: {
                         $cond: {
-                            if: { $eq: ["$reject.status", 3] },
+                            if: {
+                                $eq: ["$followOne.status", 4],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    followedByViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followOne.status", 2],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    rejectedByViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 3],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    requestedByViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followOne.status", 1],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    followsViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 2],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    hasBlockedViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 4],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    hasRequestedViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 1],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    hasRejectedViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followOne.status", 3],
+                            },
                             then: true,
                             else: false,
                         },
@@ -1010,24 +1440,28 @@ const rejectUser = async (req, res, next) => {
             },
             {
                 $project: {
-                    _id: 1,
-                    reject: 1,
-                    alreadyRejected: 1,
+                    profile: 0,
+                    userPass: 0,
+                    createdAt: 0,
+                    userName: 0,
+                    userMail: 0,
+                    mailConfirmed: 0,
+                    __v: 0,
                 },
             },
         ]);
         user = user[0];
         if (!user) {
             throw createError.NotFound();
-        } else if (!user.reject) {
+        } else if (!user.followTwo) {
             throw createError.Forbidden();
-        } else if (user.alreadyRejected) {
+        } else if (user.rejectedByViewer) {
             // check the current user if already reject this user
             // return not modified
             res.status(304);
             res.end();
             return;
-        } else if (user.reject.status === 1) {
+        } else if (user.followTwo.status === 1) {
             // update exist document
             let reject = await Follow.findOneAndUpdate(
                 {
@@ -1068,17 +1502,20 @@ const unRejectUser = async (req, res, next) => {
             {
                 $lookup: {
                     from: "follows",
-                    let: { userOne: req.currentUser._id, userTwo: "$_id" },
+                    let: {
+                        userOne: req.currentUser._id,
+                        userTwo: "$_id",
+                    },
                     pipeline: [
                         {
                             $match: {
                                 $expr: {
                                     $and: [
                                         {
-                                            $eq: ["$userOne", "$$userTwo"],
+                                            $eq: ["$userOne", "$$userOne"],
                                         },
                                         {
-                                            $eq: ["$userTwo", "$$userOne"],
+                                            $eq: ["$userTwo", "$$userTwo"],
                                         },
                                     ],
                                 },
@@ -1087,23 +1524,140 @@ const unRejectUser = async (req, res, next) => {
                         {
                             $project: {
                                 status: 1,
-                                prevStatus: 1,
                             },
                         },
                     ],
-                    as: "unReject",
+                    as: "followOne",
+                },
+            },
+            {
+                $lookup: {
+                    from: "follows",
+                    let: {
+                        userOne: "$_id",
+                        userTwo: req.currentUser._id,
+                    },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        {
+                                            $eq: ["$userOne", "$$userOne"],
+                                        },
+                                        {
+                                            $eq: ["$userTwo", "$$userTwo"],
+                                        },
+                                    ],
+                                },
+                            },
+                        },
+                        {
+                            $project: {
+                                status: 1,
+                            },
+                        },
+                    ],
+                    as: "followTwo",
                 },
             },
             {
                 $unwind: {
-                    path: "$unReject",
+                    path: "$followOne",
                     preserveNullAndEmptyArrays: true,
                 },
             },
             {
+                $unwind: {
+                    path: "$followTwo",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $addFields: {
+                    blockedByViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followOne.status", 4],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    followedByViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followOne.status", 2],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    rejectedByViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 3],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    requestedByViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followOne.status", 1],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    followsViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 2],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    hasBlockedViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 4],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    hasRequestedViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followTwo.status", 1],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                    hasRejectedViewer: {
+                        $cond: {
+                            if: {
+                                $eq: ["$followOne.status", 3],
+                            },
+                            then: true,
+                            else: false,
+                        },
+                    },
+                },
+            },
+            {
                 $project: {
-                    _id: 1,
-                    unReject: 1,
+                    profile: 0,
+                    userPass: 0,
+                    createdAt: 0,
+                    userName: 0,
+                    userMail: 0,
+                    mailConfirmed: 0,
+                    __v: 0,
                 },
             },
         ]);
@@ -1111,9 +1665,9 @@ const unRejectUser = async (req, res, next) => {
 
         if (!user) {
             throw createError.NotFound();
-        } else if (!user.unReject) {
+        } else if (!user.followTwo) {
             throw createError.Forbidden();
-        } else if (user.unReject.status === 3) {
+        } else if (user.followTwo.status === 3) {
             // update exist document
 
             let unReject = await Follow.findOneAndUpdate(
@@ -1505,10 +2059,8 @@ const getUserPosts = async (req, res, next) => {
 
         if (!user) {
             throw createError.NotFound();
-        } else if (user.hasBlockedViewer) {
+        } else if (user.hasBlockedViewer || user.blockedByViewer) {
             throw createError.NotFound();
-        } else if (user.blockedByViewer) {
-            throw createError.Forbidden();
         } else if ((user.isPrivate && user.followedByViewer) || user.isOwner) {
             let posts = user.posts?.data;
             let pageInfo = user.posts?.pageInfo;
@@ -2769,8 +3321,8 @@ const acceptUser = async (req, res, next) => {
             },
             {
                 $project: {
-                    // followOne: 0,
-                    // followTwo: 0,
+                    followOne: 0,
+                    followTwo: 0,
                     profile: 0,
                     userPass: 0,
                     createdAt: 0,
@@ -2785,7 +3337,7 @@ const acceptUser = async (req, res, next) => {
         if (!user) {
             throw createError.NotFound();
         } else if (user.hasBlockedViewer || user.blockedByViewer) {
-            throw createError.NotFound();
+            throw createError.Forbidden();
         } else if (user.followsViewer) {
             res.status(304);
             res.end();
