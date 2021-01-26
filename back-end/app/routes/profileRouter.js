@@ -14,6 +14,7 @@ router.put("/blocks/:userName", profileController.blockUser);
 router.delete("/blocks/:userName", profileController.unBlockUser);
 router.put("/rejects/:userName", profileController.rejectUser);
 router.delete("/rejects/:userName", profileController.unRejectUser);
+router.put("/accepts/:userName", profileController.acceptUser);
 router.get("/:userName/posts", profileController.getUserPosts);
 router.get("/:userName/following", profileController.getUserFollowing);
 router.get("/:userName/followers", profileController.getUserFollowers);
