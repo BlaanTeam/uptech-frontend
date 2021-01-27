@@ -27,27 +27,6 @@ Vue.mixin({
   }
 });
 
-const originalSetItem = localStorage.setItem;
-
-localStorage.setItem = function(key, value) {
-  const event = new Event("itemInserted");
-
-  event.value = value;
-  event.key = key;
-
-  document.dispatchEvent(event);
-
-  originalSetItem.apply(this, arguments);
-};
-
-const localStorageSetHandler = async function(e) {
-  if (e.key == "access_token") {
-    await store.dispatch("updateToken", { accessToken: e.value });
-  }
-};
-
-document.addEventListener("itemInserted", localStorageSetHandler, false);
-
 Vue.use(Notifications);
 Vue.use(VEmojiPicker);
 
@@ -62,24 +41,21 @@ new Vue({
   store,
   vuetify,
   i18n,
+  mounted() {
+    if (this.isLoggedIn === true) {
+      this.$socket.io.opts.extraHeaders[
+        "x-auth-token"
+      ] = this.$store.getters.getToken;
+      this.$socket.open();
+    }
+  },
   watch: {
     isLoggedIn(newVal, oldVal) {
-      if (newVal === false) {
-        if (this.$route.name === "Feeds") {
-          this.$router.push({ name: "Home" });
-        } else if (this.$route.name !== "SignIn") {
-          this.$router.push({ name: "Home" });
-          this.$notify({
-            group: "errors",
-            type: "error",
-            title: this.$t("globals.errors.authError"),
-            text: this.$t("globals.errors.authorizationError")
-          });
-        }
-      } else {
-        if (this.$route.name !== "SignIn") {
-          this.$router.push({ name: "Feeds" });
-        }
+      if (newVal === true) {
+        this.$socket.io.opts.extraHeaders[
+          "x-auth-token"
+        ] = this.$store.getters.getToken;
+        this.$socket.open();
       }
     }
   },
