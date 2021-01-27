@@ -7,6 +7,7 @@ Vue.use(
   new VueSocket({
     debug: true,
     connection: io("http://localhost:5000", {
+      autoConnect: false,
       extraHeaders: {
         "x-auth-token": store.getters.getToken
       }
