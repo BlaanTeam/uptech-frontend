@@ -3,37 +3,43 @@
     <CreatePost @creating="handleLoading" @created="addPost" />
     <div class="posts">
       <PostSkeleton v-if="loading.value" />
-      <div>
-        <Post
-          v-for="(post, index) in posts"
-          :key="post._id"
-          :post="post"
-          :index="index"
-          :comments="(post.commentsData = [])"
-          transition="scale-transition"
-        />
-        <infinite-loading @infinite="infiniteHandler">
-          <template slot="spinner">
-            <PostSkeleton />
-          </template>
-          <template slot="no-results">
-            <span></span>
-            <div v-if="!posts.length">
-              <v-icon size="80" color="#b68d06">
-                mdi-database-alert-outline
-              </v-icon>
-              <h2 class="mt-4 px-2 font-weight-regular">
-                It's quiet here nothing to show for you
-              </h2>
-              <h3 class="font-weight-light">
-                Find accounts that you're interested in
-                <br />
-                And make sure to follow them to get some noise out here
-              </h3>
-            </div>
-          </template>
-        </infinite-loading>
-      </div>
+      <DynamicScroller
+        key-field="_id"
+        :items="posts"
+        :min-item-size="180"
+        page-mode
+      >
+        <template v-slot="{ item, index, active }">
+          <DynamicScrollerItem
+            :item="item"
+            :active="active"
+            :size-dependencies="[item.content]"
+            :data-index="index"
+            :data-active="active"
+            class="item"
+          >
+            <Post :post="item" :index="index" :comments="[]" />
+          </DynamicScrollerItem>
+        </template>
+      </DynamicScroller>
+      <infinite-loading @infinite="infiniteHandler">
+        <template slot="no-results">
+          <span></span>
+          <div v-if="!posts.length">
+            <v-icon size="80" color="#b68d06">
+              mdi-database-alert-outline
+            </v-icon>
+            <h2 class="mt-4 px-2 font-weight-regular">
+              It's quiet here nothing to show for you
+            </h2>
+            <h3 class="font-weight-light">
+              Find accounts that you're interested in
+              <br />
+              And make sure to follow them to get some noise out here
+            </h3>
+          </div>
+        </template>
+      </infinite-loading>
     </div>
   </div>
 </template>
@@ -88,9 +94,6 @@ export default {
       payload.like = false;
       this.posts.unshift(payload);
     }
-  },
-  async destroyed() {
-    await this.$store.dispatch("destroyPosts");
   }
 };
 </script>
@@ -98,7 +101,7 @@ export default {
 <style lang="scss">
 .feeds {
   max-width: 50vw;
-  height: 92vh;
+  overflow: hidden;
   padding: 16px 10px 40px 10px;
   overflow-x: hidden;
 }
@@ -116,5 +119,8 @@ export default {
   .v-car {
     transition: all 5s !important;
   }
+}
+.item {
+  min-height: 180px;
 }
 </style>
