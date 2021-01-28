@@ -1,8 +1,19 @@
 <template>
   <div class="menu">
-    <FollowUnfollow v-if="!userInfo.blockedByViewer" :userInfo="userInfo" />
+    <FollowUnfollow
+      v-if="
+        !userInfo.blockedByViewer &&
+          !userInfo.hasRejectedViewer &&
+          !userInfo.rejectedByViewer
+      "
+      :userInfo="userInfo"
+    />
     <v-btn
-      v-if="!userInfo.blockedByViewer"
+      v-if="
+        !userInfo.blockedByViewer &&
+          !userInfo.hasRejectedViewer &&
+          !userInfo.rejectedByViewer
+      "
       color="primary"
       class="mt-n2 me-3"
       icon
