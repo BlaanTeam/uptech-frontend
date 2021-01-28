@@ -170,7 +170,10 @@ export default {
             if (res.status === 200 && res.data.code === 2032) {
               if (this.$route.query.nextPath) {
                 this.$router
-                  .push({ name: this.$route.query.nextPath })
+                  .push({
+                    name: this.$route.query.nextPath,
+                    params: this.$route.params
+                  })
                   .then(null, err => {
                     this.$router.push({ name: "NotFound" });
                   });

@@ -128,6 +128,18 @@ const getFeedPosts = async (req, res, next) => {
                         },
                         {
                             $addFields: {
+                                isOwner: {
+                                    $cond: [
+                                        {
+                                            $eq: [
+                                                "$user._id",
+                                                req.currentUser._id,
+                                            ],
+                                        },
+                                        true,
+                                        false,
+                                    ],
+                                },
                                 likedByViewer: {
                                     $cond: [
                                         {
