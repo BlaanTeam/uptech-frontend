@@ -98,7 +98,15 @@
             </v-col>
           </v-row>
         </div>
-        <v-row v-if="userInfo.hasRequestedViewer" no-gutters class="mt-4">
+        <v-row
+          v-if="
+            userInfo.hasRequestedViewer &&
+              !userInfo.followsViewer &&
+              !userInfo.rejectedByViewer
+          "
+          no-gutters
+          class="mt-4"
+        >
           <v-btn
             class="text-capitalize me-4"
             elevation="0"
@@ -106,6 +114,10 @@
             color="primary"
             rounded
             width="120"
+            :loading="confirmLoading"
+            :disabled="confirmLoading"
+            @click="confirm"
+            v-if="userInfo.hasRequestedViewer"
           >
             <v-icon small left>mdi-account-check</v-icon>
             Confirm
@@ -116,9 +128,28 @@
             class="text-capitalize mx-4 secondarybg"
             elevation="0"
             rounded
+            v-if="userInfo.hasRequestedViewer"
+            @click="reject"
+            :loading="rejectLoading"
+            :disabled="rejectLoading"
           >
             <v-icon small left>mdi-account-cancel</v-icon>
             Reject
+          </v-btn>
+        </v-row>
+        <v-row v-if="userInfo.rejectedByViewer" no-gutters class="mt-4">
+          <v-btn
+            width="120"
+            class="text-capitalize secondarybg"
+            elevation="0"
+            rounded
+            v-if="userInfo.rejectedByViewer"
+            @click="unReject"
+            :loading="rejectLoading"
+            :disabled="rejectLoading"
+          >
+            <v-icon small left>mdi-account-cancel</v-icon>
+            unReject
           </v-btn>
         </v-row>
       </v-col>
@@ -136,13 +167,72 @@ export default {
   props: { userInfo: { type: Object, required: true } },
   data: () => ({
     following: { value: false },
-    followers: { value: false }
+    followers: { value: false },
+    confirmLoading: false,
+    rejectLoading: false
   }),
   computed: {
     myInfo() {
       let userName = this.$store.getters.getUserName;
       if (this.userInfo.userName === userName) return this.userInfo;
       else return false;
+    }
+  },
+  methods: {
+    async confirm() {
+      this.confirmLoading = true;
+      try {
+        let userName = this.userInfo.userName;
+        let res = await this.$http.put(`/users/accepts/${userName}`);
+        if (res.status === 204) {
+          this.userInfo.followsViewer = true;
+          console.log("Profile.vue(confirm): Request accepted :)");
+        } else
+          console.log("Profile.vue(confirm): No error but nothing changed :(");
+
+        this.confirmLoading = false;
+      } catch (err) {
+        console.log("Something went wrong from:Profile.vue (confirm)");
+        this.confirmLoading = false;
+        console.log(err);
+      }
+    },
+    async reject() {
+      this.rejectLoading = true;
+      try {
+        let userName = this.userInfo.userName;
+        let res = await this.$http.put(`/users/rejects/${userName}`);
+        if (res) {
+          this.userInfo.rejectedByViewer = true;
+          console.log("Profile.vue(reject): Request rejected :)");
+        } else
+          console.log("Profile.vue(reject): No error but nothing changed :(");
+
+        this.rejectLoading = false;
+      } catch (err) {
+        console.log("Something went wrong from:Profile.vue (reject)");
+        this.rejectLoading = false;
+        console.log(err);
+      }
+    },
+    async unReject() {
+      this.rejectLoading = true;
+      try {
+        let userName = this.userInfo.userName;
+        let res = await this.$http.delete(`/users/rejects/${userName}`);
+        if (res.status === 204) {
+          this.userInfo.rejectedByViewer = false;
+          this.userInfo.hasRequestedViewer = false;
+          console.log("Profile.vue(unReject): Request unRejected :)");
+        } else
+          console.log("Profile.vue(unReject): No error but nothing changed :(");
+
+        this.rejectLoading = false;
+      } catch (err) {
+        console.log("Something went wrong from:Profile.vue (unReject)");
+        this.rejectLoading = false;
+        console.log(err);
+      }
     }
   }
 };
