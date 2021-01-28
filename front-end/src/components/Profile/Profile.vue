@@ -68,10 +68,7 @@
                 Followers
               </a>
               <Followers
-                v-if="
-                  (!userInfo.isPrivate || userInfo.followedByViewer) &&
-                    !userInfo.blockedByViewer
-                "
+                v-if="!userInfo.isOwner || !userInfo.blockedByViewer"
                 :userName="userInfo.userName"
                 :myInfo="myInfo"
                 :dialog="followers"
@@ -93,10 +90,7 @@
                 Following
               </a>
               <Following
-                v-if="
-                  (!userInfo.isPrivate || userInfo.followedByViewer) &&
-                    !userInfo.blockedByViewer
-                "
+                v-if="!userInfo.isOwner || !userInfo.blockedByViewer"
                 :userName="userInfo.userName"
                 :myInfo="myInfo"
                 :dialog="following"
