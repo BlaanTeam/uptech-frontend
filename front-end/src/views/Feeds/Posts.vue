@@ -3,25 +3,14 @@
     <CreatePost @creating="handleLoading" @created="addPost" />
     <div class="posts">
       <PostSkeleton v-if="loading.value" />
-      <DynamicScroller
-        key-field="_id"
-        :items="posts"
-        :min-item-size="180"
-        page-mode
-      >
-        <template v-slot="{ item, index, active }">
-          <DynamicScrollerItem
-            :item="item"
-            :active="active"
-            :size-dependencies="[item.content]"
-            :data-index="index"
-            :data-active="active"
-            class="item"
-          >
-            <Post :post="item" :index="index" :comments="[]" />
-          </DynamicScrollerItem>
-        </template>
-      </DynamicScroller>
+      <Post
+        v-for="(post, index) in posts"
+        :key="post._id"
+        :post="post"
+        :index="index"
+        :comments="(post.commentsData = [])"
+        transition="scale-transition"
+      />
       <infinite-loading @infinite="infiniteHandler">
         <template slot="no-results">
           <span></span>
@@ -119,8 +108,5 @@ export default {
   .v-car {
     transition: all 5s !important;
   }
-}
-.item {
-  min-height: 180px;
 }
 </style>
