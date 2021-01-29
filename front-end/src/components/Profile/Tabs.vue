@@ -40,17 +40,18 @@
       <div class="mt-4 text-center bg">
         <h2>You have been blocked this user</h2>
         <h4>Unblock to see other info</h4>
-        <v-btn
-          elevation="0"
-          :loading="blockLoading"
-          @click="unBlockUser"
-          class="text-capitalize mt-4"
-          color="red"
-          dark
-        >
-          <v-icon small left>mdi-lock-open-variant-outline</v-icon>
-          unblock
-        </v-btn>
+        <Unblock :userInfo="userInfo">
+          <v-btn
+            @click="dialog = true"
+            elevation="0"
+            class="text-capitalize mt-4"
+            color="red"
+            dark
+          >
+            <v-icon small left>mdi-lock-open-variant-outline</v-icon>
+            unblock
+          </v-btn>
+        </Unblock>
       </div>
     </v-tabs-items>
 
@@ -113,7 +114,8 @@ export default {
     Post: () => import("@/components/Post/Post"),
     PrivateSvg: () => import("@/components/svg/PrivateSvg"),
     CreatePost: () => import("@/components/Post/CreatePost"),
-    PostSkeleton: () => import("@/components/Skeletons/PostSkeleton")
+    PostSkeleton: () => import("@/components/Skeletons/PostSkeleton"),
+    Unblock: () => import("./Unblock")
   },
   props: {
     userInfo: { type: Object, required: true }
@@ -151,26 +153,6 @@ export default {
       } catch (err) {
         this.loaded = true;
         $state.error();
-        console.log(err);
-      }
-    },
-    async unBlockUser() {
-      this.blockLoading = true;
-      try {
-        let userName = this.userInfo.userName;
-        let res = await this.$http.delete(`/users/blocks/${userName}`);
-        if (res.status === 204) {
-          this.userInfo.blockedByViewer = false;
-          this.userInfo.followedByViewer = false;
-          this.userInfo.requestedByViewer = false;
-          this.blocked = false;
-          console.log("Menu.vue: User UnBlocked :)");
-        } else
-          console.log("Menu.vue(unBlockUser): No error but nothing changed :(");
-        this.blockLoading = false;
-      } catch (err) {
-        console.log("Something went wrong from:Menu.vue (unBlockUser)");
-        this.blockLoading = false;
         console.log(err);
       }
     },
