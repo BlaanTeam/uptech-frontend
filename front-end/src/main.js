@@ -12,10 +12,6 @@ import Notifications from "vue-notification";
 import VEmojiPicker from "v-emoji-picker";
 import parseBody from "./plugins/parsePost";
 import InfiniteLoading from "vue-infinite-loading";
-import VueVirtualScroller from "vue-virtual-scroller";
-import "vue-virtual-scroller/dist/vue-virtual-scroller.css";
-
-Vue.use(VueVirtualScroller);
 
 Vue.use(InfiniteLoading, {
   props: { spinner: "spiral" },
