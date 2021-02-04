@@ -52,7 +52,7 @@
 
 <script>
 export default {
-  name: "BlockUnblock",
+  name: "Unblock",
   props: {
     userInfo: { type: Object, required: false }
   },
@@ -70,13 +70,15 @@ export default {
           this.userInfo.blockedByViewer = false;
           this.userInfo.followedByViewer = false;
           this.userInfo.requestedByViewer = false;
-          console.log("Menu.vue: User UnBlocked :)");
+          console.log("Unblock.vue: User UnBlocked :)");
         } else
-          console.log("Menu.vue(unBlockUser): No error but nothing changed :(");
+          console.log(
+            "Unblock.vue(unBlockUser): No error but nothing changed :("
+          );
         this.blockLoading = false;
         this.dialog = false;
       } catch (err) {
-        console.log("Something went wrong from:Menu.vue (unBlockUser)");
+        console.log("Something went wrong from:Unblock.vue (unBlockUser)");
         this.blockLoading = false;
         console.log(err);
       }

@@ -52,7 +52,7 @@
 
 <script>
 export default {
-  name: "BlockUnblock",
+  name: "Block",
   props: {
     userInfo: { type: Object, required: false }
   },
@@ -68,14 +68,14 @@ export default {
         let res = await this.$http.put(`/users/blocks/${userName}`);
         if (res.status === 204) {
           this.userInfo.blockedByViewer = true;
-          console.log("Menu.vue: User Blocked :)");
+          console.log("Block.vue: User Blocked :)");
         } else
-          console.log("Menu.vue(blockUser): No error but nothing changed :(");
+          console.log("Block.vue(blockUser): No error but nothing changed :(");
 
         this.blockLoading = false;
         this.dialog = false;
       } catch (err) {
-        console.log("Something went wrong from:Menu.vue (blockUser)");
+        console.log("Something went wrong from:Block.vue (blockUser)");
         this.blockLoading = false;
         console.log(err);
       }
