@@ -16,9 +16,6 @@
                 color="green"
                 class="mt-2"
               />
-              <span class="white--text caption">
-                {{ post.user.userName.slice(0, 4) }}
-              </span>
             </v-col>
             <v-col class="pa-0 ma-0 pe-4" height="100px">
               <v-textarea
