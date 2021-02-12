@@ -111,7 +111,9 @@
           dark
           height="30"
           color="primary text-capitalize me-2"
-          @click="dialog = false"
+          :disabled="loading"
+          :loading="loading"
+          @click="edit"
         >
           <v-icon left size="16" class="">mdi-content-save</v-icon>
           Save
@@ -126,6 +128,7 @@ export default {
   props: { profile: { type: Object, required: true } },
   data: () => ({
     dialog: false,
+    loading: false,
     months: [
       "January",
       "February",
@@ -141,8 +144,27 @@ export default {
       "December"
     ]
   }),
-  mounted() {
-    console.log("edit post mounted");
+  methods: {
+    async edit() {
+      this.loading = true;
+      console.log(this.profile);
+      try {
+        const res = await this.$http.patch("/users", {
+          profile: {
+            firstName: this.profile.firstName,
+            lastName: this.profile.firstName,
+            bio: this.profile.bio
+          }
+        });
+        console.log("Edit.vue(edit): Profile edited successfully :)");
+        this.loading = false;
+        this.dialog = false;
+      } catch (err) {
+        this.loading = false;
+        console.log("Edit.vue(edit): Something went wrong :(");
+        console.log(err);
+      }
+    }
   }
 };
 </script>
