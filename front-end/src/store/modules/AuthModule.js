@@ -11,7 +11,8 @@ export default {
       !!state.accessToken &&
       !!state.accessToken.match(Vue.prototype.$pattern.jwtToken),
     getToken: state => state.accessToken,
-    getUserId: state => state.user._id
+    getUserId: state => state.user._id,
+    getUserName: state => state.user.userName
   },
   mutations: {
     AUTH_SUCCESS: (state, payload) => {
@@ -112,14 +113,11 @@ export default {
       });
     },
     destroySession: async context => {
-      await context.commit("DESTROY_SESSION");
-      router.push({ name: "SignIn" });
+      context.commit("DESTROY_SESSION");
+      await router.push({ name: "SignIn" });
     },
-    handleNotFound() {
-      router.push({ name: "NotFound" });
-    },
-    updateToken: (context, payload) => {
-      context.commit("UPDATE_TOKEN", payload.accessToken);
+    async handleNotFound() {
+      await router.push({ name: "NotFound" });
     }
   }
 };

@@ -37,7 +37,7 @@ const router = new VueRouter({
 
 router.afterEach((to, from) => {
   Vue.nextTick(() => {
-    document.title = `${t("appName")} | ${t(to.meta.title, { ...to.meta })}`;
+    document.title = `${t("appName")} | ${t(to.meta.title, to.params)}`;
   });
 });
 router.beforeEach((to, from, next) => {
@@ -47,6 +47,7 @@ router.beforeEach((to, from, next) => {
     } else {
       next({
         name: "SignIn",
+        params: to.params,
         query: {
           nextPath: to.name
         }

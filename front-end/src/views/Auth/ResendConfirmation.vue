@@ -6,7 +6,7 @@
       </h1>
       <v-card-text>
         <h3 class="mb-6">{{ $t("resendConfirmation.h2") }}</h3>
-        <v-form ref="forgotPassword">
+        <v-form ref="forgotPassword" v-model="validity">
           <v-text-field
             dense
             outlined
@@ -23,6 +23,9 @@
             rounded
             color="primary"
             dark
+            :loading="loading"
+            :disabled="loading || !validity"
+            type="submit"
             elevation="0"
           >
             {{ $t("resendConfirmation.send") }}
@@ -38,7 +41,9 @@ export default {
   name: "RenesendConfirmation",
   data() {
     return {
-      email: ""
+      email: "",
+      loading: false,
+      validity: false
     };
   },
   computed: {
@@ -73,13 +78,13 @@ export default {
     },
     handleSubmit() {
       if (this.$refs.resendConfirmation.validate()) {
-        let loader = this.$loading.show({ container: null, canCancel: false });
+        this.loading = true;
         this.$store
           .dispatch("resendConfirmation", {
             email: this.email
           })
           .then(res => {
-            loader.hide();
+            this.loading = false;
             if (res.status === 200 && res.data.code === 2051) {
               this.successNotification(
                 this.$t("resendConfirmation.success.msgSent")
@@ -87,7 +92,7 @@ export default {
             }
           })
           .catch(({ response }) => {
-            loader.hide();
+            this.loading = false;
             if (
               response?.status === 404 &&
               response?.data?.error?.code === 1030

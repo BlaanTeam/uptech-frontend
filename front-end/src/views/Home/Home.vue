@@ -15,8 +15,7 @@
             <v-btn
               elevation="0"
               rounded
-              dark
-              class="mt-4 py-6 px-12"
+              class="mt-4 py-6 px-12 white--text"
               color="primary"
               to="/sign_up"
             >

@@ -62,9 +62,11 @@ const userSchema = new Schema({
         default: false,
     },
 });
+// Indexing userSchema by userName field
 userSchema.index(
     {
         userName: 1,
+        userMail: 1,
     },
     { unique: true }
 );
@@ -84,7 +86,18 @@ const followSchema = new Schema({
         type: Number,
         required: true,
     },
+    prevStatus: {
+        type: Number,
+    },
 });
+
+// Indexing followSchema by userOne & userTwo fields
+followSchema.index({
+    userOne: 1,
+    userTwo: 1,
+    status: 1,
+});
+
 // Iniatialize Methods To userSchema
 
 // hashing the password

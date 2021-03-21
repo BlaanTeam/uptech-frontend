@@ -13,9 +13,9 @@
 
     <AuthLayout v-else :style="authBackground">
       <v-main>
-        <keep-alive :max="5">
-          <router-view :key="$route.fullPath"></router-view>
-        </keep-alive>
+        <!-- <keep-alive :max="5" :include="include"> -->
+        <router-view :key="$route.fullPath"></router-view>
+        <!-- </keep-alive> -->
       </v-main>
     </AuthLayout>
   </div>
@@ -30,6 +30,9 @@ export default {
     UnAuthLayout,
     AuthLayout
   },
+  data: () => ({
+    inlcude: ["CreatePost"]
+  }),
   computed: {
     unAuthBackground() {
       return { background: this.$vuetify.theme.currentTheme.bg };
@@ -89,5 +92,16 @@ main {
     border-radius: 10px;
     background: #19191d;
   }
+}
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
 }
 </style>

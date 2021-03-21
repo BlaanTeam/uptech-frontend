@@ -3,18 +3,14 @@
     <v-card-title :class="'ma-0 pt-2 pb-3 card-title' + index">
       <v-row no-gutters>
         <v-col lg="1" md="1" sm="2" class="pa-0 ma-0 ms-2">
-          <PopoverProfile :index="index">
+          <PopoverProfile :index="post._id" :userName="post.user.userName">
             <router-link
               :to="{
                 name: 'ViewProfile',
-                params: { userId: post.user._id }
+                params: { userName: post.user.userName }
               }"
             >
-              <v-avatar width="40" color="red">
-                <span class="white--text caption">
-                  {{ post.user.userName.slice(0, 4) }}
-                </span>
-              </v-avatar>
+              <img src="@/assets/images/avatar.svg" width="44" />
             </router-link>
           </PopoverProfile>
         </v-col>
@@ -22,7 +18,7 @@
           <router-link
             :to="{
               name: 'ViewProfile',
-              params: { userId: post.user._id }
+              params: { userName: post.user.userName }
             }"
             class="pa-0 ma-0"
           >
@@ -35,6 +31,24 @@
           </p>
         </v-col>
         <v-spacer></v-spacer>
+
+        <router-link :to="{ name: 'ViewPost', params: { postId: post._id } }">
+          <v-tooltip
+            :attach="'.card-title' + index"
+            :close-delay="100"
+            bottom
+            color="#2F3136"
+            nudge-top="8"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn v-bind="attrs" v-on="on" class="view-post-btn" icon>
+                <v-icon size="20">mdi-eye</v-icon>
+              </v-btn>
+            </template>
+            <span>View Post</span>
+          </v-tooltip>
+        </router-link>
+
         <v-col lg="1" md="1" sm="2" class="pa-0 ma-0 text-center">
           <v-menu
             :attach="'.card-title' + index"
@@ -55,14 +69,6 @@
               </v-btn>
             </template>
             <v-list-item-group class="auth-secondarybg">
-              <router-link
-                :to="{ name: 'ViewPost', params: { postId: post._id } }"
-              >
-                <v-list-item dense>
-                  <v-icon left small>mdi-eye</v-icon>
-                  <v-list-item-title>view</v-list-item-title>
-                </v-list-item>
-              </router-link>
               <v-list-item dense @click="copyPostLink">
                 <v-icon left small>mdi-content-copy</v-icon>
                 <v-list-item-title>Copy</v-list-item-title>
@@ -71,21 +77,13 @@
                 <v-icon left small>mdi-content-save</v-icon>
                 <v-list-item-title>Save</v-list-item-title>
               </v-list-item>
-              <EditPost
-                :post="post"
-                :index="index"
-                v-if="post.user._id === userId"
-              >
+              <EditPost :post="post" :index="index" v-if="post.isOwner">
                 <v-list-item dense>
                   <v-icon left small>mdi-square-edit-outline</v-icon>
                   <v-list-item-title>Edit</v-list-item-title>
                 </v-list-item>
               </EditPost>
-              <DeletePost
-                :post="post"
-                :index="index"
-                v-if="post.user._id === userId"
-              >
+              <DeletePost :post="post" :index="index" v-if="post.isOwner">
                 <v-list-item dense class="text-start">
                   <v-icon left color="red" small>mdi-delete</v-icon>
                   <v-list-item-title class="red--text">
@@ -110,16 +108,15 @@
       >
       </a>
     </div>
-
     <v-divider></v-divider>
     <v-card-actions class="px-4 py-0">
-      <v-row class="text-center py-0">
+      <v-row class="text-center py-0" no-gutters>
         <v-col class="pa-2">
           <LikeUnlike :post="post" />
         </v-col>
         <v-col class="pa-2">
           <div>
-            <span class="caption">{{ post.totalComments }}</span>
+            <span class="caption">{{ post.comments }}</span>
             <v-btn
               class="ml-2 caption"
               @click="commentExpanded = !commentExpanded"
@@ -139,17 +136,21 @@
         </v-col>
       </v-row>
     </v-card-actions>
-    <div>
-      <AddComment :display="commentExpanded" :post="post" />
-      <template v-if="post.comments && post.comments.length">
-        <DisplayComment
-          v-for="(comment, i) in post.comments"
-          :key="i"
-          :comment="comment"
-          :post="post"
-        />
-      </template>
-    </div>
+
+    <transition name="slide">
+      <AddComment v-if="commentExpanded" :post="post" :comments="comments" />
+    </transition>
+    <template v-show="comments.length">
+      <DisplayComment
+        v-for="(comment, i) in comments"
+        :key="comment._id"
+        :comment="comment"
+        :post="post"
+        :comments="comments"
+        :index="i"
+      />
+      <slot name="commentsLoading" />
+    </template>
     <v-snackbar
       v-model="snackbar"
       color="#22a56a"
@@ -184,6 +185,7 @@ export default {
   },
   props: {
     post: { type: Object, required: true },
+    comments: { type: Array, required: true },
     index: { type: Number, required: false, default: 0 }
   },
   data: props => ({
@@ -219,3 +221,18 @@ export default {
   }
 };
 </script>
+<style lang="scss">
+.post {
+  .slide-enter-active {
+    transition: all 0.4s linear;
+  }
+  .slide-leave-active {
+    transition: all 0.4s linear;
+  }
+  .slide-enter,
+  .slide-leave-to {
+    transform: translateX(15px);
+    opacity: 0;
+  }
+}
+</style>

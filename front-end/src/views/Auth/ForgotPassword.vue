@@ -4,7 +4,7 @@
       <h1 class="display-3 my-10 ms-4">{{ $t("forgotPassword.h1") }}</h1>
       <v-card-text>
         <h3 class="mb-3">{{ $t("forgotPassword.h2") }}</h3>
-        <v-form ref="forgotPassword">
+        <v-form ref="forgotPassword" v-model="validity">
           <v-text-field
             dense
             outlined
@@ -21,6 +21,9 @@
             rounded
             color="primary"
             dark
+            :loading="loading"
+            :disabled="loading || !validity"
+            type="submit"
             elevation="0"
           >
             {{ $t("forgotPassword.search") }}
@@ -36,7 +39,9 @@ export default {
   name: "ForgotPassword",
   data() {
     return {
-      email: ""
+      email: "",
+      loading: false,
+      validity: false
     };
   },
   computed: {
@@ -71,13 +76,13 @@ export default {
     },
     handleSubmit() {
       if (this.$refs.forgotPassword.validate()) {
-        let loader = this.$loading.show({ container: null, canCancel: false });
+        this.loading = true;
         this.$store
           .dispatch("forgotPassword", {
             email: this.email
           })
           .then(res => {
-            loader.hide();
+            this.loading = false;
             if (res.status === 200 && res.data.code === 2013) {
               this.successNotification(
                 this.$t("forgotPassword.success.msgSent")
@@ -85,7 +90,7 @@ export default {
             }
           })
           .catch(({ response }) => {
-            loader.hide();
+            this.loading = false;
             if (
               response?.status === 404 &&
               response?.data?.error?.code === 1030

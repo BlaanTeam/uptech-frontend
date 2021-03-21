@@ -20,9 +20,8 @@
       <v-skeleton-loader class="" type="card" width="100%" height="100">
       </v-skeleton-loader>
     </div>
-
     <v-divider></v-divider>
-    <v-card-actions class="px-4 py-0 pb-6">
+    <v-card-actions class="px-4 my-2 pb-6">
       <v-row class="text-center py-0">
         <v-col class="pa-2">
           <v-skeleton-loader type="card" width="100%" height="34">

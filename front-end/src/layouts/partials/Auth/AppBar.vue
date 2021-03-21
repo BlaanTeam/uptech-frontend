@@ -5,7 +5,7 @@
     <v-spacer></v-spacer>
     <DarkMode />
     <Locale />
-    <v-btn text class="mr-2" @click="logout()">
+    <v-btn text class="mr-2" @click.prevent="logout()">
       <v-icon left>mdi-logout</v-icon>
       logout
     </v-btn>
@@ -20,8 +20,9 @@ export default {
 
   name: "AppBar",
   methods: {
-    logout() {
-      this.$store.dispatch("destroySession");
+    async logout() {
+      this.$socket.close();
+      await this.$store.dispatch("destroySession");
     }
   }
 };

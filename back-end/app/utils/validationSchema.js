@@ -86,8 +86,7 @@ const postValidator = async (credentials, select) => {
             }),
             content: joi.string().min(2).max(5000).trim(),
             isPrivate: joi.boolean().default(false),
-            offset: joi.number().default(0),
-            limit: joi.number().greater(0).less(101).default(50),
+            createdAt: joi.date().iso(),
         });
         postSchema = validator(postSchema, select);
         return await postSchema.validateAsync(credentials);
@@ -107,8 +106,7 @@ const commentValidator = async (credentials, select) => {
         let commentSchema = joi.object({
             content: joi.string().trim(),
             isPrivate: joi.boolean().default(false),
-            offset: joi.number().default(0),
-            limit: joi.number().greater(0).less(101).default(50),
+            page: joi.number().greater(0).default(1),
             postId: joi.string().custom((value, helper) => {
                 try {
                     let result = mongoose.Types.ObjectId(value);
@@ -146,12 +144,15 @@ const profileValidator = async (credentials, select) => {
             userName: joi
                 .string()
                 .pattern(pattern.username)
-                .message("Please fill a valid userName"),
+                .message("Please fill a valid userName")
+                .lowercase()
+                .trim(),
             userPass: joi
                 .string()
                 .pattern(pattern.password)
                 .message("Please fill a valid password"),
             isPrivate: joi.boolean(),
+            page: joi.number().greater(0).default(1),
             profile: joi.object({
                 firstName: joi.string().trim(),
                 lastName: joi.string().trim(),

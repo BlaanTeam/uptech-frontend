@@ -10,15 +10,16 @@
         <v-card-title>
           <v-row>
             <v-col cols="2" class="pa-0 ma-0 text-center">
-              <v-avatar width="40" color="green" class="mt-2">
-                <span class="white--text caption">
-                  {{ post.user.userName.slice(0, 4) }}
-                </span>
-              </v-avatar>
+              <img
+                src="@/assets/images/avatar.svg"
+                width="40"
+                color="green"
+                class="mt-2"
+              />
             </v-col>
             <v-col class="pa-0 ma-0 pe-4" height="100px">
               <v-textarea
-                ref="EditTextArea"
+                id="EditTextArea"
                 autofocus
                 append-outer-icon="mdi-close"
                 @click:append-outer="clearTextArea"
@@ -57,7 +58,7 @@
 
           <Emojis
             :inputModel="content"
-            element="CreateTextArea"
+            element="EditTextArea"
             nudge-left="320"
             nudge-top="360"
             right
@@ -113,7 +114,7 @@ export default {
   data: props => ({
     dialog: false,
     content: { value: props.post.content },
-    isPrivate: false
+    isPrivate: props.post.isPrivate
   }),
   computed: {
     togglePrivatePublic() {

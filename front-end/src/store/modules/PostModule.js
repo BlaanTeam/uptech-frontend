@@ -8,14 +8,11 @@ export default {
     getPosts: state => state.posts
   },
   mutations: {
-    INIT_POSTS(state, payload) {
-      state.posts = payload;
+    DESTROY_POSTS(state) {
+      state.posts.length = 0;
     },
-    ADD_POST(state, payload) {
-      payload.totalComments = 0;
-      payload.totalLikes = 0;
-      payload.like = false;
-      state.posts.unshift(payload);
+    INIT_POSTS(state, payload) {
+      state.posts.push(...payload);
     },
     EDIT_POST(state, payload) {
       state.posts[payload.index] = payload;
@@ -26,18 +23,25 @@ export default {
       el.style.transition = "all 0.5s ease-in-out";
       setTimeout(() => {
         el.remove();
-        state.posts.splice(payload.index, 1);
+        if (state.posts.length) state.posts.splice(payload.index, 1);
       }, 500);
     }
   },
   actions: {
-    getFeedPosts(context) {
+    destroyPosts(context) {
+      context.commit("DESTROY_POSTS");
+    },
+    getFeedPosts(context, payload) {
       return new Promise((resolve, reject) => {
+        let path = "/feed/posts";
+        if (payload.createdAt) {
+          path += `?createdAt=${payload.createdAt}`;
+        }
         Vue.prototype.$http
-          .get("/feed/posts")
+          .get(path)
           .then(res => {
             if (res.status === 200) {
-              context.commit("INIT_POSTS", res.data);
+              context.commit("INIT_POSTS", res.data.posts);
               resolve(res);
             }
           })
@@ -53,7 +57,6 @@ export default {
           })
           .then(res => {
             if (res.status === 201) {
-              context.commit("ADD_POST", res.data);
               resolve(res);
             }
           })

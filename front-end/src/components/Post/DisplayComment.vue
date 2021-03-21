@@ -1,18 +1,31 @@
 <template>
   <div class="display-comments py-2" :id="'comment' + comment._id">
-    <v-row class="ms-10" no-gutters>
-      <v-col cols="1" class="">
-        <v-avatar width="20" color="green">
-          <span class="white--text caption">
-            {{ comment.user.userName.slice(0, 4) }}
-          </span>
-        </v-avatar>
+    <v-row class="justify-center" no-gutters>
+      <v-col cols="1">
+        <PopoverProfile :index="comment._id" :userName="comment.user.userName">
+          <router-link
+            :to="{
+              name: 'ViewProfile',
+              params: { userName: comment.user.userName }
+            }"
+          >
+            <img class="ms-2" src="@/assets/images/avatar.svg" width="36" />
+          </router-link>
+        </PopoverProfile>
       </v-col>
-      <v-col cols="9" class="auth-bg rounded-lg ps-3 pe-2 mx-1 pt-1 pb-2">
+
+      <v-col cols="9" class="auth-bg rounded-lg ps-3 pe-2 me-1 pt-1 pb-2">
         <v-row no-gutters>
-          <span text class="body-2 font-weight-bold">
-            {{ comment.user.userName }}
-          </span>
+          <router-link
+            :to="{
+              name: 'ViewProfile',
+              params: { userName: comment.user.userName }
+            }"
+          >
+            <span text class="body-2 font-weight-bold">
+              {{ comment.user.userName }}
+            </span>
+          </router-link>
         </v-row>
         <v-row no-gutters>
           <v-row v-if="editMode" no-gutters>
@@ -37,8 +50,9 @@
             </v-col>
             <v-col cols="1" class="align-self-center">
               <v-btn
-                :disabled="comment.content === content.value"
+                :disabled="comment.content === content.value || loading"
                 icon
+                :loading="loading"
                 @click="editComment()"
               >
                 <v-icon color="primary" class="ms-1">mdi-send</v-icon>
@@ -56,12 +70,14 @@
           :attach="'#comment' + comment._id"
           nudge-right="25"
           offset-y
+          :close-on-content-click="false"
+          v-if="!deleting"
           left
           transition="slide-y-transition"
         >
           <template v-slot:activator="{ on, attrs }">
             <v-btn
-              v-show="userId === post.user._id || userId === comment.user._id"
+              v-show="post.isOwner || userId === comment.user._id"
               v-bind="attrs"
               v-on="on"
               class="auth-secondarybg"
@@ -72,30 +88,46 @@
             </v-btn>
           </template>
           <v-list-item-group class="auth-secondarybg">
-            <v-list-item
+            <v-btn
+              text
+              block
+              tile
+              color="blue"
               dense
+              class="text-capitalize subtitle-2 justify-start"
               v-if="editMode && userId === comment.user._id"
               @click="editMode = false"
             >
-              <v-icon left small color="blue">mdi-file-undo</v-icon>
-              <v-list-item-title class="blue--text">cancel</v-list-item-title>
-            </v-list-item>
-            <v-list-item
+              <v-icon left small>mdi-file-undo</v-icon>
+              cancel
+            </v-btn>
+            <v-btn
               v-if="userId === comment.user._id"
               dense
+              text
+              block
+              tile
+              class="text-capitalize subtitle-2 justify-start"
               @click="editMode = true"
             >
               <v-icon left small>mdi-square-edit-outline</v-icon>
-              <v-list-item-title>edit</v-list-item-title>
-            </v-list-item>
-            <v-list-item
-              v-if="userId === comment.user._id || userId === post.user._id"
+              edit
+            </v-btn>
+            <v-btn
+              v-if="userId === comment.user._id || post.isOwner"
               dense
+              color="red"
+              text
+              block
+              tile
               @click="deleteComment()"
+              :loading="loading"
+              :disabled="loading"
+              class="text-capitalize subtitle-2 justify-start"
             >
               <v-icon left small color="red">mdi-delete</v-icon>
-              <v-list-item-title class="red--text">delete</v-list-item-title>
-            </v-list-item>
+              delete
+            </v-btn>
           </v-list-item-group>
         </v-menu>
       </v-col>
@@ -115,15 +147,21 @@
 
 <script>
 import Emojis from "@/components/Emojis.vue";
+import PopoverProfile from "./PopoverProfile";
+
 export default {
-  components: { Emojis },
+  components: { Emojis, PopoverProfile },
   props: {
     comment: { type: Object, required: true },
+    comments: { type: Array, required: true },
+    index: { type: Number, required: true },
     post: { type: Object, required: true }
   },
   data: props => ({
     editMode: false,
-    content: { value: props.comment.content }
+    content: { value: props.comment.content },
+    loading: false,
+    deleting: false
   }),
   computed: {
     userId() {
@@ -136,40 +174,43 @@ export default {
       const api = `/feed/posts/${this.post._id}/comments/${this.comment._id}`;
       const data = { content: this.content.value };
       try {
+        this.loading = true;
         const res = await this.$http.put(api, data);
 
         if (res.status === 200) {
           console.log("Comment Updated successfully");
           this.comment.content = res.data.content;
+          this.loading = false;
           this.editMode = false;
         }
       } catch (err) {
         console.log("Something went wrong from:UpdateComment");
+        this.loading = false;
         console.log(err);
       }
     },
     async deleteComment() {
       const api = `/feed/posts/${this.post._id}/comments/${this.comment._id}`;
       try {
+        this.loading = true;
         const res = await this.$http.delete(api);
         if (res.status === 204) {
           console.log("Comment deleted successfully");
-
-          // let el = document.getElementById("comment" + this.comment._id);
-          // console.log(el);
-          // el.style.transition = "all 0.4s";
-          // el.style.transform = "translateX(-100vh";
-          // el.style.opacity = "0";
-          // setTimeout(() => {
-          // el.remove();
-          this.post.comments = this.post.comments.filter(
-            comment => comment._id !== this.comment._id
-          );
-          this.post.totalComments--;
-          // }, 300);
+          this.deleting = true;
+          let el = document.querySelector("#comment" + this.comment._id);
+          el.style.transition = "all 0.6s";
+          el.style.transform = "translateX(-100vh";
+          el.style.opacity = "0";
+          setTimeout(() => {
+            el.remove();
+            this.comments.splice(this.index, 1);
+            this.post.comments--;
+            this.loading = false;
+          }, 600);
         }
       } catch (err) {
         console.log("Something went wrong from:DeleteComment");
+        this.loading = false;
         console.log(err);
       }
     }

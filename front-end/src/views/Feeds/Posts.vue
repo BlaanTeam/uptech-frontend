@@ -1,20 +1,34 @@
 <template>
   <div class="feeds">
-    <CreatePost @creating="handleLoading" />
+    <CreatePost @creating="handleLoading" @created="addPost" />
     <div class="posts">
-      <span v-if="!loaded">
-        <PostSkeleton v-for="n in 5" :key="n" />
-      </span>
       <PostSkeleton v-if="loading.value" />
-      <span v-if="loaded">
-        <Post
-          v-for="(post, index) in posts"
-          :key="post._id"
-          :post="post"
-          :index="index"
-          transition="scale-transition"
-        />
-      </span>
+      <Post
+        v-for="(post, index) in posts"
+        :key="post._id"
+        :post="post"
+        :index="index"
+        :comments="(post.commentsData = [])"
+        transition="scale-transition"
+      />
+      <infinite-loading @infinite="infiniteHandler">
+        <template slot="no-results">
+          <span></span>
+          <div v-if="!posts.length">
+            <v-icon size="80" color="#b68d06">
+              mdi-database-alert-outline
+            </v-icon>
+            <h2 class="mt-4 px-2 font-weight-regular">
+              It's quiet here nothing to show for you
+            </h2>
+            <h3 class="font-weight-light">
+              Find accounts that you're interested in
+              <br />
+              And make sure to follow them to get some noise out here
+            </h3>
+          </div>
+        </template>
+      </infinite-loading>
     </div>
   </div>
 </template>
@@ -27,8 +41,9 @@ import PostSkeleton from "@/components/Skeletons/PostSkeleton";
 export default {
   components: { CreatePost, Post, PostSkeleton },
   data: () => ({
-    loaded: false,
-    loading: { value: false }
+    loading: { value: false },
+    comments: [],
+    createdAt: null
   }),
   computed: {
     posts() {
@@ -36,18 +51,37 @@ export default {
     }
   },
   methods: {
+    async infiniteHandler($state) {
+      try {
+        let res = await this.$store.dispatch("getFeedPosts", {
+          createdAt: this.createdAt
+        });
+        if (res.status === 200) {
+          if (res.data.posts.length) {
+            let lastPost = res.data.posts[res.data.posts.length - 1];
+            this.createdAt = lastPost.createdAt;
+            $state.loaded();
+            if (res.data.posts.length < 20) {
+              $state.complete();
+              this.createdAt = null;
+            }
+          } else {
+            $state.complete();
+          }
+        }
+      } catch (err) {
+        $state.error();
+        console.log(err);
+      }
+    },
     handleLoading(loading) {
       this.loading = loading;
-    }
-  },
-
-  async mounted() {
-    try {
-      await this.$store.dispatch("getFeedPosts");
-      this.loaded = true;
-    } catch (err) {
-      this.loaded = true;
-      console.log(err);
+    },
+    addPost({ content, isPrivate, payload }) {
+      payload.comments = 0;
+      payload.likes = 0;
+      payload.like = false;
+      this.posts.unshift(payload);
     }
   }
 };
@@ -56,9 +90,9 @@ export default {
 <style lang="scss">
 .feeds {
   max-width: 50vw;
-  height: 92vh;
+  overflow: hidden;
   padding: 16px 10px 40px 10px;
-  overflow-y: auto;
+  overflow-x: hidden;
 }
 .posts {
   .theme--light {

@@ -1,11 +1,7 @@
 <template>
   <v-card class="create__post my-10 auth-secondarybg">
     <v-card-title class="ma-0 d-inline-block float-left">
-      <v-avatar width="40" color="green">
-        <span class="white--text caption">
-          test
-        </span>
-      </v-avatar>
+      <img src="@/assets/images/avatar.svg" width="50" />
     </v-card-title>
     <v-card-subtitle class="ms-10 ps-4 pt-3 d-block">
       <v-textarea
@@ -94,6 +90,11 @@ export default {
         });
         if (res.status === 201) {
           console.log("Post Created");
+          this.$emit("created", {
+            content: temptext,
+            isPrivate: this.isPrivate,
+            payload: res.data
+          });
           temptext = "";
           this.loading.value = false;
         }

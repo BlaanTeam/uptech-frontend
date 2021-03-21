@@ -31,12 +31,18 @@ const signUp = async (req, res, next) => {
             userName: data.username,
             userMail: data.email,
             userPass: data.password,
+            mailConfirmed: true, // TODO: set false in production
+            profile: {
+                firstName: "Unknown",
+                lastName: "Unknown",
+                bio: "The bio wrote by UpTech! Please Change it asap.",
+            },
         });
         newUser.externalURL = req.externalURL;
         await newUser.hashPassword();
         await newUser.save();
-        // todo : send mail confirmation
-        sendConfirmation(newUser, "Confirm Your Account 😇", "confirmAccount");
+        // TODO : uncommment this line in production
+        // sendConfirmation(newUser, "Confirm Your Account 😇", "confirmAccount");
         res.status(201);
         res.json({ code: 2062 });
     } catch (err) {
