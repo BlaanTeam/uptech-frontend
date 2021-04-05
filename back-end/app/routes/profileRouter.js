@@ -1,7 +1,6 @@
-const express = require("express");
+const router = require("express").Router();
 const profileController = require("../controllers/profileController");
 const { protectRouter } = require("../utils/middlewares");
-const router = express.Router();
 protectRouter(router);
 
 router.get("/:userName", profileController.getUser);
