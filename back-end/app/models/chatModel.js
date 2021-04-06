@@ -16,9 +16,6 @@ const conversationSchema = new Schema({
         ref: "users",
         required: true,
     },
-    read: {
-        type: Boolean,
-    },
     timestamp: {
         type: Date,
         default: Date.now,
@@ -76,6 +73,18 @@ const messageSchema = new Schema({
         type: Date,
         default: Date.now,
     },
+    readByRecipients: [
+        {
+            userId: {
+                type: Schema.Types.ObjectId,
+                ref: "users",
+            },
+            readAt: {
+                type: Date,
+                default: Date.now,
+            },
+        },
+    ],
     convId: {
         type: Schema.Types.ObjectId,
         ref: "conversations",
