@@ -15,12 +15,12 @@ const objectId = (message, options) => {
     });
 };
 
-const validator = (schema, select = {}) => {
+const validator = (schema, selectors = {}) => {
     const requiredFields = [];
     const optionalFields = [];
     const forbiddenFields = [];
     schema._ids._byKey.forEach((el) => {
-        switch (select[el.id]) {
+        switch (selectors[el.id]) {
             case 1:
                 requiredFields.push(el.id);
                 break;
@@ -36,7 +36,7 @@ const validator = (schema, select = {}) => {
     schema = schema.fork(forbiddenFields, (field) => field.forbidden());
     return schema;
 };
-const authValidator = async (credentials, select) => {
+const authValidator = async (credentials, selectors) => {
     try {
         let authSchema = joi.object({
             username: joi
@@ -60,9 +60,9 @@ const authValidator = async (credentials, select) => {
                 .string()
                 .pattern(pattern.jwtToken)
                 .message("Please fill a valid token"),
-            userId: objectId("Post Not Found!", { postNotFound: true }),
+            userId: objectId("Post Doesn't Exist!", { postNotFound: true }),
         });
-        authSchema = validator(authSchema, select);
+        authSchema = validator(authSchema, selectors);
         return await authSchema.validateAsync(credentials);
     } catch (err) {
         if (err.isJoi) {
@@ -75,15 +75,15 @@ const authValidator = async (credentials, select) => {
     }
 };
 
-const postValidator = async (credentials, select) => {
+const postValidator = async (credentials, selectors) => {
     try {
         let postSchema = joi.object({
-            postId: objectId("Post Not Found!", { postNotFound: true }),
+            postId: objectId("Post Doesn't Exist!", { postNotFound: true }),
             content: joi.string().min(2).max(5000).trim(),
             isPrivate: joi.boolean().default(false),
             createdAt: joi.date().iso(),
         });
-        postSchema = validator(postSchema, select);
+        postSchema = validator(postSchema, selectors);
         return await postSchema.validateAsync(credentials);
     } catch (err) {
         if (err.isJoi) {
@@ -96,17 +96,19 @@ const postValidator = async (credentials, select) => {
     }
 };
 
-const commentValidator = async (credentials, select) => {
+const commentValidator = async (credentials, selectors) => {
     try {
         let commentSchema = joi.object({
             content: joi.string().trim(),
             isPrivate: joi.boolean().default(false),
             page: joi.number().greater(0).default(1),
-            postId: objectId("Post Not Found!", { postNotFound: true }),
-            commentId: objectId("Comment Not Found!", { postNotFound: true }),
+            postId: objectId("Post Doesn't Exist!", { postNotFound: true }),
+            commentId: objectId("Comment Doesn't Exist!", {
+                postNotFound: true,
+            }),
         });
 
-        commentSchema = validator(commentSchema, select);
+        commentSchema = validator(commentSchema, selectors);
         return await commentSchema.validateAsync(credentials);
     } catch (err) {
         if (err.isJoi) {
@@ -119,7 +121,7 @@ const commentValidator = async (credentials, select) => {
     }
 };
 
-const profileValidator = async (credentials, select) => {
+const profileValidator = async (credentials, selectors) => {
     try {
         let profileSchema = joi.object({
             userName: joi
@@ -148,7 +150,7 @@ const profileValidator = async (credentials, select) => {
                     .trim(),
             }),
         });
-        profileSchema = validator(profileSchema, select);
+        profileSchema = validator(profileSchema, selectors);
         return await profileSchema.validateAsync(credentials);
     } catch (err) {
         if (err.isJoi) {
@@ -160,7 +162,7 @@ const profileValidator = async (credentials, select) => {
         throw err;
     }
 };
-const followValidator = async (credentials, select) => {
+const followValidator = async (credentials, selectors) => {
     try {
         followSchema = joi.object({
             userName: joi
@@ -168,7 +170,7 @@ const followValidator = async (credentials, select) => {
                 .pattern(pattern.username)
                 .message("Please fill a valid userName"),
         });
-        followSchema = validator(followSchema, select);
+        followSchema = validator(followSchema, selectors);
         return await followSchema.validateAsync(credentials);
     } catch (err) {
         if (err.isJoi) {
