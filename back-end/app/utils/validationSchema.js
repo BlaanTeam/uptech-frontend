@@ -2,6 +2,19 @@ const joi = require("joi");
 const mongoose = require("mongoose");
 const { pattern } = require("../config/config");
 
+const objectId = (message, options) => {
+    return joi.string().custom((value, helper) => {
+        try {
+            let result = mongoose.Types.ObjectId(value);
+            return result;
+        } catch (err) {
+            return helper.message(message, {
+                ...options,
+            });
+        }
+    });
+};
+
 const validator = (schema, select = {}) => {
     const requiredFields = [];
     const optionalFields = [];
@@ -47,16 +60,7 @@ const authValidator = async (credentials, select) => {
                 .string()
                 .pattern(pattern.jwtToken)
                 .message("Please fill a valid token"),
-            userId: joi.string().custom((value, helper) => {
-                try {
-                    let result = mongoose.Types.ObjectId(value);
-                    return result;
-                } catch (err) {
-                    return helper.message("Account Not Found!", {
-                        postNotFound: true,
-                    });
-                }
-            }),
+            userId: objectId("Post Not Found!", { postNotFound: true }),
         });
         authSchema = validator(authSchema, select);
         return await authSchema.validateAsync(credentials);
@@ -74,16 +78,7 @@ const authValidator = async (credentials, select) => {
 const postValidator = async (credentials, select) => {
     try {
         let postSchema = joi.object({
-            postId: joi.string().custom((value, helper) => {
-                try {
-                    let result = mongoose.Types.ObjectId(value);
-                    return result;
-                } catch (err) {
-                    return helper.message("Post Not Found!", {
-                        postNotFound: true,
-                    });
-                }
-            }),
+            postId: objectId("Post Not Found!", { postNotFound: true }),
             content: joi.string().min(2).max(5000).trim(),
             isPrivate: joi.boolean().default(false),
             createdAt: joi.date().iso(),
@@ -107,22 +102,8 @@ const commentValidator = async (credentials, select) => {
             content: joi.string().trim(),
             isPrivate: joi.boolean().default(false),
             page: joi.number().greater(0).default(1),
-            postId: joi.string().custom((value, helper) => {
-                try {
-                    let result = mongoose.Types.ObjectId(value);
-                    return result;
-                } catch (err) {
-                    return helper.message("Post Not Found!");
-                }
-            }),
-            commentId: joi.string().custom((value, helper) => {
-                try {
-                    let result = mongoose.Types.ObjectId(value);
-                    return result;
-                } catch (err) {
-                    return helper.message("Comment Not Found!");
-                }
-            }),
+            postId: objectId("Post Not Found!", { postNotFound: true }),
+            commentId: objectId("Comment Not Found!", { postNotFound: true }),
         });
 
         commentSchema = validator(commentSchema, select);
