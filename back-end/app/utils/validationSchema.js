@@ -183,10 +183,32 @@ const followValidator = async (credentials, selectors) => {
     }
 };
 
+const chatValidator = async (credentials, selectors) => {
+    try {
+        chatSchema = joi.object({
+            convId: objectId("Conversation Doesn't Exist!"),
+            messageId: objectId("Message Doesn't Exist!"),
+            content: joi.string().max(50000).trim(),
+            userId: objectId("User Doesn't Exist !"),
+            page: joi.number().greater(0).default(1),
+        });
+        chatSchema = validator(chatSchema, selectors);
+        return await chatSchema.validateAsync(credentials);
+    } catch (err) {
+        if (err.isJoi) {
+            err.status = 400;
+            err.code = 1049;
+            // TODO add message in  production
+            // err.message = "Missing or invalid fields.";
+        }
+        throw err;
+    }
+};
 module.exports = {
     authValidator,
     postValidator,
     commentValidator,
     profileValidator,
     followValidator,
+    chatValidator,
 };
