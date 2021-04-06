@@ -33,16 +33,21 @@ conversationSchema.statics.initConversation = async function (
     userIds
 ) {
     try {
-        let availableConv = await this.findOne({
-            userIds: {
-                $size: userIds.length,
-                $all: [...userIds],
+        let availableConv = await this.findOne(
+            {
+                userIds: {
+                    $size: userIds.length,
+                    $all: [...userIds],
+                },
             },
-        });
+            {
+                _id: 1,
+            }
+        );
         if (availableConv) {
             return {
                 isNew: false,
-                convId: availableConv.doc_._id,
+                doc: availableConv,
             };
         }
 
@@ -50,9 +55,15 @@ conversationSchema.statics.initConversation = async function (
             initiator,
             userIds,
         });
+        newConv = await newConv
+            .populate({
+                path: "userIds",
+                select: "userName profile",
+            })
+            .execPopulate();
         return {
             isNew: true,
-            convId: newConv._doc._id,
+            doc: newConv,
         };
     } catch (err) {
         throw err;
@@ -63,6 +74,10 @@ const messageSchema = new Schema({
     content: {
         type: Schema.Types.Mixed,
         required: true,
+    },
+    type: {
+        type: String,
+        default: CONTENT_TYPES.TYPE_TEXT,
     },
     userId: {
         type: Schema.Types.ObjectId,
@@ -75,6 +90,7 @@ const messageSchema = new Schema({
     },
     readByRecipients: [
         {
+            _id: false,
             userId: {
                 type: Schema.Types.ObjectId,
                 ref: "users",
@@ -91,25 +107,6 @@ const messageSchema = new Schema({
         required: true,
     },
 });
-
-messageSchema.statics.createMessage = async function (
-    content,
-    type = CONTENT_TYPES.TYPE_TEXT.anchor,
-    userId,
-    convId
-) {
-    try {
-        let newMessage = await this.create({
-            content,
-            type,
-            userId,
-            convId,
-        });
-        return newMessage;
-    } catch (err) {
-        throw err;
-    }
-};
 
 module.exports = {
     Conversation: Model("conversations", conversationSchema),
