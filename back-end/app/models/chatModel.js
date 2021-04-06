@@ -1,19 +1,25 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
-const Model = mongoose.model;
+const { Schema, model: Model } = require("mongoose");
+
+const CONTENT_TYPES = {
+    TYPE_TEXT: "text",
+};
 
 const conversationSchema = new Schema({
-    userOne: {
+    userIds: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "users",
+        },
+    ],
+    initiator: {
         type: Schema.Types.ObjectId,
-        required: true,
         ref: "users",
-    },
-    userTwo: {
-        type: Schema.Types.ObjectId,
         required: true,
-        ref: "users",
     },
-    createdAt: {
+    read: {
+        type: Boolean,
+    },
+    timestamp: {
         type: Date,
         default: Date.now,
     },
@@ -24,26 +30,77 @@ const conversationSchema = new Schema({
         },
     ],
 });
+
+conversationSchema.statics.initConversation = async function (
+    initiator,
+    userIds
+) {
+    try {
+        let availableConv = await this.findOne({
+            userIds: {
+                $size: userIds.length,
+                $all: [...userIds],
+            },
+        });
+        if (availableConv) {
+            return {
+                isNew: false,
+                convId: availableConv.doc_._id,
+            };
+        }
+
+        let newConv = await this.create({
+            initiator,
+            userIds,
+        });
+        return {
+            isNew: true,
+            convId: newConv._doc._id,
+        };
+    } catch (err) {
+        throw err;
+    }
+};
+
 const messageSchema = new Schema({
     content: {
-        type: String,
+        type: Schema.Types.Mixed,
+        required: true,
+    },
+    userId: {
+        type: Schema.Types.ObjectId,
+        ref: "users",
         required: true,
     },
     createdAt: {
         type: Date,
         default: Date.now,
     },
-    userId: {
-        type: Schema.Types.ObjectId,
-        required: true,
-        ref: "users",
-    },
     convId: {
         type: Schema.Types.ObjectId,
-        required: true,
         ref: "conversations",
+        required: true,
     },
 });
+
+messageSchema.statics.createMessage = async function (
+    content,
+    type = CONTENT_TYPES.TYPE_TEXT.anchor,
+    userId,
+    convId
+) {
+    try {
+        let newMessage = await this.create({
+            content,
+            type,
+            userId,
+            convId,
+        });
+        return newMessage;
+    } catch (err) {
+        throw err;
+    }
+};
 
 module.exports = {
     Conversation: Model("conversations", conversationSchema),
