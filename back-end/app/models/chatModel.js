@@ -33,17 +33,22 @@ conversationSchema.statics.initConversation = async function (
     userIds
 ) {
     try {
-        let availableConv = await this.findOne(
+        let availableConv = await this.aggregate([
             {
-                userIds: {
-                    $size: userIds.length,
-                    $all: [...userIds],
+                $match: {
+                    userIds: {
+                        $size: userIds.length,
+                        $all: [...userIds],
+                    },
                 },
             },
             {
-                _id: 1,
-            }
-        );
+                $project: {
+                    _id: 1,
+                },
+            },
+        ]);
+        availableConv = availableConv[0];
         if (availableConv) {
             return {
                 isNew: false,
@@ -55,12 +60,6 @@ conversationSchema.statics.initConversation = async function (
             initiator,
             userIds,
         });
-        newConv = await newConv
-            .populate({
-                path: "userIds",
-                select: "userName profile",
-            })
-            .execPopulate();
         return {
             isNew: true,
             doc: newConv,
