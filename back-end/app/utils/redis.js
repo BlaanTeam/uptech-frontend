@@ -37,7 +37,10 @@ const isUserActive = async (userId) => {
 
 const addSession = async (userId, sessionId) => {
     try {
-        await client.sadd(`${userId.toString()}:sessions`, sessionId);
+        await client.sadd(
+            `${userId.toString()}:sessions`,
+            sessionId.toString()
+        );
     } catch (err) {
         throw err;
     }
@@ -65,7 +68,7 @@ const removeSession = async (userId, sessionId) => {
 const removeActiveUser = async (userId, sessionId) => {
     try {
         let sessions = await getSessions(userId);
-        if (sessions.length >= 1) {
+        if (sessions.length <= 1) {
             await client.srem("active_users", userId.toString());
             await removeSession(userId, sessionId);
         } else {
