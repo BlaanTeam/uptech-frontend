@@ -6,16 +6,32 @@ const io = require("socket.io")(null, {
     },
 });
 const { protectSocketIo } = require("../utils/middlewares");
-const client = require("./redis");
+const {
+    addActiveUser,
+    isUserActive,
+    addSession,
+    removeActiveUser,
+} = require("./redis");
 
 // check if the access token is passed in headers
 io.use(protectSocketIo);
 
-io.on("connection", (socket) => {
-    console.log("SocketIO Client Connected !");
-    socket.on("disconnect", () => {
-        console.log("SocketIO Client Disconnected !");
-        console.log(socket.id);
+io.on("connection", async (socket) => {
+    console.log("Client Connected !");
+    // check if the user is active
+    let isActive = await isUserActive(socket.currentUser._id);
+    if (isActive) {
+        // add session to active sessions
+        await addSession(socket.currentUser._id, socket.id);
+    } else {
+        // add new session & add user to online users
+        await addActiveUser(socket.currentUser._id);
+        await addSession(socket.currentUser._id, socket.id);
+    }
+    socket.on("disconnect", async () => {
+        console.log("Client Disconnected !");
+        // remove user from online users
+        await removeActiveUser(socket.currentUser._id, socket.id);
     });
 });
 
