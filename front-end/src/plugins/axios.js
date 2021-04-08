@@ -75,3 +75,4 @@ axios.interceptors.response.use(
 );
 
 Vue.prototype.$http = axios;
+export default axios;
