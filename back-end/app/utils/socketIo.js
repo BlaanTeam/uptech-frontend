@@ -6,6 +6,7 @@ const io = require("socket.io")(null, {
     },
 });
 const { protectSocketIo } = require("../utils/middlewares");
+const { typingEvent } = require("../controllers/socketEvents");
 const {
     addActiveUser,
     isUserActive,
@@ -18,6 +19,14 @@ io.use(protectSocketIo);
 
 io.on("connection", async (socket) => {
     console.log("Client Connected !");
+    // register events
+    socket.on("disconnect", async () => {
+        console.log("Client Disconnected !");
+        // remove user from online users
+        await removeActiveUser(socket.currentUser._id, socket.id);
+    });
+
+    socket.on("typing", async (data) => await typingEvent(socket, data));
     // check if the user is active
     let isActive = await isUserActive(socket.currentUser._id);
     if (isActive) {
@@ -28,11 +37,6 @@ io.on("connection", async (socket) => {
         await addActiveUser(socket.currentUser._id);
         await addSession(socket.currentUser._id, socket.id);
     }
-    socket.on("disconnect", async () => {
-        console.log("Client Disconnected !");
-        // remove user from online users
-        await removeActiveUser(socket.currentUser._id, socket.id);
-    });
 });
 
 io.on("error", (error) => {
