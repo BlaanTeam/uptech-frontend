@@ -284,8 +284,83 @@ const sendMessage = async (req, res, next) => {
 
 const getMessages = async (req, res, next) => {
     try {
-        // write logic here!
-        res.json({ message: "Hello There!" });
+        let params = await chatValidator(req.params, { convId: 1 });
+        let perPage = 10;
+        let conv = await Conversation.aggregate([
+            {
+                $match: {
+                    _id: params.convId,
+                },
+            },
+            {
+                $project: {
+                    _id: 1,
+                },
+            },
+            {
+                $lookup: {
+                    from: "messages",
+                    let: { convId: "$_id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $eq: ["$convId", "$$convId"],
+                                },
+                            },
+                        },
+                        {
+                            $sort: { createdAt: -1 },
+                        },
+                        {
+                            $limit: perPage,
+                        },
+                        {
+                            $sort: { createdAt: 1 },
+                        },
+                        {
+                            $lookup: {
+                                from: "users",
+                                let: { userId: "$userId" },
+                                pipeline: [
+                                    {
+                                        $match: {
+                                            $expr: {
+                                                $eq: ["$_id", "$$userId"],
+                                            },
+                                        },
+                                    },
+                                    {
+                                        $project: {
+                                            userName: 1,
+                                            profile: 1,
+                                        },
+                                    },
+                                ],
+                                as: "user",
+                            },
+                        },
+                        {
+                            $unwind: "$user",
+                        },
+                        {
+                            $project: {
+                                userId: 0,
+                                convId: 0,
+                                readByRecipients: 0,
+                                __v: 0,
+                            },
+                        },
+                    ],
+                    as: "messages",
+                },
+            },
+        ]);
+        conv = conv[0];
+        if (!conv) {
+            throw createError.NotFound();
+        }
+        res.json(conv.messages);
     } catch (err) {
         next(err);
     }
