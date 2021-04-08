@@ -266,7 +266,7 @@ const sendMessage = async (req, res, next) => {
                 },
             }
         );
-        let isActive = isUserActive(userId[0]);
+        let isActive = await isUserActive(userId[0]);
         if (isActive) {
             let sessionIds = await getSessions(userId[0]);
             sessionIds.forEach((id) => {
