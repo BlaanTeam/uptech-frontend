@@ -383,6 +383,22 @@ const getMessages = async (req, res, next) => {
                             $unwind: "$user",
                         },
                         {
+                            $addFields: {
+                                isOwner: {
+                                    $cond: [
+                                        {
+                                            $eq: [
+                                                "$user._id",
+                                                req.currentUser._id,
+                                            ],
+                                        },
+                                        true,
+                                        false,
+                                    ],
+                                },
+                            },
+                        },
+                        {
                             $project: {
                                 userId: 0,
                                 convId: 0,
