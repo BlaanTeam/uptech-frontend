@@ -293,8 +293,48 @@ const getMessages = async (req, res, next) => {
                 },
             },
             {
+                $addFields: {
+                    user: {
+                        $filter: {
+                            input: "$userIds",
+                            as: "array",
+                            cond: {
+                                $ne: ["$$array", req.currentUser._id],
+                            },
+                        },
+                    },
+                },
+            },
+            {
+                $unwind: "$user",
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    let: { userId: "$user" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $eq: ["$_id", "$$userId"],
+                                },
+                            },
+                        },
+                        {
+                            $project: {
+                                userName: 1,
+                                profile: 1,
+                            },
+                        },
+                    ],
+                    as: "user",
+                },
+            },
+            { $unwind: "$user" },
+            {
                 $project: {
                     _id: 1,
+                    user: 1,
                 },
             },
             {
@@ -360,7 +400,7 @@ const getMessages = async (req, res, next) => {
         if (!conv) {
             throw createError.NotFound();
         }
-        res.json(conv.messages);
+        res.json(conv);
     } catch (err) {
         next(err);
     }
