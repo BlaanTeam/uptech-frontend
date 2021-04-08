@@ -255,6 +255,7 @@ const sendMessage = async (req, res, next) => {
                 _id: params.convId,
             },
             {
+                timestamp: Date.now(),
                 $addToSet: {
                     messages: message._id,
                 },
