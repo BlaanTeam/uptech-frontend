@@ -27,6 +27,10 @@ const conversationSchema = new Schema({
         },
     ],
 });
+conversationSchema.index({
+    userIds: 1,
+    initiator: 1,
+});
 
 conversationSchema.statics.initConversation = async function (
     initiator,
