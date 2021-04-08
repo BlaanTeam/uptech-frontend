@@ -27,9 +27,7 @@ const initConversation = async (req, res, next) => {
             data.userId,
         ]);
         if (!conv.isNew) {
-            // redirect or return 304 Not Modified !
-            // res.status(304).end()
-            res.redirect(302, `chats/${conv.doc._id}/messages`);
+            res.json(conv.doc);
             return;
         } else if (!conv.doc) {
             throw createError.Forbidden();
