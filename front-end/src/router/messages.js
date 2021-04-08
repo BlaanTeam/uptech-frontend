@@ -10,6 +10,7 @@ export default [
     children: [
       {
         path: ":id",
+        name: "ViewMessages",
         component: () => import("@/components/Chat/Messages.vue"),
         meta: {
           title: "Chat"
