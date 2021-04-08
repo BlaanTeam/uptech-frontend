@@ -106,7 +106,10 @@ const messageSchema = new Schema({
         required: true,
     },
 });
-
+messageSchema.index({
+    convId: 1,
+    createdAt: 1,
+});
 module.exports = {
     Conversation: Model("conversations", conversationSchema),
     Message: Model("messages", messageSchema),
