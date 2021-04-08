@@ -60,7 +60,42 @@ const getConversations = async (req, res, next) => {
                     lastMessage: {
                         $arrayElemAt: ["$messages", -1],
                     },
+                    user: {
+                        $filter: {
+                            input: "$userIds",
+                            as: "array",
+                            cond: { $ne: ["$$array", currentUser._id] },
+                        },
+                    },
                 },
+            },
+            {
+                $unwind: "$user",
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    let: { userId: "$user" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $eq: ["$_id", "$$userId"],
+                                },
+                            },
+                        },
+                        {
+                            $project: {
+                                userName: 1,
+                                profile: 1,
+                            },
+                        },
+                    ],
+                    as: "user",
+                },
+            },
+            {
+                $unwind: "$user",
             },
             {
                 $lookup: {
@@ -131,6 +166,7 @@ const getConversations = async (req, res, next) => {
                             $project: {
                                 __v: 0,
                                 convId: 0,
+                                readByRecipients: 0,
                             },
                         },
                     ],
