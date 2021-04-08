@@ -4,8 +4,10 @@
       <v-card-title class="bg messages-box__header px-6">
         <div class="d-flex align-center">
           <img src="@/assets/images/avatar.svg" width="40" class="me-2" />
-          <h1 class="title">Jhon doe</h1>
-          <h3 class="mx-1">{{ parseInt(id) + 1 }}</h3>
+          <h1 class="title" v-if="user">
+            {{ user.userName + " " }}
+            {{ user.profile.firstName }}
+          </h1>
         </div>
         <div class="ms-auto">
           <v-btn icon class="me-4">
@@ -17,19 +19,19 @@
         </div>
       </v-card-title>
 
-      <v-card-text class="bg messages-box__messages d-flex">
-        <div v-for="item in $store.getters.currentMessages" :key="item.id">
+      <v-card-text class="bg messages-box__messages d-flex pt-4">
+        <div v-for="message in messages" :key="message.id">
           <div
-            v-if="item.received"
-            class="messages-box__messages__received message secondarybg darken-1"
-          >
-            <p>{{ item.received }}</p>
-          </div>
-          <div
-            v-if="item.sent"
+            v-if="message.isOwner"
             class="messages-box__messages__sent message primary darken-2"
           >
-            <p>{{ item.sent }}</p>
+            <p>{{ message.content }}</p>
+          </div>
+          <div
+            v-else
+            class="messages-box__messages__received message secondarybg darken-1"
+          >
+            <p>{{ message.content }}</p>
           </div>
         </div>
       </v-card-text>
@@ -51,7 +53,7 @@
           dense
           :rows="1"
           @keydown.enter.exact.prevent
-          @keyup.enter.exact="send()"
+          @keyup.enter.exact="sendMessage()"
           v-model="content.value"
         ></v-textarea>
         <div class="ms-n14">
@@ -78,16 +80,45 @@ export default {
   name: "messages-boxbox",
   components: { Emojis },
   data: () => ({
+    messages: [],
+    user: null,
+    convId: "",
     content: { value: "" },
     id: 0
   }),
   methods: {
-    send() {
+    async sendMessage() {
+      try {
+        let res = await this.$store.dispatch("sendMessage", {
+          convId: this.convId,
+          content: this.content.value
+        });
+        res.data.isOwner = true;
+        this.messages.push(res.data);
+        this.scrollBottom();
+      } catch (err) {
+        console.log(err);
+      }
+
       this.content.value = "";
+    },
+    scrollBottom() {
+      let messagesContainer = document.querySelector(".messages-box__messages");
+      setTimeout(() => {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      }, 0);
     }
   },
-  mounted() {
-    this.id = this.$route.params.id;
+  async created() {
+    this.convId = this.$route.params.id;
+    try {
+      let res = await this.$http.get(`/chats/${this.convId}/messages`);
+      console.log(res);
+      this.messages = res.data.messages;
+      this.user = res.data.user;
+    } catch (err) {
+      console.log(err);
+    }
   }
 };
 </script>
