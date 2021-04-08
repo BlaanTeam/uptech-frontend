@@ -98,7 +98,7 @@ conversationSchema.statics.initConversation = async function (
         if (availableConv) {
             return {
                 isNew: false,
-                doc: availableConv,
+                ...availableConv,
             };
         }
 
@@ -108,7 +108,7 @@ conversationSchema.statics.initConversation = async function (
         });
         return {
             isNew: true,
-            doc: newConv,
+            ...newConv._doc,
         };
     } catch (err) {
         throw err;

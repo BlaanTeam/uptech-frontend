@@ -27,12 +27,12 @@ const initConversation = async (req, res, next) => {
             data.userId,
         ]);
         if (!conv.isNew) {
-            res.json(conv.doc);
+            res.json(conv);
             return;
-        } else if (!conv.doc) {
+        } else if (!conv) {
             throw createError.Forbidden();
         }
-        res.json(conv.doc);
+        res.json(conv);
     } catch (err) {
         next(err);
     }
