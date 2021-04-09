@@ -19,7 +19,7 @@
         </div>
       </v-card-title>
 
-      <v-card-text class="bg messages-box__messages d-flex pt-4">
+      <v-card-text class="bg messages-box__messages d-flex pt-4 px-8">
         <div v-for="message in messages" :key="message.id">
           <div
             v-if="message.isOwner"
@@ -27,12 +27,16 @@
           >
             <p>{{ message.content }}</p>
           </div>
+
           <div
             v-else
             class="messages-box__messages__received message secondarybg darken-1"
           >
             <p>{{ message.content }}</p>
           </div>
+        </div>
+        <div v-if="typing" class="ps-2">
+          <Dots />
         </div>
       </v-card-text>
       <v-card-actions class="messages-box__actions bg px-6">
@@ -76,10 +80,11 @@
 
 <script>
 import Emojis from "@/components/Emojis.vue";
+import Dots from "@/components/Chat/DotsLoading";
 
 export default {
   name: "messages-boxbox",
-  components: { Emojis },
+  components: { Emojis, Dots },
   data: () => ({
     messages: [],
     user: null,
@@ -91,13 +96,17 @@ export default {
   }),
   sockets: {
     typing(data) {
-      if (this.$store.getters.currentConversationId == data.convId) {
-        clearTimeout(this.timeOutId);
-        this.typing = true;
-        this.timeOutId = setTimeout(() => {
-          this.typing = false;
-        }, 1000);
-      }
+      console.log("typing");
+      clearTimeout(this.timeOutId);
+      this.typing = true;
+      this.timeOutId = setTimeout(() => {
+        this.typing = false;
+      }, 2000);
+    },
+    message(data) {
+      data.isOwner = false;
+      this.messages.push(data);
+      this.scrollBottom();
     }
   },
   methods: {
@@ -139,6 +148,9 @@ export default {
     } catch (err) {
       console.log(err);
     }
+  },
+  mounted() {
+    this.scrollBottom();
   }
 };
 </script>
