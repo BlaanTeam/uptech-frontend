@@ -41,6 +41,25 @@ const initConversation = async (req, res, next) => {
 const getConversations = async (req, res, next) => {
     try {
         let currentUser = req.currentUser;
+        let query = await chatValidator(req.query, { createdAt: 2 });
+        let perPage = 20;
+        let matchQuery = {};
+        if (query.createdAt) {
+            matchQuery = {
+                $and: [
+                    { userIds: currentUser._id },
+                    { messages: { $elemMatch: { $exists: true } } },
+                    { timestamp: { $lt: query.createdAt } },
+                ],
+            };
+        } else {
+            matchQuery = {
+                $and: [
+                    { userIds: currentUser._id },
+                    { messages: { $elemMatch: { $exists: true } } },
+                ],
+            };
+        }
         let conv = await Conversation.aggregate([
             {
                 $sort: {
@@ -48,10 +67,10 @@ const getConversations = async (req, res, next) => {
                 },
             },
             {
-                $match: {
-                    userIds: currentUser._id,
-                    messages: { $elemMatch: { $exists: true } },
-                },
+                $match: matchQuery,
+            },
+            {
+                $limit: perPage,
             },
             {
                 $addFields: {
