@@ -1,6 +1,6 @@
 <template>
   <div class="messages-container">
-    <Conversations class="conversations" :conversations="items" />
+    <Conversations class="conversations" />
     <v-divider vertical></v-divider>
     <div
       v-if="!$route.params.id"
@@ -21,41 +21,7 @@ import Conversations from "@/components/Chat/Conversations.vue";
 import NewConversation from "@/components/Chat/NewConversation.vue";
 
 export default {
-  components: { Conversations, NewConversation },
-  data: () => ({
-    items: [
-      {
-        avatar: "https://cdn.vuetifyjs.com/images/lists/4.jpg",
-        title: "Camella cabello",
-        subtitle:
-          "Have any ideas about what we should get Heidi for her birthday?"
-      },
-      {
-        avatar: "https://cdn.vuetifyjs.com/images/lists/5.jpg",
-        title: "Debbie oien ",
-        subtitle:
-          "We should eat this: Grate, Squash, Corn, and tomatillo Tacos."
-      },
-      {
-        avatar: "https://cdn.vuetifyjs.com/images/lists/4.jpg",
-        title: "Camella cabello",
-        subtitle:
-          "Have any ideas about what we should get Heidi for her birthday?"
-      },
-      {
-        avatar: "https://cdn.vuetifyjs.com/images/lists/5.jpg",
-        title: "Debbie dorien ",
-        subtitle:
-          "We should eat this: Grate, Squash, Corn, and tomatillo Tacos."
-      },
-      {
-        avatar: "https://cdn.vuetifyjs.com/images/lists/4.jpg",
-        title: "Camella cabello",
-        subtitle:
-          "Have any ideas about what we should get Heidi for her birthday?"
-      }
-    ]
-  })
+  components: { Conversations, NewConversation }
 };
 </script>
 
