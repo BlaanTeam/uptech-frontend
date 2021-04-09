@@ -70,7 +70,7 @@
             :inputModel="content"
           />
         </div>
-        <v-btn class="mx-1" icon>
+        <v-btn class="mx-1" icon @click.prevent="sendMessage()">
           <v-icon color="primary">mdi-send</v-icon>
         </v-btn>
       </v-card-actions>
