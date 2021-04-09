@@ -284,7 +284,29 @@ const sendMessage = async (req, res, next) => {
 const getMessages = async (req, res, next) => {
     try {
         let params = await chatValidator(req.params, { convId: 1 });
-        let perPage = 10;
+        let perPage = 20;
+        let query = await chatValidator(req.query, { createdAt: 2 });
+        let matchQuery = {};
+        if (query.createdAt) {
+            matchQuery = {
+                $expr: {
+                    $and: [
+                        {
+                            $lt: ["$createdAt", query.createdAt],
+                        },
+                        {
+                            $eq: ["$convId", "$$convId"],
+                        },
+                    ],
+                },
+            };
+        } else {
+            matchQuery = {
+                $expr: {
+                    $eq: ["$convId", "$$convId"],
+                },
+            };
+        }
         let conv = await Conversation.aggregate([
             {
                 $match: {
@@ -342,11 +364,7 @@ const getMessages = async (req, res, next) => {
                     let: { convId: "$_id" },
                     pipeline: [
                         {
-                            $match: {
-                                $expr: {
-                                    $eq: ["$convId", "$$convId"],
-                                },
-                            },
+                            $match: matchQuery,
                         },
                         {
                             $sort: { createdAt: -1 },
