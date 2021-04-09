@@ -52,6 +52,7 @@
           auto-grow
           dense
           :rows="1"
+          @input="emitTyping"
           @keydown.enter.exact.prevent
           @keyup.enter.exact="sendMessage()"
           v-model="content.value"
@@ -84,9 +85,28 @@ export default {
     user: null,
     convId: "",
     content: { value: "" },
+    timeOutId: null,
+    typing: false,
     id: 0
   }),
+  sockets: {
+    typing(data) {
+      if (this.$store.getters.currentConversationId == data.convId) {
+        clearTimeout(this.timeOutId);
+        this.typing = true;
+        this.timeOutId = setTimeout(() => {
+          this.typing = false;
+        }, 1000);
+      }
+    }
+  },
   methods: {
+    emitTyping() {
+      this.$socket.emit("typing", {
+        convId: this.convId,
+        userId: this.user._id
+      });
+    },
     async sendMessage() {
       try {
         let res = await this.$store.dispatch("sendMessage", {

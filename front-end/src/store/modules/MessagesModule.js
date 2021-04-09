@@ -7,6 +7,7 @@ export default {
   },
   getters: {
     conversations: state => state.conversations,
+    currentConversationId: state => state.currentConversationId,
     currentConversation: state =>
       state.conversations[state.currentConversationId],
     currentMessages: (state, { currentConversation }) => {
