@@ -68,4 +68,11 @@ export default {
   width: 30%;
   z-index: 2;
 }
+
+.theme--dark .conv-list-item:hover {
+  background: #26272b !important;
+}
+.theme--light .conv-list-item:hover {
+  background: #dbd9d9 !important;
+}
 </style>
