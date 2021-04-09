@@ -191,6 +191,7 @@ const chatValidator = async (credentials, selectors) => {
             content: joi.string().max(50000).trim(),
             userId: objectId("User Doesn't Exist !"),
             page: joi.number().greater(0).default(1),
+            createdAt: joi.date().optional(),
         });
         chatSchema = validator(chatSchema, selectors);
         return await chatSchema.validateAsync(credentials);
