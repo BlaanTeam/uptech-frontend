@@ -478,10 +478,33 @@ const deleteMessage = async (req, res, next) => {
         next(err);
     }
 };
+const editMessage = async (req, res, next) => {
+    try {
+        let currentUser = req.currentUser;
+        let params = await chatValidator(req.params, { messageId: 1 });
+        let data = await chatValidator(req.body, { content: 1 });
+        let message = await Message.findOne(
+            { _id: params.messageId },
+            { _id: 1, userId: 1 }
+        );
+        if (!message) {
+            throw createError.NotFound();
+        } else if (message.userId.toString() !== currentUser._id.toString()) {
+            throw createError.Forbidden();
+        }
+        // update content of message
+        message.content = data.content;
+        message = await message.save();
+        res.json(message);
+    } catch (err) {
+        next(err);
+    }
+};
 module.exports = {
     initConversation,
     getConversations,
     sendMessage,
     getMessages,
     deleteMessage,
+    editMessage,
 };
