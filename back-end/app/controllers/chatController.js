@@ -41,6 +41,25 @@ const initConversation = async (req, res, next) => {
 const getConversations = async (req, res, next) => {
     try {
         let currentUser = req.currentUser;
+        let query = await chatValidator(req.query, { createdAt: 2 });
+        let perPage = 20;
+        let matchQuery = {};
+        if (query.createdAt) {
+            matchQuery = {
+                $and: [
+                    { userIds: currentUser._id },
+                    { messages: { $elemMatch: { $exists: true } } },
+                    { timestamp: { $lt: query.createdAt } },
+                ],
+            };
+        } else {
+            matchQuery = {
+                $and: [
+                    { userIds: currentUser._id },
+                    { messages: { $elemMatch: { $exists: true } } },
+                ],
+            };
+        }
         let conv = await Conversation.aggregate([
             {
                 $sort: {
@@ -48,10 +67,10 @@ const getConversations = async (req, res, next) => {
                 },
             },
             {
-                $match: {
-                    userIds: currentUser._id,
-                    messages: { $elemMatch: { $exists: true } },
-                },
+                $match: matchQuery,
+            },
+            {
+                $limit: perPage,
             },
             {
                 $addFields: {
@@ -284,7 +303,29 @@ const sendMessage = async (req, res, next) => {
 const getMessages = async (req, res, next) => {
     try {
         let params = await chatValidator(req.params, { convId: 1 });
-        let perPage = 10;
+        let perPage = 20;
+        let query = await chatValidator(req.query, { createdAt: 2 });
+        let matchQuery = {};
+        if (query.createdAt) {
+            matchQuery = {
+                $expr: {
+                    $and: [
+                        {
+                            $lt: ["$createdAt", query.createdAt],
+                        },
+                        {
+                            $eq: ["$convId", "$$convId"],
+                        },
+                    ],
+                },
+            };
+        } else {
+            matchQuery = {
+                $expr: {
+                    $eq: ["$convId", "$$convId"],
+                },
+            };
+        }
         let conv = await Conversation.aggregate([
             {
                 $match: {
@@ -342,11 +383,7 @@ const getMessages = async (req, res, next) => {
                     let: { convId: "$_id" },
                     pipeline: [
                         {
-                            $match: {
-                                $expr: {
-                                    $eq: ["$convId", "$$convId"],
-                                },
-                            },
+                            $match: matchQuery,
                         },
                         {
                             $sort: { createdAt: -1 },
@@ -421,9 +458,53 @@ const getMessages = async (req, res, next) => {
     }
 };
 
+const deleteMessage = async (req, res, next) => {
+    try {
+        let currentUser = req.currentUser;
+        let params = await chatValidator(req.params, { messageId: 1 });
+        let message = await Message.findOne(
+            { _id: params.messageId },
+            { _id: 1, userId: 1 }
+        );
+        if (!message) {
+            throw createError.NotFound();
+        } else if (message.userId.toString() !== currentUser._id.toString()) {
+            throw createError.Forbidden();
+        }
+        // remove it from messages
+        await message.remove();
+        res.status(204).end();
+    } catch (err) {
+        next(err);
+    }
+};
+const editMessage = async (req, res, next) => {
+    try {
+        let currentUser = req.currentUser;
+        let params = await chatValidator(req.params, { messageId: 1 });
+        let data = await chatValidator(req.body, { content: 1 });
+        let message = await Message.findOne(
+            { _id: params.messageId },
+            { _id: 1, userId: 1 }
+        );
+        if (!message) {
+            throw createError.NotFound();
+        } else if (message.userId.toString() !== currentUser._id.toString()) {
+            throw createError.Forbidden();
+        }
+        // update content of message
+        message.content = data.content;
+        message = await message.save();
+        res.json(message);
+    } catch (err) {
+        next(err);
+    }
+};
 module.exports = {
     initConversation,
     getConversations,
     sendMessage,
     getMessages,
+    deleteMessage,
+    editMessage,
 };
