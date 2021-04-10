@@ -1,8 +1,32 @@
 import axios from "../../plugins/axios";
 
+let handleConvs = (context, convId, user, data) => {
+  let convIndex = context.state.convIds.get(convId);
+
+  if (convIndex === undefined) {
+    let conv = {
+      _id: convId,
+      lastMessage: data,
+      timestamp: Date.now(),
+      user
+    };
+    context.commit("ADD_CONVERSATION", conv);
+  } else if (convIndex === 0) {
+    context.state.conversations[convIndex].lastMessage = data;
+    context.state.conversations[convIndex].timestamp = Date.now();
+  } else {
+    let conv = context.state.conversations[convIndex];
+    conv.lastMessage = data;
+    conv.timestamp = Date.now();
+    context.commit("REMOVE_CONVERSATION", convIndex);
+    context.commit("ADD_CONVERSATION", conv);
+  }
+};
+
 export default {
   state: {
     currentConversationId: 1,
+    convIds: new Map(),
     conversations: []
   },
   getters: {
@@ -24,6 +48,9 @@ export default {
     },
     ADD_CONVERSATION(state, conv) {
       state.conversations.unshift(conv);
+    },
+    ADD_CONV_ID(state, payload) {
+      state.convIds.set(payload._id, payload.index);
     }
   },
   actions: {
@@ -35,11 +62,6 @@ export default {
         axios
           .post(`/chats`, { userId: payload._id })
           .then(res => {
-            console.log(res.data);
-            // if (!res.isNew) res.user = payload;
-            res.data.user = payload;
-            res.data.lastMessage = { content: "New Conversation" };
-            context.state.conversations.unshift(res.data);
             resolve(res.data);
           })
           .catch(err => reject(err));
@@ -70,30 +92,21 @@ export default {
           .catch(err => reject(err));
       });
     },
-
-    sendMessage(context, { convId, content }) {
+    sendMessage(context, { convId, content, user }) {
       return new Promise((resolve, reject) => {
         axios
           .post(`/chats/${convId}/messages`, { content })
           .then(res => {
-            let length = context.state.conversations.length;
-            for (let i = 0; i < length; i++) {
-              if (context.state.conversations[i]._id === convId) {
-                let conv = context.state.conversations[i];
-                conv.lastMessage.content = res.data.content;
-                conv.timestamp = Date.now();
-                if (i === 0) break;
-                context.commit("REMOVE_CONVERSATION", i);
-                context.commit("ADD_CONVERSATION", conv);
-                break;
-              }
-            }
+            handleConvs(context, convId, user, res.data);
             resolve(res);
           })
           .catch(err => {
             reject(err);
           });
       });
+    },
+    generateConvIds(context, payload) {
+      context.commit("ADD_CONV_ID", payload);
     }
   }
 };

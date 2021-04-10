@@ -115,19 +115,17 @@ export default {
   methods: {
     async loadMessages($state) {
       this.convId = this.$route.params.id;
-
       try {
         let res = await this.$store.dispatch("getMessages", {
           createdAt: this.createdAt,
           convId: this.convId
         });
-
+        if (!this.user) this.user = res.user;
         if (res.messages.length) {
           let lastMessage = res.messages[0];
           this.createdAt = lastMessage.createdAt;
 
           this.messages.unshift(...res.messages);
-          if (!this.user) this.user = res.user;
 
           $state.loaded();
         } else {
@@ -145,10 +143,12 @@ export default {
       });
     },
     async sendMessage() {
+      console.log("sending messgae: ", this.user);
       try {
         let res = await this.$store.dispatch("sendMessage", {
           convId: this.convId,
-          content: this.content.value
+          content: this.content.value,
+          user: this.user
         });
         res.data.isOwner = true;
         this.messages.push(res.data);

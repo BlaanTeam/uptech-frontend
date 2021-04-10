@@ -13,7 +13,12 @@
       <v-divider></v-divider>
     </div>
     <v-list class="bg " height="80%">
-      <div v-for="conv in conversations" :key="conv._id" class="conv-list-item">
+      <div
+        v-for="(conv, i) in conversations"
+        :key="conv._id"
+        class="conv-list-item"
+      >
+        <span v-if="generateConvIds(conv._id, i)"></span>
         <router-link :to="{ name: 'ViewMessages', params: { id: conv._id } }">
           <v-list-item class="py-1">
             <v-list-item-avatar>
@@ -68,6 +73,9 @@ export default {
         $state.error();
         console.log(err);
       }
+    },
+    async generateConvIds(_id, index) {
+      await this.$store.dispatch("generateConvIds", { _id, index });
     }
   },
   computed: {
