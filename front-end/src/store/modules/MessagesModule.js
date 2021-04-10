@@ -17,7 +17,7 @@ export default {
   },
   mutations: {
     INIT_CONVERSATIONS(state, payload) {
-      state.conversations = payload;
+      state.conversations.push(...payload);
     },
     REMOVE_CONVERSATION(state, index) {
       state.conversations.splice(index, 1);
@@ -45,10 +45,12 @@ export default {
           .catch(err => reject(err));
       });
     },
-    getConversations(context) {
+    getConversations(context, { createdAt }) {
+      let path = `/chats`;
+      if (createdAt) path += `?createdAt=${createdAt}`;
       return new Promise((resolve, reject) => {
         axios
-          .get("/chats")
+          .get(path)
           .then(res => {
             context.commit("INIT_CONVERSATIONS", res.data);
             resolve(res.data);
@@ -79,7 +81,7 @@ export default {
               if (context.state.conversations[i]._id === convId) {
                 let conv = context.state.conversations[i];
                 conv.lastMessage.content = res.data.content;
-                conv.timestamp = Date.now()
+                conv.timestamp = Date.now();
                 if (i === 0) break;
                 context.commit("REMOVE_CONVERSATION", i);
                 context.commit("ADD_CONVERSATION", conv);

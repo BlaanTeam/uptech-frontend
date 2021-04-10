@@ -39,6 +39,7 @@
         </router-link>
         <v-divider></v-divider>
       </div>
+      <infinite-loading @infinite="loadConversations"> </infinite-loading>
     </v-list>
   </div>
 </template>
@@ -46,14 +47,33 @@
 <script>
 export default {
   name: "Conversations",
+  data: () => ({
+    createdAt: null
+  }),
+  methods: {
+    async loadConversations($state) {
+      try {
+        let conversations = await this.$store.dispatch("getConversations", {
+          createdAt: this.createdAt
+        });
 
+        if (conversations.length) {
+          let lastConv = conversations[conversations.length - 1];
+          this.createdAt = lastConv.timestamp;
+          $state.loaded();
+        } else {
+          $state.complete();
+        }
+      } catch (err) {
+        $state.error();
+        console.log(err);
+      }
+    }
+  },
   computed: {
     conversations() {
       return this.$store.getters.conversations;
     }
-  },
-  created() {
-    let res = this.$store.dispatch("getConversations");
   }
 };
 </script>
