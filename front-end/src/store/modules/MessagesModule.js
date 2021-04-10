@@ -56,6 +56,19 @@ export default {
           .catch(err => reject(err));
       });
     },
+    getMessages(context, { createdAt, convId }) {
+      let path = `/chats/${convId}/messages`;
+      if (createdAt) path += `?createdAt=${createdAt}`;
+      return new Promise((resolve, reject) => {
+        axios
+          .get(path)
+          .then(res => {
+            resolve(res.data);
+          })
+          .catch(err => reject(err));
+      });
+    },
+
     sendMessage(context, { convId, content }) {
       return new Promise((resolve, reject) => {
         axios

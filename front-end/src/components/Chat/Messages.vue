@@ -20,6 +20,8 @@
       </v-card-title>
 
       <v-card-text class="bg messages-box__messages d-flex pt-4 px-8">
+        <infinite-loading direction="top" @infinite="loadMessages">
+        </infinite-loading>
         <div v-for="message in messages" :key="message.id">
           <div
             v-if="message.isOwner"
@@ -39,6 +41,7 @@
           <Dots />
         </div>
       </v-card-text>
+
       <v-card-actions class="messages-box__actions bg px-6">
         <v-btn icon>
           <v-icon color="primary">mdi-plus-box</v-icon>
@@ -92,7 +95,7 @@ export default {
     content: { value: "" },
     timeOutId: null,
     typing: false,
-    id: 0
+    createdAt: null
   }),
   sockets: {
     typing(data) {
@@ -110,6 +113,31 @@ export default {
     }
   },
   methods: {
+    async loadMessages($state) {
+      this.convId = this.$route.params.id;
+
+      try {
+        let res = await this.$store.dispatch("getMessages", {
+          createdAt: this.createdAt,
+          convId: this.convId
+        });
+
+        if (res.messages.length) {
+          let lastMessage = res.messages[0];
+          this.createdAt = lastMessage.createdAt;
+
+          this.messages.unshift(...res.messages);
+          if (!this.user) this.user = res.user;
+
+          $state.loaded();
+        } else {
+          $state.complete();
+        }
+      } catch (err) {
+        $state.error();
+        console.log(err);
+      }
+    },
     emitTyping() {
       this.$socket.emit("typing", {
         convId: this.convId,
@@ -138,17 +166,7 @@ export default {
       }, 0);
     }
   },
-  async created() {
-    this.convId = this.$route.params.id;
-    try {
-      let res = await this.$http.get(`/chats/${this.convId}/messages`);
-      console.log(res);
-      this.messages = res.data.messages;
-      this.user = res.data.user;
-    } catch (err) {
-      console.log(err);
-    }
-  },
+
   mounted() {
     this.scrollBottom();
   }
