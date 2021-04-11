@@ -349,6 +349,7 @@ const sendMessage = async (req, res, next) => {
 
 const getMessages = async (req, res, next) => {
     try {
+        let currentUser = req.currentUser;
         let params = await chatValidator(req.params, { convId: 1 });
         let perPage = 20;
         let query = await chatValidator(req.query, { createdAt: 2 });
@@ -468,6 +469,32 @@ const getMessages = async (req, res, next) => {
                         },
                         {
                             $addFields: {
+                                read: {
+                                    $cond: [
+                                        {
+                                            $eq: [
+                                                {
+                                                    $size: {
+                                                        $filter: {
+                                                            input:
+                                                                "$readByRecipients",
+                                                            as: "array",
+                                                            cond: {
+                                                                $eq: [
+                                                                    "$$array.userId",
+                                                                    currentUser._id,
+                                                                ],
+                                                            },
+                                                        },
+                                                    },
+                                                },
+                                                1,
+                                            ],
+                                        },
+                                        true,
+                                        false,
+                                    ],
+                                },
                                 isOwner: {
                                     $cond: [
                                         {
