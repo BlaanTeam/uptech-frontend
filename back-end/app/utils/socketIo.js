@@ -6,7 +6,7 @@ const io = require("socket.io")(null, {
     },
 });
 const { protectSocketIo } = require("../utils/middlewares");
-const { typingEvent } = require("../controllers/socketEvents");
+const { typingEvent, markReadEvent } = require("../controllers/socketEvents");
 const {
     addActiveUser,
     isUserActive,
@@ -25,8 +25,8 @@ io.on("connection", async (socket) => {
         // remove user from online users
         await removeActiveUser(socket.currentUser._id, socket.id);
     });
-
     socket.on("typing", async (data) => await typingEvent(socket, data));
+    socket.on("mark-read", async (data) => await markReadEvent(socket, data));
     // check if the user is active
     let isActive = await isUserActive(socket.currentUser._id);
     if (isActive) {

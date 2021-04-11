@@ -1,5 +1,7 @@
+const { Message } = require("../models/chatModel");
 const { isUserActive, getSessions } = require("../utils/redis");
 const { chatValidator } = require("../utils/validationSchema");
+const createError = require("http-errors");
 // handle socket.io events here
 const typingEvent = async (socket, payload) => {
     try {
@@ -18,6 +20,110 @@ const typingEvent = async (socket, payload) => {
     }
 };
 
+const markReadEvent = async (socket, payload) => {
+    try {
+        let currentUser = socket.currentUser;
+        let data = await chatValidator(payload, { messageId: 1, userId: 1 });
+        console.log(data);
+        let message = await Message.aggregate([
+            {
+                $match: {
+                    _id: data.messageId,
+                },
+            },
+            {
+                $addFields: {
+                    read: {
+                        $cond: [
+                            {
+                                $eq: [
+                                    {
+                                        $size: {
+                                            $filter: {
+                                                input: "$readByRecipients",
+                                                as: "array",
+                                                cond: {
+                                                    $eq: [
+                                                        "$$array.userId",
+                                                        currentUser._id,
+                                                    ],
+                                                },
+                                            },
+                                        },
+                                    },
+                                    1,
+                                ],
+                            },
+                            true,
+                            false,
+                        ],
+                    },
+                },
+            },
+            {
+                $lookup: {
+                    from: "conversations",
+                    let: { convId: "$convId" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $and: [
+                                        { $eq: ["$_id", "$$convId"] },
+                                        { $in: [data.userId, "$userIds"] },
+                                    ],
+                                },
+                            },
+                        },
+                        {
+                            $project: {
+                                _id: 1,
+                            },
+                        },
+                    ],
+                    as: "conv",
+                },
+            },
+            {
+                $unwind: "$conv",
+            },
+            {
+                $project: {
+                    __v: 0,
+                    readByRecipients: 0,
+                    convId: 0,
+                },
+            },
+        ]);
+        message = message[0];
+        if (message) {
+            console.log(message);
+            if (!message.read) {
+                await Message.findOneAndUpdate(
+                    {
+                        _id: message._id,
+                    },
+                    {
+                        $addToSet: {
+                            readByRecipients: { userId: data.userId },
+                        },
+                    },
+                    {
+                        projection: {
+                            _id: 1,
+                        },
+                    }
+                );
+            }
+        } else {
+            // TODO: throw valid error
+            throw new Error();
+        }
+    } catch (err) {
+        socket.emit("error", err);
+    }
+};
 module.exports = {
     typingEvent,
+    markReadEvent,
 };
