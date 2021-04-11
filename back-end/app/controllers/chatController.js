@@ -250,6 +250,15 @@ const sendMessage = async (req, res, next) => {
                             input: "$userIds",
                             as: "array",
                             cond: {
+                                $eq: ["$$array", currentUser._id],
+                            },
+                        },
+                    },
+                    otherUserId: {
+                        $filter: {
+                            input: "$userIds",
+                            as: "array",
+                            cond: {
                                 $ne: ["$$array", currentUser._id],
                             },
                         },
@@ -257,6 +266,7 @@ const sendMessage = async (req, res, next) => {
                 },
             },
             { $unwind: "$userId" },
+            { $unwind: "$otherUserId" },
             {
                 $lookup: {
                     from: "users",
@@ -291,6 +301,7 @@ const sendMessage = async (req, res, next) => {
             },
         ]);
         conv = conv[0];
+        console.log(conv);
         if (!conv) {
             throw createError.NotFound();
         } else if (!conv.isOwner) {
@@ -320,9 +331,9 @@ const sendMessage = async (req, res, next) => {
             }
         );
         conv.lastMessage = message;
-        let isActive = await isUserActive(conv.user._id);
+        let isActive = await isUserActive(conv.otherUserId);
         if (isActive) {
-            let sessionIds = await getSessions(conv.user._id);
+            let sessionIds = await getSessions(conv.otherUserId);
             sessionIds.forEach((id) => {
                 socket.to(id);
             });
