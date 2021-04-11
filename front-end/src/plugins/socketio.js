@@ -6,7 +6,7 @@ import io from "socket.io-client";
 Vue.use(
   new VueSocket({
     debug: true,
-    connection: io("http://localhost:5000", {
+    connection: io("https://whispering-peak-15342.herokuapp.com", {
       autoConnect: false,
       extraHeaders: {
         "x-auth-token": store.getters.getToken
