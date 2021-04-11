@@ -301,7 +301,6 @@ const sendMessage = async (req, res, next) => {
             },
         ]);
         conv = conv[0];
-        console.log(conv);
         if (!conv) {
             throw createError.NotFound();
         } else if (!conv.isOwner) {
@@ -314,7 +313,6 @@ const sendMessage = async (req, res, next) => {
             convId: conv._id,
             readByRecipients: [{ userId: currentUser._id }],
         });
-        message.read = false;
         await Conversation.findOneAndUpdate(
             {
                 _id: params.convId,
@@ -331,7 +329,10 @@ const sendMessage = async (req, res, next) => {
                 },
             }
         );
-        conv.lastMessage = message;
+        let lastMessage = { ...message };
+        lastMessage.read = false;
+        lastMessage.isOwner = false;
+        conv.lastMessage = lastMessage;
         let isActive = await isUserActive(conv.otherUserId);
         if (isActive) {
             let sessionIds = await getSessions(conv.otherUserId);
