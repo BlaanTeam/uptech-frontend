@@ -393,9 +393,7 @@ const getMessages = async (req, res, next) => {
                     },
                 },
             },
-            {
-                $unwind: "$user",
-            },
+            { $unwind: "$user" },
             {
                 $lookup: {
                     from: "users",
@@ -428,7 +426,7 @@ const getMessages = async (req, res, next) => {
             {
                 $lookup: {
                     from: "messages",
-                    let: { convId: "$_id" },
+                    let: { convId: "$_id", otherUser: "$user._id" },
                     pipeline: [
                         {
                             $match: matchQuery,
@@ -470,29 +468,22 @@ const getMessages = async (req, res, next) => {
                         {
                             $addFields: {
                                 read: {
-                                    $cond: [
+                                    $ne: [
                                         {
-                                            $eq: [
-                                                {
-                                                    $size: {
-                                                        $filter: {
-                                                            input:
-                                                                "$readByRecipients",
-                                                            as: "array",
-                                                            cond: {
-                                                                $eq: [
-                                                                    "$$array.userId",
-                                                                    currentUser._id,
-                                                                ],
-                                                            },
-                                                        },
+                                            $size: {
+                                                $filter: {
+                                                    input: "$readByRecipients",
+                                                    as: "array",
+                                                    cond: {
+                                                        $eq: [
+                                                            "$$array.userId",
+                                                            "$$otherUser",
+                                                        ],
                                                     },
                                                 },
-                                                1,
-                                            ],
+                                            },
                                         },
-                                        true,
-                                        false,
+                                        0,
                                     ],
                                 },
                                 isOwner: {
