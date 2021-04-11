@@ -97,7 +97,6 @@ const markReadEvent = async (socket, payload) => {
         ]);
         message = message[0];
         if (message) {
-            console.log(message);
             if (!message.read) {
                 await Message.findOneAndUpdate(
                     {
@@ -114,6 +113,7 @@ const markReadEvent = async (socket, payload) => {
                         },
                     }
                 );
+                socket.emit("read", { messageId: message._id });
             }
         } else {
             // TODO: throw valid error
