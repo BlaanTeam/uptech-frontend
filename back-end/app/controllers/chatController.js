@@ -314,6 +314,7 @@ const sendMessage = async (req, res, next) => {
             convId: conv._id,
             readByRecipients: [{ userId: currentUser._id }],
         });
+        message.read = false;
         await Conversation.findOneAndUpdate(
             {
                 _id: params.convId,
