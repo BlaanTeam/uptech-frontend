@@ -94,6 +94,9 @@ export default {
           });
       });
     },
+    async receiveMessage(context, { convId, user, lastMessage }) {
+      handleConvs(context, convId, user, lastMessage);
+    },
     generateConvIds(context, payload) {
       context.commit("ADD_CONV_ID", payload);
     }
