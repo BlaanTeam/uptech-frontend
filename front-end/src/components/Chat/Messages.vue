@@ -19,23 +19,11 @@
         </div>
       </v-card-title>
 
-      <v-card-text class="bg messages-box__messages d-flex pt-4 px-8">
+      <v-card-text class="bg messages-box__messages d-flex pt-4 px-6">
         <infinite-loading direction="top" @infinite="loadMessages">
         </infinite-loading>
         <div v-for="message in messages" :key="message.id">
-          <div
-            v-if="message.isOwner"
-            class="messages-box__messages__sent message primary darken-2"
-          >
-            <p>{{ message.content }}</p>
-          </div>
-
-          <div
-            v-else
-            class="messages-box__messages__received message secondarybg darken-1"
-          >
-            <p>{{ message.content }}</p>
-          </div>
+          <Message :message="message" />
         </div>
         <div v-if="typing" class="ps-2">
           <Dots />
@@ -84,10 +72,11 @@
 <script>
 import Emojis from "@/components/Emojis.vue";
 import Dots from "@/components/Chat/DotsLoading";
+import Message from "@/components/Chat/Message";
 
 export default {
   name: "messages-boxbox",
-  components: { Emojis, Dots },
+  components: { Emojis, Dots, Message },
   data: () => ({
     messages: [],
     user: null,
@@ -172,10 +161,6 @@ export default {
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
       }, 0);
     }
-  },
-
-  mounted() {
-    this.scrollBottom();
   }
 };
 </script>
@@ -193,28 +178,11 @@ export default {
     padding-top: 64px;
   }
   &__messages {
+    width: 100%;
     height: 90%;
     flex-direction: column;
-    padding: 30px 10px;
+    padding: 30px 0px;
     overflow-y: auto;
-    .message {
-      clear: both;
-      padding: 10px;
-      max-width: 70%;
-      margin: 4px 0;
-      p {
-        margin: 0;
-      }
-    }
-    &__received {
-      border-radius: 0 10px 10px 10px;
-      float: left;
-    }
-    &__sent {
-      border-radius: 10px 0 10px 10px;
-      float: right;
-      color: #d8d8d8;
-    }
   }
   &__actions {
     box-shadow: 0px -3px 10px rgba(0, 0, 0, 0.2);
