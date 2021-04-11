@@ -4,9 +4,7 @@ const { chatValidator } = require("../utils/validationSchema");
 const typingEvent = async (socket, payload) => {
     try {
         let data = await chatValidator(payload, { userId: 1, convId: 1 });
-        console.log(data);
         let isActive = await isUserActive(data.userId);
-        console.log(isActive);
         if (isActive) {
             let sessionIds = await getSessions(data.userId);
             sessionIds.forEach((id) => {
@@ -16,7 +14,7 @@ const typingEvent = async (socket, payload) => {
             socket.emit("typing", { convId: data.convId });
         }
     } catch (err) {
-        console.log(err);
+        socket.emit("error", err);
     }
 };
 
