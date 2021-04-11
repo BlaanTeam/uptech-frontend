@@ -32,6 +32,9 @@ Vue.use(VEmojiPicker);
 
 Vue.prototype.$theme = vuetify.framework.theme;
 Vue.prototype.$pattern = patterns;
+Vue.prototype.soundEffect = new Audio(
+  "https://static.xx.fbcdn.net/rsrc.php/yy/r/XFhtdTsftOC.ogg"
+);
 Vue.config.productionTip = false;
 new Vue({
   computed: {

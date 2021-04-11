@@ -57,6 +57,7 @@ export default {
   }),
   sockets: {
     async message(data) {
+      this.soundEffect.play()
       await this.$store.dispatch("receiveMessage", {
         convId: data._id,
         user: data.user,
