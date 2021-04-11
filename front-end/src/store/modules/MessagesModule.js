@@ -1,22 +1,22 @@
 import axios from "../../plugins/axios";
 
-let handleConvs = (context, convId, user, data) => {
+let handleConvs = (context, convId, user, lastMessage) => {
   let convIndex = context.state.convIds.get(convId);
 
   if (convIndex === undefined) {
     let conv = {
       _id: convId,
-      lastMessage: data,
+      lastMessage: lastMessage,
       timestamp: Date.now(),
       user
     };
     context.commit("ADD_CONVERSATION", conv);
   } else if (convIndex === 0) {
-    context.state.conversations[convIndex].lastMessage = data;
+    context.state.conversations[convIndex].lastMessage = lastMessage;
     context.state.conversations[convIndex].timestamp = Date.now();
   } else {
     let conv = context.state.conversations[convIndex];
-    conv.lastMessage = data;
+    conv.lastMessage = lastMessage;
     conv.timestamp = Date.now();
     context.commit("REMOVE_CONVERSATION", convIndex);
     context.commit("ADD_CONVERSATION", conv);
@@ -29,7 +29,7 @@ export default {
     conversations: []
   },
   getters: {
-    conversations: state => state.conversations,
+    conversations: state => state.conversations
   },
   mutations: {
     INIT_CONVERSATIONS(state, payload) {
