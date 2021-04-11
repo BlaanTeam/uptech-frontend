@@ -92,6 +92,7 @@ export default {
         axios
           .post(`/chats/${convId}/messages`, { content })
           .then(res => {
+            res.data.read = false;
             handleConvs(context, convId, user, res.data);
             resolve(res);
           })
