@@ -245,11 +245,48 @@ const sendMessage = async (req, res, next) => {
                             false,
                         ],
                     },
+                    userId: {
+                        $filter: {
+                            input: "$userIds",
+                            as: "array",
+                            cond: {
+                                $ne: ["$$array", currentUser._id],
+                            },
+                        },
+                    },
                 },
+            },
+            { $unwind: "$userId" },
+            {
+                $lookup: {
+                    from: "users",
+                    let: { userId: "$userId" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $eq: ["$_id", "$$userId"],
+                                },
+                            },
+                        },
+                        {
+                            $project: {
+                                userName: 1,
+                                profile: 1,
+                            },
+                        },
+                    ],
+                    as: "user",
+                },
+            },
+            {
+                $unwind: "$user",
             },
             {
                 $project: {
                     __v: 0,
+                    userIds: 0,
+                    messages: 0,
                 },
             },
         ]);
@@ -260,16 +297,13 @@ const sendMessage = async (req, res, next) => {
             // check if the user is the owner of this conversation
             throw createError.Forbidden();
         }
-        let userId = conv.userIds.filter(
-            (id) => id.toString() !== currentUser._id.toString()
-        );
         let message = await Message.create({
             content: data.content,
             userId: currentUser._id,
             convId: conv._id,
             readByRecipients: [{ userId: currentUser._id }],
         });
-        conv = await Conversation.findOneAndUpdate(
+        await Conversation.findOneAndUpdate(
             {
                 _id: params.convId,
             },
@@ -285,14 +319,15 @@ const sendMessage = async (req, res, next) => {
                 },
             }
         );
-        let isActive = await isUserActive(userId[0]);
+        conv.lastMessage = message;
+        let isActive = await isUserActive(conv.user._id);
         if (isActive) {
-            let sessionIds = await getSessions(userId[0]);
+            let sessionIds = await getSessions(conv.user._id);
             sessionIds.forEach((id) => {
                 socket.to(id);
             });
             // emit the message event
-            socket.emit("message", message);
+            socket.emit("message", conv);
         }
         res.json(message);
     } catch (err) {
