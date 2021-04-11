@@ -25,19 +25,11 @@ let handleConvs = (context, convId, user, data) => {
 
 export default {
   state: {
-    currentConversationId: 1,
     convIds: new Map(),
     conversations: []
   },
   getters: {
     conversations: state => state.conversations,
-    currentConversationId: state => state.currentConversationId,
-    currentConversation: state =>
-      state.conversations[state.currentConversationId],
-    currentMessages: (state, { currentConversation }) => {
-      const conversation = currentConversation.id;
-      return state.messages[conversation].messages;
-    }
   },
   mutations: {
     INIT_CONVERSATIONS(state, payload) {
@@ -54,9 +46,6 @@ export default {
     }
   },
   actions: {
-    changeConversation(context, payload) {
-      context.state.currentConversationId = payload.id;
-    },
     initiateNewConversation(context, payload) {
       return new Promise((resolve, reject) => {
         axios
