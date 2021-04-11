@@ -99,17 +99,25 @@ export default {
   }),
   sockets: {
     typing(data) {
-      console.log("typing");
-      clearTimeout(this.timeOutId);
-      this.typing = true;
-      this.timeOutId = setTimeout(() => {
-        this.typing = false;
-      }, 2000);
+      if (this.currentConvId === data.convId) {
+        clearTimeout(this.timeOutId);
+        this.typing = true;
+        this.timeOutId = setTimeout(() => {
+          this.typing = false;
+        }, 2000);
+      }
     },
-    message(data) {
-      data.isOwner = false;
-      this.messages.push(data);
-      this.scrollBottom();
+    async message(data) {
+      if (this.currentConvId === data._id) {
+        data.isOwner = false;
+        this.messages.push(data.lastMessage);
+        this.scrollBottom();
+      }
+    }
+  },
+  computed: {
+    currentConvId() {
+      return this.$route.params.id;
     }
   },
   methods: {
@@ -143,7 +151,6 @@ export default {
       });
     },
     async sendMessage() {
-      console.log("sending messgae: ", this.user);
       try {
         let res = await this.$store.dispatch("sendMessage", {
           convId: this.convId,
