@@ -97,6 +97,15 @@ const markReadEvent = async (socket, payload) => {
         ]);
         message = message[0];
         if (message) {
+            let isActive = await isUserActive(message.userId);
+            if (isActive) {
+                let sessionIds = await getSessions(message.userId);
+                sessionIds.forEach((id) => {
+                    socket.to(id);
+                });
+                // emit the message event
+                socket.emit("read", { messageId: message._id });
+            }
             if (!message.read) {
                 await Message.findOneAndUpdate(
                     {
@@ -113,7 +122,6 @@ const markReadEvent = async (socket, payload) => {
                         },
                     }
                 );
-                socket.emit("read", { messageId: message._id });
             }
         } else {
             // TODO: throw valid error
