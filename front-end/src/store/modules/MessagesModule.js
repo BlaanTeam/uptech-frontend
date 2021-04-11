@@ -25,6 +25,7 @@ let handleConvs = (context, convId, user, lastMessage) => {
 
 export default {
   state: {
+    createdAt: null,
     convIds: new Map(),
     conversations: []
   },
@@ -56,14 +57,19 @@ export default {
           .catch(err => reject(err));
       });
     },
-    getConversations(context, { createdAt }) {
+    getConversations(context) {
       let path = `/chats`;
-      if (createdAt) path += `?createdAt=${createdAt}`;
+      if (context.state.createdAt)
+        path += `?createdAt=${context.state.createdAt}`;
       return new Promise((resolve, reject) => {
         axios
           .get(path)
           .then(res => {
-            context.commit("INIT_CONVERSATIONS", res.data);
+            if (res.data.length) {
+              let lastConv = res.data[res.data.length - 1];
+              context.state.createdAt = lastConv.timestamp;
+              context.commit("INIT_CONVERSATIONS", res.data);
+            }
             resolve(res.data);
           })
           .catch(err => reject(err));

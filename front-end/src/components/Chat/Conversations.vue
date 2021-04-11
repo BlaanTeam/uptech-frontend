@@ -52,12 +52,9 @@
 <script>
 export default {
   name: "Conversations",
-  data: () => ({
-    createdAt: null
-  }),
   sockets: {
     async message(data) {
-      this.soundEffect.play()
+      this.soundEffect.play();
       await this.$store.dispatch("receiveMessage", {
         convId: data._id,
         user: data.user,
@@ -68,13 +65,8 @@ export default {
   methods: {
     async loadConversations($state) {
       try {
-        let conversations = await this.$store.dispatch("getConversations", {
-          createdAt: this.createdAt
-        });
-
+        let conversations = await this.$store.dispatch("getConversations");
         if (conversations.length) {
-          let lastConv = conversations[conversations.length - 1];
-          this.createdAt = lastConv.timestamp;
           $state.loaded();
         } else {
           $state.complete();
