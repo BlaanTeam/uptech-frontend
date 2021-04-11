@@ -55,6 +55,15 @@ export default {
   data: () => ({
     createdAt: null
   }),
+  sockets: {
+    async message(data) {
+      await this.$store.dispatch("receiveMessage", {
+        convId: data._id,
+        user: data.user,
+        lastMessage: data.lastMessage
+      });
+    }
+  },
   methods: {
     async loadConversations($state) {
       try {
