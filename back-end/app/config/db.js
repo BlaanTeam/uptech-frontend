@@ -3,12 +3,14 @@ const {
     db: { dbHost, dbUser, dbPass, dbName },
 } = require("./config");
 
-const isDev = process.env.ENV === "development" ? true : false;
+const isDnsSrvEnabled =
+    process.env.DB_DNS_SRV.toLowerCase() === 'enabled' ? true : false;
 
 const dbURI = `mongodb${
-    !isDev ? "+srv" : ""
+    isDnsSrvEnabled ? "+srv" : ""
 }://${dbUser}:${dbPass}@${dbHost}/${dbName}?authSource=admin&retryWrites=true&w=majority`;
 
+console.log(dbURI);
 mongoose.set("useCreateIndex", true);
 mongoose.connect(dbURI, {
     useNewUrlParser: true,
