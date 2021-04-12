@@ -3,7 +3,7 @@ import axios from "axios";
 import i18n from "./i18n";
 import store from "../store/index";
 
-axios.defaults.baseURL = "http://localhost:5000/api/v1/";
+axios.defaults.baseURL = "https://whispering-peak-15342.herokuapp.com/api/v1/";
 
 axios.defaults.validateStatus = status => status >= 200 && status < 399;
 
