@@ -9,8 +9,6 @@ const isDnsSrvEnabled =
 const dbURI = `mongodb${
     isDnsSrvEnabled ? "+srv" : ""
 }://${dbUser}:${dbPass}@${dbHost}/${dbName}?authSource=admin&retryWrites=true&w=majority`;
-
-console.log(dbURI);
 mongoose.set("useCreateIndex", true);
 mongoose.connect(dbURI, {
     useNewUrlParser: true,
