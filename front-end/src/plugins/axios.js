@@ -3,7 +3,7 @@ import axios from "axios";
 import i18n from "./i18n";
 import store from "../store/index";
 
-axios.defaults.baseURL = "http://168.63.104.46";
+axios.defaults.baseURL = "http://168.63.104.46/api/v1";
 
 axios.defaults.validateStatus = status => status >= 200 && status < 399;
 
