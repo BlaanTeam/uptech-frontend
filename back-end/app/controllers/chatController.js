@@ -329,10 +329,7 @@ const sendMessage = async (req, res, next) => {
                 },
             }
         );
-        let lastMessage = { ...message };
-        lastMessage.read = false;
-        lastMessage.isOwner = false;
-        conv.lastMessage = lastMessage;
+        conv.lastMessage = message;
         let isActive = await isUserActive(conv.otherUserId);
         if (isActive) {
             let sessionIds = await getSessions(conv.otherUserId);
