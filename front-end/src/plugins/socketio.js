@@ -5,7 +5,7 @@ import io from "socket.io-client";
 Vue.use(
   new VueSocket({
     debug: true,
-    connection: io("http://168.63.104.46", {
+    connection: io("wss://uptech.tk", {
       autoConnect: false,
       extraHeaders: {
         "x-auth-token": store.getters.getToken
