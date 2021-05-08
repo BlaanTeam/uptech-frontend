@@ -4,6 +4,7 @@ const express = require("express");
 const path = require("path");
 const logger = require("morgan");
 const cors = require("cors");
+const helmet = require("helmet");
 
 require("dotenv").config(); // Include .env variables
 require("./utils/redis");
@@ -27,6 +28,7 @@ const server = http.createServer(app);
 
 // Iniatialize extensions
 
+app.use(helmet());
 app.use(cors());
 app.use(logger("dev"));
 app.use(express.json());
