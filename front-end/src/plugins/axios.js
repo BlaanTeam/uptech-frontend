@@ -3,7 +3,7 @@ import axios from "axios";
 import i18n from "./i18n";
 import store from "../store/index";
 
-axios.defaults.baseURL = "https://uptech.tk/api/v1";
+axios.defaults.baseURL = "https://bdab-129-213-51-199.ngrok.io/api/v1";
 
 axios.defaults.validateStatus = status => status >= 200 && status < 399;
 
