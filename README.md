@@ -20,8 +20,9 @@ UpTech is an open-source social media website, it's fast and easy to use.
 
 ## Technologies
 Project created with these open-source technologies
+
 Name | Description
----- | ----
+---- | -----------
 [Express](https://github.com/expressjs/express) | Express.js, or simply Express, is a back end web application framework for Node.js
 [Vue](https://github.com/vuejs/vue) | Vue.js is an open-source model–view–viewmodel front end JavaScript framework for building user interfaces and single-page applications.
 [Vuetify](https://github.com/vuetifyjs/vuetify) | Vuetify is a Vue UI Library with beautifully handcrafted Material Components.

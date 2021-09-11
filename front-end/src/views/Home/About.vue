@@ -1,8 +1,5 @@
 <template>
-  <div class="about">
-    About Us Page
-    <router-link to="/">Home</router-link>
-  </div>
+  <v-container fluid class="about"></v-container>
 </template>
 
 <script>

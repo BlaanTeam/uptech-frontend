@@ -1,34 +1,107 @@
 <template>
-  <Layout>
-    <v-main>
-      <v-container fluid>
-        <router-view></router-view>
-        <v-snackbar v-model="snackbar">
-          {{ text }}
+  <div>
+    <notifications :duration="10000" position="bottom right" group="errors">
+    </notifications>
+    <notifications :duration="10000" position="bottom left" group="success">
+    </notifications>
 
-          <template v-slot:action="{ attrs }">
-            <v-btn color="pink" text v-bind="attrs" @click="snackbar = false">
-              Close
-            </v-btn>
-          </template>
-        </v-snackbar>
-      </v-container>
-    </v-main>
-  </Layout>
+    <UnAuthLayout v-if="!$store.getters.isLoggedIn" :style="unAuthBackground">
+      <v-main>
+        <router-view></router-view>
+      </v-main>
+    </UnAuthLayout>
+
+    <AuthLayout v-else :style="authBackground">
+      <v-main>
+        <!-- <keep-alive :max="5" :include="include"> -->
+        <router-view></router-view>
+        <!-- </keep-alive> -->
+      </v-main>
+    </AuthLayout>
+  </div>
 </template>
 
 <script>
+import UnAuthLayout from "./layouts/UnAuthLayout";
+import AuthLayout from "@/layouts/AuthLayout";
+
 export default {
-  name: "App",
-  created() {
-    this.snackbar = true;
+  components: {
+    UnAuthLayout,
+    AuthLayout
   },
-  data() {
-    return {
-      snackbar: false,
-      text: "Welcome To UpTech"
-    };
+  data: () => ({
+    inlcude: ["CreatePost"]
+  }),
+  computed: {
+    unAuthBackground() {
+      return { background: this.$vuetify.theme.currentTheme.bg };
+    },
+    authBackground() {
+      return { background: this.$vuetify.theme.currentTheme["auth-bg"] };
+    }
+  },
+  watch: {
+    "$i18n.locale"() {
+      document.title = `${this.$t("appName")} | ${this.$t(
+        this.$route.meta.title
+      )}`;
+    }
   }
 };
 </script>
-<style lang="scss"></style>
+<style lang="scss">
+a {
+  text-decoration: none;
+  color: white;
+}
+main {
+  min-height: 100vh;
+}
+.v-application a {
+  color: inherit !important;
+}
+.theme--light {
+  ::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background-color: #b9b9b9;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    background-color: #9e9e9e;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: #999999;
+  }
+}
+.theme--dark {
+  ::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background-color: #3d3d3d;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    background-color: #2b2b2b;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: #19191d;
+  }
+}
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+</style>
