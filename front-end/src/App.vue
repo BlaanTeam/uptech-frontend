@@ -14,7 +14,7 @@
     <AuthLayout v-else :style="authBackground">
       <v-main>
         <!-- <keep-alive :max="5" :include="include"> -->
-        <router-view :key="$route.fullPath"></router-view>
+        <router-view></router-view>
         <!-- </keep-alive> -->
       </v-main>
     </AuthLayout>

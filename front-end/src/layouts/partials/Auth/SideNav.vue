@@ -59,7 +59,8 @@ export default {
       items: [
         { title: "Feeds", icon: "mdi-home", href: "/feeds" },
         { title: "My Account", icon: "mdi-account", href: "account" },
-        { title: "Users", icon: "mdi-account-group-outline", href: "/users" }
+        { title: "Users", icon: "mdi-account-group-outline", href: "/users" },
+        { title: "Messages", icon: "mdi-message", href: "/messages" }
       ],
       mini: true,
       user: {

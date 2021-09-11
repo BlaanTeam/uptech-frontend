@@ -3,7 +3,7 @@ import axios from "axios";
 import i18n from "./i18n";
 import store from "../store/index";
 
-axios.defaults.baseURL = "http://localhost:5000/api/v1/";
+axios.defaults.baseURL = "https://bdab-129-213-51-199.ngrok.io/api/v1";
 
 axios.defaults.validateStatus = status => status >= 200 && status < 399;
 
@@ -75,3 +75,4 @@ axios.interceptors.response.use(
 );
 
 Vue.prototype.$http = axios;
+export default axios;

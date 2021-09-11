@@ -7,6 +7,7 @@ import home from "./home";
 import auth from "./auth";
 import post from "./post";
 import profile from "./profile";
+import messages from "./messages";
 
 Vue.use(VueRouter);
 
@@ -17,6 +18,7 @@ const routes = [
   ...auth,
   ...post,
   ...profile,
+  ...messages,
   {
     path: "/not_found",
     alias: "*",
@@ -30,8 +32,7 @@ const routes = [
 ];
 
 const router = new VueRouter({
-  mode: false,
-  base: process.env.BASE_URL,
+  mode: "history",
   routes
 });
 
