@@ -91,7 +91,10 @@
       </v-row>
     </v-card-title>
 
-    <div class="title font-weight-light ps-6 pe-2 pb-2" v-html="content">
+    <div
+      class="title post-content font-weight-light ps-6 pe-2 pb-2"
+      v-html="content"
+    >
       <a
         id="read-more"
         text
@@ -217,6 +220,9 @@ export default {
 </script>
 <style lang="scss">
 .post {
+  .post-content {
+    white-space: pre-wrap;
+  }
   .slide-enter-active {
     transition: all 0.4s linear;
   }
