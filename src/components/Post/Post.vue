@@ -33,16 +33,10 @@
         <v-spacer></v-spacer>
 
         <router-link :to="{ name: 'ViewPost', params: { postId: post._id } }">
-          <v-tooltip
-            :attach="'.card-title' + index"
-            :close-delay="100"
-            bottom
-            color="#2F3136"
-            nudge-top="8"
-          >
+          <v-tooltip :close-delay="100" bottom color="#2F3136" nudge-top="8">
             <template v-slot:activator="{ on, attrs }">
               <v-btn v-bind="attrs" v-on="on" class="view-post-btn" icon>
-                <v-icon size="20">mdi-eye</v-icon>
+                <v-icon size="15">mdi-eye</v-icon>
               </v-btn>
             </template>
             <span>View Post</span>
@@ -65,7 +59,7 @@
                 elevation="0"
                 icon
               >
-                <v-icon size="40">mdi-dots-horizontal</v-icon>
+                <v-icon size="30">mdi-dots-horizontal</v-icon>
               </v-btn>
             </template>
             <v-list-item-group class="auth-secondarybg">
@@ -140,7 +134,7 @@
     <transition name="slide">
       <AddComment v-if="commentExpanded" :post="post" :comments="comments" />
     </transition>
-    <template v-show="comments.length">
+    <template>
       <DisplayComment
         v-for="(comment, i) in comments"
         :key="comment._id"
