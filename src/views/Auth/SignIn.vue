@@ -166,8 +166,7 @@ export default {
           })
           .then(res => {
             this.loading = false;
-
-            if (res.status === 200 && res.data.code === 2032) {
+            if (res.status === 200) {
               if (this.$route.query.nextPath) {
                 this.$router
                   .push({
@@ -183,24 +182,18 @@ export default {
           .catch(({ response }) => {
             this.loading = false;
             this.password = "";
-            if (
-              response?.status === 404 &&
-              response?.data?.error?.code === 1030
-            ) {
+            if (response?.status === 404) {
               this.errorNotification(this.$t("signin.errors.notRegistredYet"));
             } else if (
               response?.status === 401 &&
-              response?.data?.error?.code === 1024
-            ) {
-              this.errorNotification(this.$t("signin.errors.invalid"));
-            } else if (
-              response?.status === 401 &&
-              response?.data?.error?.code === 1063
+              response?.data.error.notConfirmed
             ) {
               this.errorNotification(
                 this.$t("signin.errors.notConfirmed"),
                 "warn"
               );
+            } else if (response?.status === 401) {
+              this.errorNotification(this.$t("signin.errors.invalid"));
             }
           });
       }
