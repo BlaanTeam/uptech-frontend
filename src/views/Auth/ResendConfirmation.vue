@@ -6,7 +6,7 @@
       </h1>
       <v-card-text>
         <h3 class="mb-6">{{ $t("resendConfirmation.h2") }}</h3>
-        <v-form ref="forgotPassword" v-model="validity">
+        <v-form ref="resendConfirmation" v-model="validity">
           <v-text-field
             dense
             outlined
@@ -25,7 +25,6 @@
             dark
             :loading="loading"
             :disabled="loading || !validity"
-            type="submit"
             elevation="0"
           >
             {{ $t("resendConfirmation.send") }}
