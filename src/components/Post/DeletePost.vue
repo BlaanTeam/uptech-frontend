@@ -9,7 +9,7 @@
       <v-card class="auth-bg py-4 px-1">
         <v-card-title class="pb-6 justify-center">
           <h1 class="subtitle-1">
-            This post is going to deleted
+            This post is going to be deleted
             <v-icon size="18" class="ms-1 mt-n1">mdi-delete-alert</v-icon>
           </h1>
         </v-card-title>
@@ -53,17 +53,16 @@ export default {
     loading: false
   }),
   methods: {
-    async deletePost(id, index) {
+    async deletePost(id) {
       this.loading = true;
       try {
-        let res = await this.$store.dispatch("deletePost", {
-          id: id,
-          index: index
-        });
+        let res = await this.$store.dispatch("deletePost", { id });
         if (res.status === 204) {
           this.loading = false;
           this.dialog = false;
         }
+        if (this.$route.path.startsWith("/post"))
+          await this.$router.push({ name: "Feeds" });
       } catch (err) {
         console.log(err);
       }

@@ -24,7 +24,8 @@ export default {
       el.style.transition = "all 0.5s ease-in-out";
       setTimeout(() => {
         el.remove();
-        if (state.posts.length) state.posts.splice(payload.index, 1);
+        if (state.posts.length && payload.index != undefined)
+          state.posts.splice(payload.index, 1);
       }, 500);
     }
   },
