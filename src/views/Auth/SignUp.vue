@@ -183,17 +183,14 @@ export default {
           })
           .then(res => {
             this.loading = false;
-            if (res.status === 201 && res.data.code === 2062) {
+            if (res.status === 201) {
               this.$router.push({ name: "SignIn" });
               this.successNotification(this.$t("signup.success.registred"));
             }
           })
           .catch(({ response }) => {
             this.loading = false;
-            if (
-              response?.status === 409 &&
-              response?.data?.error?.code === 1092
-            ) {
+            if (response?.status === 409) {
               this.errorNotification(
                 this.$t("signup.errors.usernameAlreadyRegistred")
               );
