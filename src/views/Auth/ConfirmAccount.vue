@@ -41,7 +41,7 @@ export default {
           token: this.getToken
         })
         .then(res => {
-          if (res.status === 200 && res.data.code === 2041) {
+          if (res.status === 200) {
             this.$router.push({ name: "SignIn" });
             this.successNotification(
               this.$t("confirmAccount.success.confirmed")
@@ -50,10 +50,7 @@ export default {
         })
         .catch(({ response }) => {
           this.$router.push({ name: "SignIn" });
-          if (
-            response?.status === 401 &&
-            response?.data?.error?.code === 1026
-          ) {
+          if (response?.status === 401) {
             this.errorNotification(
               this.$t("confirmAccount.errors.invOrExp"),
               "warn"

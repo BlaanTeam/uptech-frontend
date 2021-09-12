@@ -87,7 +87,7 @@ export default {
           })
           .then(res => {
             this.loading = false;
-            if (res.status === 200 && res.data.code === 2029) {
+            if (res.status === 200) {
               this.$notify({
                 group: "success",
                 type: "success",

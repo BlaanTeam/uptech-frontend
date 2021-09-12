@@ -83,7 +83,7 @@ export default {
           })
           .then(res => {
             this.loading = false;
-            if (res.status === 200 && res.data.code === 2013) {
+            if (res.status === 200) {
               this.successNotification(
                 this.$t("forgotPassword.success.msgSent")
               );
@@ -91,17 +91,11 @@ export default {
           })
           .catch(({ response }) => {
             this.loading = false;
-            if (
-              response?.status === 404 &&
-              response?.data?.error?.code === 1030
-            ) {
+            if (response?.status === 404) {
               this.errorNotification(
                 this.$t("forgotPassword.errors.invalidEmail")
               );
-            } else if (
-              response?.status === 429 &&
-              response?.data?.error?.code === 1032
-            ) {
+            } else if (response?.status === 429) {
               this.errorNotification(
                 this.$t("forgotPassword.errors.tooManyReq")
               );
