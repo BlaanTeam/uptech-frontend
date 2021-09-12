@@ -1,11 +1,11 @@
 <template>
-  <v-menu offset-y nudge-left="25" transition="slide-y-transition">
+  <v-menu offset-y nudge-left="20" transition="slide-y-transition">
     <template v-slot:activator="{ on, attrs }">
       <v-btn v-bind="attrs" v-on="on" text icon>
-        <v-icon size="40">mdi-dots-horizontal</v-icon>
+        <v-icon size="30">mdi-dots-horizontal</v-icon>
       </v-btn>
     </template>
-    <div class="bg d-flex flex-column align-start">
+    <div class="bg d-flex flex-column align-start ">
       <v-btn tile block text class="text-capitalize justify-start">
         <v-icon small left>mdi-square-edit-outline</v-icon>
         Edit

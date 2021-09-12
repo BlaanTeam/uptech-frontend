@@ -7,8 +7,8 @@
     :data-read="!message.read"
   >
     <div class="message__sent__state ms-1">
-      <v-icon v-if="!message.read" small>mdi-check</v-icon>
-      <v-icon color="teal" v-else small>mdi-check-all</v-icon>
+      <v-icon v-if="messageSent" small>mdi-check</v-icon>
+      <v-icon color="teal" v-if="message.read" small>mdi-check-all</v-icon>
     </div>
     <div class="message__sent__content primary darken-2">
       {{ message.content }}
@@ -46,6 +46,14 @@ export default {
       if (data.messageId === this.message._id && this.message.isOwner) {
         this.message.read = true;
       }
+    }
+  },
+  computed: {
+    messageSent() {
+      return (
+        (!this.message.read && !this.message.sent) ||
+        (!this.message.read && this.message.sent == 2)
+      );
     }
   },
   mounted() {
@@ -86,6 +94,7 @@ export default {
       padding: 10px;
       border-radius: 10px 0 10px 10px;
       color: #d8d8d8;
+      white-space: pre-wrap;
     }
     &__menu {
       width: 6%;

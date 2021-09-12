@@ -141,19 +141,26 @@ export default {
     },
     async sendMessage() {
       try {
-        let res = await this.$store.dispatch("sendMessage", {
+        const message = {
           convId: this.convId,
           content: this.content.value,
+          user: this.user,
+          isOwner: true,
+          sent: 1
+        };
+        this.messages.push(message);
+        const content = this.content.value;
+        this.content.value = "";
+        this.scrollBottom();
+        let res = await this.$store.dispatch("sendMessage", {
+          convId: this.convId,
+          content,
           user: this.user
         });
-        res.data.isOwner = true;
-        this.messages.push(res.data);
-        this.scrollBottom();
+        message.sent = 2;
       } catch (err) {
         console.log(err);
       }
-
-      this.content.value = "";
     },
     scrollBottom() {
       let messagesContainer = document.querySelector(".messages-box__messages");
