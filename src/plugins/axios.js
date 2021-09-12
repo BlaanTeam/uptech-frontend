@@ -3,7 +3,8 @@ import axios from "axios";
 import i18n from "./i18n";
 import store from "../store/index";
 
-axios.defaults.baseURL = "https://bdab-129-213-51-199.ngrok.io/api/v1";
+let baseURL = `${process.env.VUE_APP_API_SCHEME}://${process.env.VUE_APP_API_HOST}:${process.env.VUE_APP_API_PORT}`;
+axios.defaults.baseURL = `${baseURL}/api/v1`;
 
 axios.defaults.validateStatus = status => status >= 200 && status < 399;
 
