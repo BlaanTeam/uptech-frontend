@@ -2,7 +2,6 @@ export default [
   {
     path: "/profile",
     component: () => import("@/views/Profile/Profile"),
-    name: "Profile",
     meta: {
       authRequired: true,
       title: "titles.Profile"
