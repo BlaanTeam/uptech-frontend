@@ -72,7 +72,7 @@ export default {
         group: "errors",
         type: type,
         title: this.$t("resendConfirmation.errors.name"),
-        text: this.$t("signup.errors.usernameAlreadyRegistred")
+        text
       });
     },
     handleSubmit() {
