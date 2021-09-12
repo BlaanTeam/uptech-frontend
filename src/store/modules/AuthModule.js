@@ -37,7 +37,7 @@ export default {
         Vue.prototype.$http
           .post("/auth/sign-in", payload)
           .then(res => {
-            if (res.status === 200 && res.data.code === 2032) {
+            if (res.status === 200) {
               context.commit("AUTH_SUCCESS", {
                 accessToken: res.data.accessToken,
                 user: res.data.user
