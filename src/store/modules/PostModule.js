@@ -2,7 +2,8 @@ import Vue from "vue";
 
 export default {
   state: {
-    posts: []
+    posts: [],
+    createdAt: null
   },
   getters: {
     getPosts: state => state.posts
@@ -31,18 +32,19 @@ export default {
     destroyPosts(context) {
       context.commit("DESTROY_POSTS");
     },
-    getFeedPosts(context, payload) {
+    getFeedPosts(context) {
       return new Promise((resolve, reject) => {
         let path = "/feed/posts";
-        if (payload.createdAt) {
-          path += `?createdAt=${payload.createdAt}`;
-        }
+        if (context.state.createdAt)
+          path += `?createdAt=${context.state.createdAt}`;
         Vue.prototype.$http
           .get(path)
           .then(res => {
             if (res.status === 200) {
+              let lastPost = res.data.posts[res.data.posts.length - 1];
+              context.state.createdAt = lastPost.createdAt;
               context.commit("INIT_POSTS", res.data.posts);
-              resolve(res);
+              resolve(res.data.posts);
             }
           })
           .catch(err => reject(err));

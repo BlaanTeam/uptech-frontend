@@ -53,21 +53,11 @@ export default {
   methods: {
     async infiniteHandler($state) {
       try {
-        let res = await this.$store.dispatch("getFeedPosts", {
-          createdAt: this.createdAt
-        });
-        if (res.status === 200) {
-          if (res.data.posts.length) {
-            let lastPost = res.data.posts[res.data.posts.length - 1];
-            this.createdAt = lastPost.createdAt;
-            $state.loaded();
-            if (res.data.posts.length < 20) {
-              $state.complete();
-              this.createdAt = null;
-            }
-          } else {
-            $state.complete();
-          }
+        let posts = await this.$store.dispatch("getFeedPosts");
+        if (posts.length) {
+          $state.loaded();
+        } else {
+          $state.complete();
         }
       } catch (err) {
         $state.error();
