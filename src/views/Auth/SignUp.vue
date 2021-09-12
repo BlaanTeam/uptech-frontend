@@ -81,7 +81,6 @@
           <v-btn
             @click="handleSubmit"
             color="primary"
-            :dark="!loading"
             class="ml-2 my-4 px-10"
             elevation="0"
             rounded
