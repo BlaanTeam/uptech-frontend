@@ -32,8 +32,10 @@ export default {
     exist: false,
     loaded: false
   }),
-  async created() {
+  async mounted() {
     let userName = this.$route.params.userName;
+    if (!userName) userName = await this.$store.getters.getUserName;
+
     try {
       let res = await this.$http.get(`/users/${userName}`);
       if (res.status === 200) this.exist = true;
