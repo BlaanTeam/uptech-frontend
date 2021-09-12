@@ -55,11 +55,7 @@ axios.interceptors.response.use(
       if (error.response.status === 404 && store.getters.isLoggedIn) {
         store.dispatch("handleNotFound");
       }
-      if (
-        error.response.data.error.code === 1079 ||
-        error.response.data.error.code === 1072 ||
-        error.response.data.error.code === 1075
-      ) {
+      if (error.response.data.error.notAuthorized) {
         if (store.getters.isLoggedIn) {
           store.dispatch("destroySession");
         }
