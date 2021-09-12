@@ -13,8 +13,6 @@
         <v-list-item-avatar>
           <v-img src="@/assets/images/avatar.svg"></v-img>
         </v-list-item-avatar>
-
-        <v-list-item-title>{{ username() }}</v-list-item-title>
       </v-list-item>
     </v-list-item>
 
@@ -58,21 +56,11 @@ export default {
       group: "",
       items: [
         { title: "Feeds", icon: "mdi-home", href: "/feeds" },
-        { title: "My Account", icon: "mdi-account", href: "account" },
-        { title: "Users", icon: "mdi-account-group-outline", href: "/users" },
-        { title: "Messages", icon: "mdi-message", href: "/messages" }
+        { title: "Messages", icon: "mdi-message", href: "/messages" },
+        { title: "Profile", icon: "mdi-account", href: "/profile" }
       ],
-      mini: true,
-      user: {
-        logedIn: () => false,
-        username: "oumoussa"
-      }
+      mini: true
     };
-  },
-  methods: {
-    username() {
-      return this.user.logedIn() ? this.user.username : "Avatar";
-    }
   }
 };
 </script>
