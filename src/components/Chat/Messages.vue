@@ -2,13 +2,23 @@
   <div class="messages-box ms-auto">
     <v-card flat height="100%" class="bg messages-box__card">
       <v-card-title class="bg messages-box__header px-6">
-        <div class="d-flex align-center">
+        <router-link
+          :to="{
+            name: 'ViewProfile',
+            params: { userName: user.userName }
+          }"
+          v-if="user"
+          class="d-flex align-center"
+        >
           <img src="@/assets/images/avatar.svg" width="40" class="me-2" />
-          <h1 class="title" v-if="user">
-            {{ user.userName + " " }}
-            {{ user.profile.firstName }}
-          </h1>
-        </div>
+          <span class="d-flex flex-column">
+            <span class="subtitle-1 mt-n1">
+              {{ user.profile.firstName + " " }}
+              {{ user.profile.lastName }}
+            </span>
+            <span class="caption mt-n2"> @{{ user.userName }} </span>
+          </span>
+        </router-link>
         <div class="ms-auto">
           <v-btn icon class="me-4">
             <v-icon color="primary">mdi-phone-hangup</v-icon>
@@ -121,11 +131,10 @@ export default {
         if (res.messages.length) {
           let lastMessage = res.messages[0];
           this.createdAt = lastMessage.createdAt;
-
           this.messages.unshift(...res.messages);
-
           $state.loaded();
         } else {
+          $state.loaded();
           $state.complete();
         }
       } catch (err) {
