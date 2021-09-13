@@ -26,22 +26,26 @@
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title class="mb-1">
-                <span>{{ conv.user.userName }}</span>
-                <span class="ms-1">{{ conv.user.profile.lastName }}</span>
+                <span>
+                  {{ conv.user.profile.firstName }}
+                  {{ conv.user.profile.lastName }}
+                </span>
               </v-list-item-title>
               <v-list-item-subtitle class="pa-0 ma-0">
                 <span>
                   {{ conv.lastMessage.content }}
                 </span>
-                <timeago
-                  class="float-right"
-                  :datetime="conv.timestamp"
-                  :auto-update="60"
-                />
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
         </router-link>
+        <div class="float-right caption mt-n4 me-1 font-weight-light">
+          <timeago
+            :converterOptions="{ addSuffix: false }"
+            :datetime="conv.timestamp"
+            :auto-update="60"
+          />
+        </div>
         <v-divider></v-divider>
       </div>
       <infinite-loading @infinite="loadConversations"> </infinite-loading>
@@ -69,6 +73,7 @@ export default {
         if (conversations.length) {
           $state.loaded();
         } else {
+          $state.loaded();
           $state.complete();
         }
       } catch (err) {
