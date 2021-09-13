@@ -141,11 +141,12 @@ export default {
     },
     async sendMessage() {
       try {
-        const message = {
+        let message = {
           convId: this.convId,
           content: this.content.value,
           user: this.user,
           isOwner: true,
+          read: false,
           sent: 1
         };
         this.messages.push(message);
@@ -157,6 +158,7 @@ export default {
           content,
           user: this.user
         });
+        message._id = res.data._id;
         message.sent = 2;
       } catch (err) {
         console.log(err);
