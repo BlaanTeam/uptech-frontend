@@ -66,6 +66,7 @@
               class="mt-n1 ms-auto text-capitalize"
               height="30"
               rounded
+              @click="sendMessage"
             >
               <v-icon left small>mdi-email-outline</v-icon>
               message
@@ -108,6 +109,14 @@ export default {
           console.log(err);
         }
       }
+    }
+  },
+  methods: {
+    async sendMessage() {
+      let res = await this.$store.dispatch("initiateNewConversation", {
+        _id: this.user._id
+      });
+      this.$router.push({ name: "ViewMessages", params: { id: res._id } });
     }
   }
 };

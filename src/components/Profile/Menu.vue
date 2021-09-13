@@ -17,6 +17,7 @@
       color="primary"
       class="mt-n2 me-3"
       icon
+      @click="sendMessage"
     >
       <v-icon>mdi-email-outline</v-icon>
     </v-btn>
@@ -63,7 +64,15 @@ export default {
   data: () => ({
     followLoading: false,
     toggle_none: 0
-  })
+  }),
+  methods: {
+    async sendMessage() {
+      let res = await this.$store.dispatch("initiateNewConversation", {
+        _id: this.userInfo._id
+      });
+      this.$router.push({ name: "ViewMessages", params: { id: res._id } });
+    }
+  }
 };
 </script>
 
