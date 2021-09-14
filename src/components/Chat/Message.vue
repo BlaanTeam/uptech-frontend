@@ -6,15 +6,20 @@
     class="message message__sent"
     :data-read="!message.read"
   >
-    <div class="message__sent__state ms-1">
+    <div class="message__sent__state ms-1" v-if="!deleted">
       <v-icon v-if="messageSent" small>mdi-check</v-icon>
       <v-icon color="teal" v-if="message.read" small>mdi-check-all</v-icon>
     </div>
-    <div class="message__sent__content primary darken-2">
+    <div
+      class="message__sent__content primary"
+      :class="{ 'lighten-1 bg me-5': deleted, 'darken-2': !deleted }"
+    >
       {{ message.content }}
     </div>
     <div class="message__sent__menu mx-1">
-      <span v-show="Menu"><MessageMenu :message="message"/></span>
+      <span v-show="Menu"
+        ><MessageMenu :message="message" @unsent="deleted = true"
+      /></span>
     </div>
   </div>
 
@@ -36,7 +41,8 @@ export default {
   name: "Message",
   components: { MessageMenu },
   data: () => ({
-    Menu: false
+    Menu: false,
+    deleted: false
   }),
   props: {
     message: { type: Object, required: true }
@@ -56,6 +62,7 @@ export default {
       );
     }
   },
+
   async mounted() {
     if (!this.message.isOwner) {
       await this.$socket.emit("mark-read", {

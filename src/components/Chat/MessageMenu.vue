@@ -5,14 +5,16 @@
         <v-icon size="30">mdi-dots-horizontal</v-icon>
       </v-btn>
     </template>
-    <div class="bg d-flex flex-column align-start ">
-      <v-btn tile block text class="text-capitalize justify-start">
-        <v-icon small left>mdi-square-edit-outline</v-icon>
-        Edit
-      </v-btn>
-      <v-btn color="red" tile block text class="text-capitalize justify-start">
-        <v-icon small left>mdi-delete</v-icon>
-        Delete
+    <div class="bg d-flex flex-column align-start">
+      <v-btn
+        @click="unsentMessage"
+        color="red"
+        tile
+        text
+        class="subtitle-2 text-none"
+      >
+        <v-icon size="13" class="me-1">mdi-delete</v-icon>
+        unsent
       </v-btn>
     </div>
   </v-menu>
@@ -25,8 +27,18 @@ export default {
     message: { type: Object, required: true }
   },
   methods: {
-    editMessage() {},
-    deleteMessage() {}
+    async unsentMessage() {
+      try {
+        const res = await this.$http.delete(
+          "/chats/messages/" + this.message._id
+        );
+        this.message.content = "Message unsent";
+        this.$emit("unsent");
+      } catch (err) {
+        console.log("MessageMenu(unsentMessage): delete failed");
+        console.log(err);
+      }
+    }
   }
 };
 </script>

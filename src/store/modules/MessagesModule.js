@@ -48,7 +48,7 @@ export default {
     MARK_READ(state, convId) {
       let i = state.convIds.get(convId);
       let conv = state.conversations[i];
-      if (!conv.lastMessage.read) {
+      if (conv && !conv.lastMessage.read) {
         conv.lastMessage.read = true;
         state.conversations.splice(i, 1, conv);
       }
