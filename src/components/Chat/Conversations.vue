@@ -2,7 +2,7 @@
   <div class="conversations bg pt-16">
     <div class="bg conversations__header">
       <div class="d-flex px-2 py-3">
-        <img src="@/assets/images/avatar.svg" width="40" />
+        <!-- <img src="@/assets/images/avatar.svg" width="40" /> -->
         <h1 class="ms-4 ">Chats</h1>
         <div class="ms-auto me-4 align-self-center">
           <v-btn icon>
@@ -12,11 +12,12 @@
       </div>
       <v-divider></v-divider>
     </div>
-    <v-list class="bg " height="80%">
+    <v-list two-line class="bg" height="80%">
       <div
         v-for="(conv, i) in conversations"
         :key="conv._id"
         class="conv-list-item"
+        :class="{ 'new-message': newMessage(conv.lastMessage) }"
       >
         <span v-if="generateConvIds(conv._id, i)"></span>
         <router-link :to="{ name: 'ViewMessages', params: { id: conv._id } }">
@@ -56,6 +57,7 @@
 <script>
 export default {
   name: "Conversations",
+
   sockets: {
     async message(data) {
       this.soundEffect.play();
@@ -83,6 +85,9 @@ export default {
     },
     async generateConvIds(_id, index) {
       await this.$store.dispatch("generateConvIds", { _id, index });
+    },
+    newMessage(message) {
+      return !message.read && message.userId != this.$store.getters.getUserId;
     }
   },
   computed: {
@@ -93,7 +98,7 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
 .conversations__header {
   position: absolute;
   top: 0;
@@ -101,10 +106,26 @@ export default {
   z-index: 2;
 }
 
-.theme--dark .conv-list-item:hover {
-  background: #26272b !important;
+.theme--dark {
+  .conv-list-item:hover {
+    background: #26272b !important;
+  }
+  .new-message {
+    background: #26272b !important;
+    .v-list-item {
+      color: #f0a709 !important;
+    }
+  }
 }
-.theme--light .conv-list-item:hover {
-  background: #dbd9d9 !important;
+.theme--light {
+  .conv-list-item:hover {
+    background: #dbd9d9 !important;
+  }
+  .new-message {
+    background: #dbd9d9 !important;
+    .v-list-item {
+      color: #f0a709 !important;
+    }
+  }
 }
 </style>

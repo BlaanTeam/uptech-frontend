@@ -44,6 +44,14 @@ export default {
     },
     ADD_CONV_ID(state, payload) {
       state.convIds.set(payload._id, payload.index);
+    },
+    MARK_READ(state, convId) {
+      let i = state.convIds.get(convId);
+      let conv = state.conversations[i];
+      if (!conv.lastMessage.read) {
+        conv.lastMessage.read = true;
+        state.conversations.splice(i, 1, conv);
+      }
     }
   },
   actions: {
@@ -100,6 +108,9 @@ export default {
             reject(err);
           });
       });
+    },
+    async markRead(context, { convId }) {
+      await context.commit("MARK_READ", convId);
     },
     async receiveMessage(context, { convId, user, lastMessage }) {
       handleConvs(context, convId, user, lastMessage);

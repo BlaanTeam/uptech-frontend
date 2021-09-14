@@ -56,12 +56,13 @@ export default {
       );
     }
   },
-  mounted() {
+  async mounted() {
     if (!this.message.isOwner) {
-      this.$socket.emit("mark-read", {
+      await this.$socket.emit("mark-read", {
         userId: this.$store.getters.getUserId,
         messageId: this.message._id
       });
+      await this.$store.dispatch("markRead", { convId: this.$route.params.id });
     }
   }
 };
