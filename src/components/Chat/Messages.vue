@@ -149,6 +149,7 @@ export default {
       });
     },
     async sendMessage() {
+      if (!this.content.value) return;
       try {
         let message = {
           convId: this.convId,
