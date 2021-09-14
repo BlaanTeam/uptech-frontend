@@ -43,7 +43,7 @@ export default {
           .then(res => {
             if (res.status === 200) {
               let lastPost = res.data.posts[res.data.posts.length - 1];
-              context.state.createdAt = lastPost.createdAt;
+              context.state.createdAt = lastPost?.createdAt;
               context.commit("INIT_POSTS", res.data.posts);
               resolve(res.data.posts);
             }
