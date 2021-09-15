@@ -66,6 +66,7 @@ export default {
         user: data.user,
         lastMessage: data.lastMessage
       });
+      await this.$state.dispatch("incrMsgsCount");
     }
   },
   methods: {
