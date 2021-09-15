@@ -49,11 +49,11 @@
         </div>
         <div class="statistics mt-4">
           <v-row>
-            <v-col cols="2">
+            <v-col cols="3">
               <span class="font-weight-bold">{{ userInfo.posts }}</span> Posts
             </v-col>
             <v-col
-              cols="3"
+              cols="4"
               class="follows"
               :class="{
                 'follows-disabled':
@@ -75,7 +75,7 @@
               />
             </v-col>
             <v-col
-              cols="3"
+              cols="4"
               class="follows"
               :class="{
                 'follows-disabled':

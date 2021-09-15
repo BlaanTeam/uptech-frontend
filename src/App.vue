@@ -12,11 +12,11 @@
     </UnAuthLayout>
 
     <AuthLayout
-      v-if="$route.path.startsWith('/messages')"
+      v-else-if="$route.path.startsWith('/messages')"
       :style="authBackground"
     >
       <v-main>
-        <router-view></router-view>
+        <router-view class="chat-view"></router-view>
       </v-main>
     </AuthLayout>
 
@@ -69,7 +69,7 @@ export default {
 </script>
 <style lang="scss">
 .v-application--wrap {
-  max-width: 1600px !important;
+  max-width: 1400px !important;
   margin: 0 auto !important;
 }
 a {

@@ -14,6 +14,7 @@
     <keep-alive v-else>
       <router-view class="messages" :key="$route.fullPath"></router-view>
     </keep-alive>
+    <v-divider vertical />
   </div>
 </template>
 
@@ -29,8 +30,9 @@ export default {
 
 <style lang="scss">
 .messages-container {
-  width: 83vw;
+  width: 80vw;
   height: 100vh;
+  max-width: 1050px;
   display: flex;
   .conversations {
     position: relative;
@@ -49,6 +51,13 @@ export default {
 }
 
 .theme--dark .conversations {
+  border-right: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+.theme--light .messages {
+  border-right: 1px solid #adadad !important;
+}
+
+.theme--dark .messages {
   border-right: 1px solid rgba(255, 255, 255, 0.12) !important;
 }
 </style>
