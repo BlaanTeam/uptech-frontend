@@ -5,7 +5,7 @@
         <div class="d-flex pt-4 px-4 pb-3">
           <div class="mx-4">
             <v-icon color="primary" size="30">
-              {{ icons[notif.notificationType] }}
+              {{ icons[notif.notifType] }}
             </v-icon>
           </div>
           <div class="d-flex flex-column">
@@ -41,7 +41,7 @@
                 </PopoverProfile>
               </span>
               <span>
-                {{ text[notif.notificationType] }}
+                {{ text[notif.notifType] }}
               </span>
             </div>
           </div>
@@ -89,9 +89,9 @@ export default {
       }
     },
     getLink(notif) {
-      if (notif.notificationType == 0 || notif.notificationType == 1)
+      if (notif.notifType == 0 || notif.notifType == 1)
         return { name: "ViewPost", params: { postId: notif.postId } };
-      if (notif.notificationType == 2)
+      if (notif.notifType == 2)
         return {
           name: "ViewProfile",
           params: { userName: notif.sender.userName }
