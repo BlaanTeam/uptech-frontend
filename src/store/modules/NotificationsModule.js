@@ -3,7 +3,8 @@ import axios from "../../plugins/axios";
 export default {
   state: {
     createdAt: null,
-    notifications: []
+    notifications: [],
+    notifCount: 0
   },
   getters: {
     notifications: state => state.notifications
@@ -17,6 +18,12 @@ export default {
     },
     ADD_NOTIFICATION(state, conv) {
       state.notifications.unshift(conv);
+    },
+    INIT_NOTIF_COUNT(state, notifCount) {
+      state.notifCount = notifCount;
+    },
+    INCR_NOTIF_COUNT(state) {
+      state.notifCount++;
     }
   },
   actions: {
@@ -37,6 +44,12 @@ export default {
           })
           .catch(err => reject(err));
       });
+    },
+    initNotifsCount(context, { notifsCount }) {
+      context.commit("INIT_NOTIF_COUNT", notifsCount);
+    },
+    incrNotifCount(context) {
+      context.commit("INCR_NOTIF_COUNT");
     }
   }
 };
