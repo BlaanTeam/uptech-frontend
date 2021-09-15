@@ -207,7 +207,7 @@ export default {
   },
   methods: {
     copyPostLink() {
-      let link = `${location.origin}/#/post/${this.post._id}`;
+      let link = `${location.origin}/post/${this.post._id}`;
       navigator.clipboard
         .writeText(link)
         .then(() => {

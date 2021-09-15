@@ -48,10 +48,3 @@ export default {
   }
 };
 </script>
-
-<style lang="scss">
-.view-profile {
-  width: 48vw;
-  min-height: 93vh;
-}
-</style>

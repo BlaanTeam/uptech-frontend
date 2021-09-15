@@ -1,8 +1,6 @@
 <template>
   <v-navigation-drawer
     :right="$vuetify.rtl === true"
-    v-model="drawer"
-    permanent
     app
     width="220px"
     class="auth-secondarybg"
@@ -70,6 +68,10 @@ export default {
 };
 </script>
 <style lang="scss">
+.v-navigation-drawer {
+  left: unset !important;
+  right: unset !important;
+}
 .theme--light {
   .v-navigation-drawer {
     padding: 0;
