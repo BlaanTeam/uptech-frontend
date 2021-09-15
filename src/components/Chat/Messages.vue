@@ -85,7 +85,7 @@ import Dots from "@/components/Chat/DotsLoading";
 import Message from "@/components/Chat/Message";
 
 export default {
-  name: "messages-boxbox",
+  name: "Messages",
   components: { Emojis, Dots, Message },
   data: () => ({
     messages: [],

@@ -39,6 +39,7 @@ import Post from "@/components/Post/Post";
 import PostSkeleton from "@/components/Skeletons/PostSkeleton";
 
 export default {
+  name: "Feeds",
   components: { CreatePost, Post, PostSkeleton },
   data: () => ({
     loading: { value: false },

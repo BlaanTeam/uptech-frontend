@@ -2,7 +2,7 @@ export default [
   {
     path: "/feeds",
     name: "Feeds",
-    component: () => import("@/views/Feeds/Posts"),
+    component: () => import("@/views/Feeds/Feeds"),
     meta: {
       authRequired: true,
       title: "titles.feeds",

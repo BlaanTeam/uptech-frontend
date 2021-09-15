@@ -13,9 +13,9 @@
 
     <AuthLayout v-else :style="authBackground">
       <v-main>
-        <!-- <keep-alive :max="5" :include="include"> -->
-        <router-view></router-view>
-        <!-- </keep-alive> -->
+        <keep-alive :max="5">
+          <router-view></router-view>
+        </keep-alive>
       </v-main>
     </AuthLayout>
   </div>
@@ -31,7 +31,7 @@ export default {
     AuthLayout
   },
   data: () => ({
-    inlcude: ["CreatePost"]
+    includes: ["CreatePost", "Profile"]
   }),
   computed: {
     unAuthBackground() {

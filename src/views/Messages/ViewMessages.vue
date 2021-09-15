@@ -12,7 +12,9 @@
       </h4>
       <NewConversation />
     </div>
-    <router-view class="messages" :key="$route.fullPath"></router-view>
+    <keep-alive>
+      <router-view class="messages" :key="$route.fullPath"></router-view>
+    </keep-alive>
   </div>
 </template>
 
@@ -21,6 +23,7 @@ import Conversations from "@/components/Chat/Conversations.vue";
 import NewConversation from "@/components/Chat/NewConversation.vue";
 
 export default {
+  name: "ViewMessages",
   components: { Conversations, NewConversation }
 };
 </script>
