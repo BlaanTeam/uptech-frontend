@@ -31,7 +31,8 @@ export default {
     msgsCount: 0
   },
   getters: {
-    conversations: state => state.conversations
+    conversations: state => state.conversations,
+    msgsCount: state => state.msgsCount
   },
   mutations: {
     INIT_CONVERSATIONS(state, payload) {

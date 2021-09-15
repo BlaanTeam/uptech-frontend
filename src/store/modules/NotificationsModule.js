@@ -7,7 +7,8 @@ export default {
     notifCount: 0
   },
   getters: {
-    notifications: state => state.notifications
+    notifications: state => state.notifications,
+    notifCount: state => state.notifCount
   },
   mutations: {
     INIT_NOTIFICATIONS(state, payload) {

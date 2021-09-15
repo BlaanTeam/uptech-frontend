@@ -7,39 +7,48 @@
     width="300px"
     class="auth-secondarybg"
   >
-    <v-list-item class="px-2" :inactive="true">
-      <!-- <v-app-bar-nav-icon @click="mini = !mini"></v-app-bar-nav-icon> -->
-      <v-list-item :inactive="true">
-        <v-list-item-avatar>
-          <v-img src="@/assets/images/avatar.svg"></v-img>
-        </v-list-item-avatar>
-      </v-list-item>
+    <v-list-item class="px-2 ms-4" :inactive="true">
+      <v-list-item-avatar>
+        <v-img src="@/assets/images/avatar.svg"></v-img>
+      </v-list-item-avatar>
     </v-list-item>
 
-    <v-list nav dense>
-      <v-list-item-group>
-        <v-list-item
-          v-for="item in items"
-          :key="item.title"
+    <div class="d-flex flex-column align-start justify-center ps-4">
+      <span v-for="item in items" :key="item.title">
+        <v-btn
           :to="item.href"
-          link
+          text
+          rounded
+          class="mt-2 pa-5 secondary-bg text-none font-weight-regular"
         >
-          <v-list-item-icon>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-item-icon>
-
-          <v-list-item-content>
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list-item-group>
-    </v-list>
+          <v-badge
+            v-if="item.title == 'Messages' && msgsCount"
+            color="primary"
+            :content="msgsCount"
+            left
+          >
+            <v-icon left size="24" class="me-4">{{ item.icon }}</v-icon>
+          </v-badge>
+          <v-badge
+            v-else-if="item.title == 'Notifications' && notifCount"
+            color="primary"
+            :content="notifCount"
+            left
+          >
+            <v-icon left size="24" class="me-4">{{ item.icon }}</v-icon>
+          </v-badge>
+          <v-icon v-else left size="24" class="me-4">{{ item.icon }}</v-icon>
+          {{ item.title }}
+        </v-btn>
+      </span>
+    </div>
 
     <template v-slot:append>
       <v-btn
         to="/settings"
-        class="ms-6 mb-6 px-8 auth-secondarybg"
-        elevation="0"
+        class="mb-6 px-4 ms-4 auth-secondarybg"
+        text
+        rounded
       >
         <v-icon size="20" left>mdi-cog</v-icon>
         Settings
@@ -66,6 +75,18 @@ export default {
       ],
       mini: true
     };
+  },
+  computed: {
+    msgsCount() {
+      return this.$store.getters.msgsCount <= 9
+        ? this.$store.getters.msgsCount
+        : "9+";
+    },
+    notifCount() {
+      return this.$store.getters.notifCount <= 9
+        ? this.$store.getters.notifCount
+        : "9+";
+    }
   }
 };
 </script>
@@ -73,6 +94,17 @@ export default {
 .v-navigation-drawer {
   left: unset !important;
   right: unset !important;
+  .v-btn--active {
+    .v-badge__badge {
+      color: white !important;
+    }
+    &::before {
+      background: unset !important;
+    }
+    span {
+      color: #f0a709 !important;
+    }
+  }
 }
 .theme--light {
   .v-navigation-drawer {
