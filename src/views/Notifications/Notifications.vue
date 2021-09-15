@@ -2,7 +2,10 @@
   <div class="notifications">
     <div class="notifications__content bg">
       <div v-for="(notif, i) in notifications" :key="i" class="conv-list-item">
-        <router-link to="#" class="d-flex align-center notif-item">
+        <router-link
+          :to="getLink(notif)"
+          class="d-flex align-center notif-item"
+        >
           <div class="d-flex pt-4 px-4 pb-3">
             <div class="mx-4">
               <v-icon color="primary" size="30">
@@ -10,13 +13,40 @@
               </v-icon>
             </div>
             <div class="d-flex flex-column">
-              <span>
-                <img src="@/assets/images/avatar.svg" width="30" alt="Avatar" />
-              </span>
+              <PopoverProfile
+                :index="notif._id"
+                :userName="notif.sender.userName"
+              >
+                <router-link
+                  :to="{
+                    name: 'ViewProfile',
+                    params: { userName: notif.sender.userName }
+                  }"
+                >
+                  <img
+                    src="@/assets/images/avatar.svg"
+                    width="30"
+                    alt="Avatar"
+                  />
+                </router-link>
+              </PopoverProfile>
+              <span> </span>
               <div class="d-flex align-center">
-                <span class="font-weight-bold me-1">
-                  {{ notif.sender.profile.firstName }}
-                  {{ notif.sender.profile.lastName }}
+                <span class="font-weight-bold me-1 underlined">
+                  <PopoverProfile
+                    :index="notif._id"
+                    :userName="notif.sender.userName"
+                  >
+                    <router-link
+                      :to="{
+                        name: 'ViewProfile',
+                        params: { userName: notif.sender.userName }
+                      }"
+                    >
+                      {{ notif.sender.profile.firstName }}
+                      {{ notif.sender.profile.lastName }}
+                    </router-link>
+                  </PopoverProfile>
                 </span>
                 <span>
                   {{ text[notif.notificationType] }}
@@ -34,7 +64,10 @@
 </template>
 
 <script>
+import PopoverProfile from "@/components/Post/PopoverProfile.vue";
 export default {
+  name: "Notifications",
+  components: { PopoverProfile },
   data: () => ({
     icons: [
       "mdi-heart-outline",
@@ -64,6 +97,15 @@ export default {
         $state.error();
         console.log(err);
       }
+    },
+    getLink(notif) {
+      if (notif.notificationType == 0 || notif.notificationType == 1)
+        return { name: "ViewPost", params: { postId: notif.postId } };
+      if (notif.notificationType == 2)
+        return {
+          name: "ViewProfile",
+          params: { userName: notif.sender.userName }
+        };
     }
   },
   computed: {
