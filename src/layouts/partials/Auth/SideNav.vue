@@ -55,9 +55,14 @@ export default {
       drawer: true,
       group: "",
       items: [
-        { title: "Feeds", icon: "mdi-home", href: "/feeds" },
-        { title: "Messages", icon: "mdi-message", href: "/messages" },
-        { title: "Profile", icon: "mdi-account", href: "/profile" }
+        { title: "Feeds", icon: "mdi-home-outline", href: "/feeds" },
+        { title: "Messages", icon: "mdi-message-outline", href: "/messages" },
+        {
+          title: "Notifications",
+          icon: "mdi-bell-outline",
+          href: "/notifications"
+        },
+        { title: "Profile", icon: "mdi-account-outline", href: "/profile" }
       ],
       mini: true
     };
