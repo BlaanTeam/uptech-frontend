@@ -16,8 +16,8 @@ export default {
     REMOVE_NOTIFICATION(state, index) {
       state.notifications.splice(index, 1);
     },
-    ADD_NOTIFICATION(state, conv) {
-      state.notifications.unshift(conv);
+    ADD_NOTIFICATION(state, notif) {
+      state.notifications.unshift(notif);
     },
     INIT_NOTIF_COUNT(state, notifCount) {
       state.notifCount = notifCount;
@@ -48,8 +48,11 @@ export default {
     initNotifsCount(context, { notifsCount }) {
       context.commit("INIT_NOTIF_COUNT", notifsCount);
     },
-    incrNotifCount(context) {
+    incrNotifsCount(context) {
       context.commit("INCR_NOTIF_COUNT");
+    },
+    addNotif(context, payload) {
+      context.commit("ADD_NOTIFICATION", payload);
     }
   }
 };

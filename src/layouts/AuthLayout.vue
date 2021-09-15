@@ -24,6 +24,10 @@ export default {
         lastMessage: data.lastMessage
       });
       await this.$store.dispatch("incrMsgsCount");
+    },
+    async notif(data) {
+      await this.$store.dispatch("addNotif", data);
+      await this.$store.dispatch("incrNotifsCount");
     }
   },
   mounted() {
