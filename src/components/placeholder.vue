@@ -1,9 +1,7 @@
 <template>
-  <v-app-bar flat app class="auth-secondarybg app-bar" height="52px">
+  <v-app-bar flat app class="auth-secondarybg search" height="52px">
     <v-toolbar-title>UpTech</v-toolbar-title>
     <v-spacer></v-spacer>
-    <DarkMode />
-    <Locale />
     <v-btn text class="mr-2" @click.prevent="logout()">
       <v-icon left>mdi-logout</v-icon>
       logout
@@ -27,23 +25,23 @@ export default {
 };
 </script>
 <style scoped lang="scss">
-.app-bar {
+.search {
   left: unset !important;
   right: unset !important;
-  width: 48vw;
-  max-width: 700px !important;
+  width: 30vw;
+  max-width: 500px !important;
 }
 .theme--light {
-  .app-bar .v-toolbar .v-sheet {
+  .search .v-toolbar .v-sheet {
     background-color: #fff;
   }
-  .app-bar {
+  .search {
     border-bottom: 1px solid #adadad !important;
     border-right: 1px solid #adadad !important;
   }
 }
 
-.theme--dark .app-bar {
+.theme--dark .search {
   border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
   border-right: 1px solid rgba(255, 255, 255, 0.12) !important;
 }

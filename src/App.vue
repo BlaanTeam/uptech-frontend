@@ -69,7 +69,7 @@ export default {
 </script>
 <style lang="scss">
 .v-application--wrap {
-  max-width: 1500px !important;
+  max-width: 1600px !important;
   margin: 0 auto !important;
 }
 a {
@@ -85,7 +85,7 @@ main {
 }
 .router-view {
   width: 48vw;
-  max-width: 800px;
+  max-width: 700px;
   min-height: 93vh;
 }
 .theme--light {

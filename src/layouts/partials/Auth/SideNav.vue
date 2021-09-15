@@ -1,8 +1,10 @@
 <template>
   <v-navigation-drawer
     :right="$vuetify.rtl === true"
+    v-model="drawer"
+    permanent
     app
-    width="220px"
+    width="300px"
     class="auth-secondarybg"
   >
     <v-list-item class="px-2" :inactive="true">
