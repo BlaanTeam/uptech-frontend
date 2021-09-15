@@ -57,18 +57,6 @@
 <script>
 export default {
   name: "Conversations",
-
-  sockets: {
-    async message(data) {
-      this.soundEffect.play();
-      await this.$store.dispatch("receiveMessage", {
-        convId: data._id,
-        user: data.user,
-        lastMessage: data.lastMessage
-      });
-      await this.$state.dispatch("incrMsgsCount");
-    }
-  },
   methods: {
     async loadConversations($state) {
       try {
