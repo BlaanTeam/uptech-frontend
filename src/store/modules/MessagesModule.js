@@ -27,7 +27,8 @@ export default {
   state: {
     createdAt: null,
     convIds: new Map(),
-    conversations: []
+    conversations: [],
+    msgsCount: 0
   },
   getters: {
     conversations: state => state.conversations
@@ -52,6 +53,12 @@ export default {
         conv.lastMessage.read = true;
         state.conversations.splice(i, 1, conv);
       }
+    },
+    INIT_MSGS_COUNT(state, msgsCount) {
+      state.msgsCount = msgsCount;
+    },
+    INCR_MSGS_COUNT(state) {
+      state.msgsCount++;
     }
   },
   actions: {
@@ -117,6 +124,12 @@ export default {
     },
     generateConvIds(context, payload) {
       context.commit("ADD_CONV_ID", payload);
+    },
+    initMsgsCount(context, { msgsCount }) {
+      context.commit("INIT_MSGS_COUNT", msgsCount);
+    },
+    incrMsgsCount(context) {
+      context.commit("INCR_MSGS_COUNT");
     }
   }
 };
