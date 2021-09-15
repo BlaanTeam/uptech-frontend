@@ -21,7 +21,7 @@ export default {
   },
   actions: {
     getNotifications(context) {
-      let path = `/Notifications`;
+      let path = `/notifications`;
       if (context.state.createdAt)
         path += `?createdAt=${context.state.createdAt}`;
       return new Promise((resolve, reject) => {

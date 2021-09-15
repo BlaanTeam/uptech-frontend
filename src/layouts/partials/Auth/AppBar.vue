@@ -1,6 +1,5 @@
 <template>
-  <v-app-bar app class="auth-secondarybg" height="52px" flat>
-    <!-- <v-app-bar-nav-icon></v-app-bar-nav-icon> -->
+  <v-app-bar app flat class="auth-secondarybg" height="52px" width="48vw">
     <v-toolbar-title>UpTech</v-toolbar-title>
     <v-spacer></v-spacer>
     <DarkMode />
@@ -34,10 +33,12 @@ export default {
   }
   .v-app-bar {
     border-bottom: 1px solid #adadad !important;
+    border-right: 1px solid #adadad !important;
   }
 }
 
 .theme--dark .v-app-bar {
-  border-bottom: 1px solid #4b4b4b !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.12) !important;
 }
 </style>

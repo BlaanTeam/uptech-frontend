@@ -13,9 +13,15 @@
 
     <AuthLayout v-else :style="authBackground">
       <v-main>
-        <keep-alive :max="5">
-          <router-view></router-view>
-        </keep-alive>
+        <div class="d-flex">
+          <div>
+            <AppBar v-if="!$route.path.startsWith('/messages')" />
+            <keep-alive :max="5">
+              <router-view></router-view>
+            </keep-alive>
+          </div>
+          <v-divider vertical />
+        </div>
       </v-main>
     </AuthLayout>
   </div>
@@ -24,11 +30,13 @@
 <script>
 import UnAuthLayout from "./layouts/UnAuthLayout";
 import AuthLayout from "@/layouts/AuthLayout";
+import AppBar from "@/layouts/partials/Auth/AppBar";
 
 export default {
   components: {
     UnAuthLayout,
-    AuthLayout
+    AuthLayout,
+    AppBar
   },
   data: () => ({
     includes: ["CreatePost", "Profile"]
@@ -57,6 +65,7 @@ a {
 }
 main {
   min-height: 100vh;
+  width: 100%;
 }
 .v-application a {
   color: inherit !important;

@@ -80,10 +80,11 @@ export default {
 
 <style lang="scss">
 .feeds {
-  max-width: 50vw;
+  max-width: 48vw;
   overflow: hidden;
-  padding: 16px 10px 40px 10px;
   overflow-x: hidden;
+  width: 48vw;
+  padding: 16px 10px 40px 10px;
 }
 .posts {
   .theme--light {

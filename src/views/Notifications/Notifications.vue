@@ -1,65 +1,55 @@
 <template>
   <div class="notifications">
-    <div class="notifications__content bg">
-      <div v-for="(notif, i) in notifications" :key="i" class="conv-list-item">
-        <router-link
-          :to="getLink(notif)"
-          class="d-flex align-center notif-item"
-        >
-          <div class="d-flex pt-4 px-4 pb-3">
-            <div class="mx-4">
-              <v-icon color="primary" size="30">
-                {{ icons[notif.notificationType] }}
-              </v-icon>
-            </div>
-            <div class="d-flex flex-column">
-              <PopoverProfile
-                :index="notif._id"
-                :userName="notif.sender.userName"
+    <div v-for="(notif, i) in notifications" :key="i" class="conv-list-item">
+      <router-link :to="getLink(notif)" class="d-flex align-center notif-item">
+        <div class="d-flex pt-4 px-4 pb-3">
+          <div class="mx-4">
+            <v-icon color="primary" size="30">
+              {{ icons[notif.notificationType] }}
+            </v-icon>
+          </div>
+          <div class="d-flex flex-column">
+            <PopoverProfile
+              :index="notif._id"
+              :userName="notif.sender.userName"
+            >
+              <router-link
+                :to="{
+                  name: 'ViewProfile',
+                  params: { userName: notif.sender.userName }
+                }"
               >
-                <router-link
-                  :to="{
-                    name: 'ViewProfile',
-                    params: { userName: notif.sender.userName }
-                  }"
+                <img src="@/assets/images/avatar.svg" width="30" alt="Avatar" />
+              </router-link>
+            </PopoverProfile>
+            <span> </span>
+            <div class="d-flex align-center">
+              <span class="font-weight-bold me-1 underlined">
+                <PopoverProfile
+                  :index="notif._id"
+                  :userName="notif.sender.userName"
                 >
-                  <img
-                    src="@/assets/images/avatar.svg"
-                    width="30"
-                    alt="Avatar"
-                  />
-                </router-link>
-              </PopoverProfile>
-              <span> </span>
-              <div class="d-flex align-center">
-                <span class="font-weight-bold me-1 underlined">
-                  <PopoverProfile
-                    :index="notif._id"
-                    :userName="notif.sender.userName"
+                  <router-link
+                    :to="{
+                      name: 'ViewProfile',
+                      params: { userName: notif.sender.userName }
+                    }"
                   >
-                    <router-link
-                      :to="{
-                        name: 'ViewProfile',
-                        params: { userName: notif.sender.userName }
-                      }"
-                    >
-                      {{ notif.sender.profile.firstName }}
-                      {{ notif.sender.profile.lastName }}
-                    </router-link>
-                  </PopoverProfile>
-                </span>
-                <span>
-                  {{ text[notif.notificationType] }}
-                </span>
-              </div>
+                    {{ notif.sender.profile.firstName }}
+                    {{ notif.sender.profile.lastName }}
+                  </router-link>
+                </PopoverProfile>
+              </span>
+              <span>
+                {{ text[notif.notificationType] }}
+              </span>
             </div>
           </div>
-        </router-link>
-        <v-divider />
-      </div>
-      <infinite-loading @infinite="loadNotifications"> </infinite-loading>
+        </div>
+      </router-link>
+      <v-divider />
     </div>
-    <v-divider vertical />
+    <infinite-loading @infinite="loadNotifications"> </infinite-loading>
   </div>
 </template>
 
@@ -118,14 +108,10 @@ export default {
 
 <style lang="scss">
 .notifications {
-  max-width: 50vw;
+  width: 48vw;
   min-height: 90.1vh;
-  display: flex;
-  &__content {
-    width: 100%;
-    overflow: hidden;
-    overflow-x: hidden;
-  }
+  overflow: hidden;
+  overflow-x: hidden;
 }
 .theme--dark {
   .notif-item:hover {

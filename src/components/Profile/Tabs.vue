@@ -1,5 +1,5 @@
 <template>
-  <div class="tabs mt-8 px-10">
+  <div class="tabs mt-8 px-4">
     <v-tabs v-model="tabs" centered grow background-color="bg">
       <v-tab>
         Posts
@@ -58,7 +58,6 @@
     <v-tabs-items
       v-else
       v-model="tabs"
-      class="px-1"
       :class="{ bg: !posts.length, 'auth-bg': posts.length }"
     >
       <v-tab-item>
@@ -67,7 +66,7 @@
           @created="addPost"
           v-if="userInfo.isOwner"
         />
-        <div class="px-1 pb-10">
+        <div class="pb-10">
           <PostSkeleton v-if="loading.value" />
           <div v-if="loaded && posts.length">
             <span v-for="(post, index) in posts" :key="post._id">

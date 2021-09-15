@@ -30,16 +30,17 @@ export default {
 
 <style lang="scss">
 .messages-container {
-  height: 91.9vh;
+  width: 83vw;
+  height: 100vh;
   display: flex;
   .conversations {
     width: 30%;
-    height: 100%;
+    height: 100vh;
     overflow-y: auto;
   }
   .messages {
     width: 70%;
-    height: 91.9vh;
+    height: 100vh;
   }
 }
 </style>
