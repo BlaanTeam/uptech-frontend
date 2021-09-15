@@ -108,8 +108,6 @@ export default {
 
 <style lang="scss">
 .notifications {
-  width: 48vw;
-  min-height: 90.1vh;
   overflow: hidden;
   overflow-x: hidden;
 }

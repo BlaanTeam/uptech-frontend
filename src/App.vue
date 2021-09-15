@@ -11,13 +11,22 @@
       </v-main>
     </UnAuthLayout>
 
+    <AuthLayout
+      v-if="$route.path.startsWith('/messages')"
+      :style="authBackground"
+    >
+      <v-main>
+        <router-view></router-view>
+      </v-main>
+    </AuthLayout>
+
     <AuthLayout v-else :style="authBackground">
       <v-main>
         <div class="d-flex">
           <div>
-            <AppBar v-if="!$route.path.startsWith('/messages')" />
-            <keep-alive :max="5">
-              <router-view></router-view>
+            <AppBar />
+            <keep-alive :max="4" :include="includes">
+              <router-view class="router-view"></router-view>
             </keep-alive>
           </div>
           <v-divider vertical />
@@ -39,7 +48,7 @@ export default {
     AppBar
   },
   data: () => ({
-    includes: ["CreatePost", "Profile"]
+    includes: ["Profile"]
   }),
   computed: {
     unAuthBackground() {
@@ -59,6 +68,10 @@ export default {
 };
 </script>
 <style lang="scss">
+.v-application--wrap {
+  max-width: 1500px !important;
+  margin: 0 auto !important;
+}
 a {
   text-decoration: none;
   color: white;
@@ -69,6 +82,11 @@ main {
 }
 .v-application a {
   color: inherit !important;
+}
+.router-view {
+  width: 48vw;
+  max-width: 800px;
+  min-height: 93vh;
 }
 .theme--light {
   ::-webkit-scrollbar-track {

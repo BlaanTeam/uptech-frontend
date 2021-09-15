@@ -1,8 +1,7 @@
 <template>
   <div class="conversations bg pt-16">
-    <div class="bg conversations__header">
+    <div class="conversations__header">
       <div class="d-flex px-2 py-3">
-        <!-- <img src="@/assets/images/avatar.svg" width="40" /> -->
         <h1 class="ms-4 ">Chats</h1>
         <div class="ms-auto me-4 align-self-center">
           <v-btn icon>
@@ -10,9 +9,9 @@
           </v-btn>
         </div>
       </div>
-      <v-divider></v-divider>
+      <v-divider />
     </div>
-    <v-list two-line class="bg" height="80%">
+    <v-list class="bg">
       <div
         v-for="(conv, i) in conversations"
         :key="conv._id"
@@ -21,15 +20,18 @@
       >
         <span v-if="generateConvIds(conv._id, i)"></span>
         <router-link :to="{ name: 'ViewMessages', params: { id: conv._id } }">
-          <v-list-item class="py-1">
+          <v-list-item class="py-2">
             <v-list-item-avatar>
               <img src="@/assets/images/avatar.svg" width="36" alt="Avatar" />
             </v-list-item-avatar>
             <v-list-item-content>
-              <v-list-item-title class="mb-1">
+              <v-list-item-title class="mb-1 d-flex align-center">
                 <span>
                   {{ conv.user.profile.firstName }}
                   {{ conv.user.profile.lastName }}
+                </span>
+                <span class="caption font-weight-thin ms-2">
+                  @{{ conv.user.userName }}
                 </span>
               </v-list-item-title>
               <v-list-item-subtitle class="pa-0 ma-0">
@@ -102,8 +104,8 @@ export default {
 .conversations__header {
   position: absolute;
   top: 0;
-  width: 29.9%;
-  z-index: 2;
+  width: 100%;
+  height: 10vh;
 }
 
 .theme--dark {

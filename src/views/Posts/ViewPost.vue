@@ -76,8 +76,6 @@ export default {
 
 <style lang="scss">
 .view-post {
-  max-width: 50vw;
-  height: 92vh;
   padding: 16px 10px 40px 10px;
   overflow-y: auto;
   overflow-x: hidden;

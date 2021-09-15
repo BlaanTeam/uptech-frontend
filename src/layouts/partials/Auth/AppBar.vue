@@ -27,6 +27,10 @@ export default {
 };
 </script>
 <style scoped lang="scss">
+.v-app-bar {
+  left: unset !important;
+  right: unset !important;
+}
 .theme--light {
   .v-app-bar.v-toolbar.v-sheet {
     background-color: #fff;

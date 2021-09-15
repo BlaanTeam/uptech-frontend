@@ -1,7 +1,6 @@
 <template>
   <div class="messages-container">
     <Conversations class="conversations" />
-    <v-divider vertical></v-divider>
     <div
       v-if="!$route.params.id"
       class="chat-box mx-auto px-10 d-flex flex-column justify-center align-center"
@@ -12,7 +11,7 @@
       </h4>
       <NewConversation />
     </div>
-    <keep-alive>
+    <keep-alive v-else>
       <router-view class="messages" :key="$route.fullPath"></router-view>
     </keep-alive>
   </div>
@@ -34,13 +33,22 @@ export default {
   height: 100vh;
   display: flex;
   .conversations {
-    width: 30%;
+    position: relative;
+    width: 36%;
     height: 100vh;
     overflow-y: auto;
+    border-right: 1px solid rgba(255, 255, 255, 0.12) !important;
   }
   .messages {
-    width: 70%;
+    width: 64%;
     height: 100vh;
   }
+}
+.theme--light .conversations {
+  border-right: 1px solid #adadad !important;
+}
+
+.theme--dark .conversations {
+  border-right: 1px solid rgba(255, 255, 255, 0.12) !important;
 }
 </style>
