@@ -4,7 +4,6 @@
     v-model="drawer"
     permanent
     app
-    width="300px"
     class="auth-secondarybg"
   >
     <div class="d-flex ms-9 my-5">
@@ -79,8 +78,11 @@ export default {
 </script>
 <style lang="scss">
 .v-navigation-drawer {
+  width: 20vw !important;
+  max-width: 240px !important;
   left: unset !important;
   right: unset !important;
+  margin-left: 20px !important;
   .router-link-exact-active {
     .v-badge__badge {
       color: white !important;

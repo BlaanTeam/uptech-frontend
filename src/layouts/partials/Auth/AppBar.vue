@@ -62,7 +62,7 @@ export default {
 .app-bar {
   left: unset !important;
   right: unset !important;
-  width: 48vw;
+  width: 50vw;
   max-width: 700px !important;
 }
 .theme--light {

@@ -30,20 +30,22 @@ export default {
 
 <style lang="scss">
 .messages-container {
-  width: 80vw;
+  width: 100%;
   height: 100vh;
-  max-width: 1050px;
+  max-width: 1060px;
   display: flex;
   .conversations {
     position: relative;
+    max-width: 400px;
     width: 36%;
     height: 100vh;
     overflow-y: auto;
     border-right: 1px solid rgba(255, 255, 255, 0.12) !important;
   }
   .messages {
-    width: 64%;
+    width: 62%;
     height: 100vh;
+    max-width: 650px;
   }
 }
 .theme--light .conversations {

@@ -30,6 +30,10 @@
             </keep-alive>
           </div>
           <v-divider vertical />
+          <div class="right-side">
+            <div class="trending secondarybg"></div>
+            <div class="search secondarybg"></div>
+          </div>
         </div>
       </v-main>
     </AuthLayout>
@@ -84,9 +88,31 @@ main {
   color: inherit !important;
 }
 .router-view {
-  width: 48vw;
+  width: 50vw;
   max-width: 700px;
   min-height: 93vh;
+}
+.right-side {
+  width: 30vw;
+  position: relative;
+  padding: 4px 10px 10px 10px;
+  .search {
+    position: fixed;
+    top: 2px;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 380px;
+    height: 45px;
+    max-height: 45px;
+  }
+  .trending {
+    position: fixed;
+    border-radius: 10px;
+    max-width: 380px;
+    width: 100%;
+    height: 100%;
+    max-height: 90vh;
+  }
 }
 .theme--light {
   ::-webkit-scrollbar-track {
