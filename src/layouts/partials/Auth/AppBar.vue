@@ -11,7 +11,10 @@
           <v-icon> mdi-chevron-down </v-icon>
         </v-btn>
       </template>
-      <div class="bg d-flex flex-column px-4 pt-4" style="width: 200px">
+      <div
+        class="auth-secondarybg d-flex flex-column px-4 pt-4"
+        style="width: 200px"
+      >
         <div class="ms-2 pb-2 d-block">
           <span class="float-left">Theme</span>
           <span class="float-right">
