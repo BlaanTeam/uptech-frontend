@@ -36,16 +36,16 @@ export default {
   display: flex;
   .conversations {
     position: relative;
-    max-width: 400px;
-    width: 36%;
+    max-width: 460px;
+    width: 40%;
     height: 100vh;
     overflow-y: auto;
     border-right: 1px solid rgba(255, 255, 255, 0.12) !important;
   }
   .messages {
-    width: 62%;
+    width: 60%;
     height: 100vh;
-    max-width: 650px;
+    max-width: 700px;
   }
 }
 .theme--light .conversations {
