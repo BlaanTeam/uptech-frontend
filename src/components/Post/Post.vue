@@ -15,17 +15,20 @@
           </PopoverProfile>
         </v-col>
         <v-col lg="3" md="3" sm="5" class="pa-0 ma-0 ms-1 mt-n1">
-          <router-link
-            :to="{
-              name: 'ViewProfile',
-              params: { userName: post.user.userName }
-            }"
-            class="pa-0 ma-0"
-          >
-            <h5 class="font-weight-medium d-inline-block">
-              {{ post.user.userName }}
-            </h5>
-          </router-link>
+          <PopoverProfile :index="post._id" :userName="post.user.userName">
+            <router-link
+              :to="{
+                name: 'ViewProfile',
+                params: { userName: post.user.userName }
+              }"
+              class="pa-0 ma-0"
+            >
+              <h5 class="font-weight-medium d-inline-block underlined">
+                {{ post.user.userName }}
+              </h5>
+            </router-link>
+          </PopoverProfile>
+
           <p class="caption text--disabled pa-0 mt-n2 ma-0 d-block">
             <timeago :datetime="post.createdAt" :auto-update="60" />
           </p>

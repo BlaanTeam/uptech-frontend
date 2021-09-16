@@ -1,5 +1,5 @@
 <template>
-  <v-btn text fab @click="darkModeToggle" height="0">
+  <v-btn text @click="darkModeToggle" height="0">
     <v-icon>{{ icon }}</v-icon>
   </v-btn>
 </template>

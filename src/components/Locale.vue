@@ -1,7 +1,14 @@
 <template>
   <v-menu offset-y>
     <template v-slot:activator="{ on, attrs }">
-      <v-btn class="me-3 text-center" text v-bind="attrs" v-on="on">
+      <v-btn
+        class="text-center"
+        text
+        height="30"
+        width="36"
+        v-bind="attrs"
+        v-on="on"
+      >
         <v-icon>mdi-translate</v-icon>
         <v-icon small>mdi-chevron-down</v-icon>
       </v-btn>

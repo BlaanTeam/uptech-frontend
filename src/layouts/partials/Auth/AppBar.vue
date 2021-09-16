@@ -1,13 +1,42 @@
 <template>
   <v-app-bar flat app class="auth-secondarybg app-bar" height="52px">
-    <v-toolbar-title>UpTech</v-toolbar-title>
+    <v-toolbar-title class="text-capitalize">{{
+      $route.path.split("/")[1]
+    }}</v-toolbar-title>
     <v-spacer></v-spacer>
-    <DarkMode />
-    <Locale />
-    <v-btn text class="mr-2" @click.prevent="logout()">
-      <v-icon left>mdi-logout</v-icon>
-      logout
-    </v-btn>
+    <v-menu offset-y left :close-on-content-click="false">
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn text v-bind="attrs" v-on="on" class="px-0 rounded-pill">
+          <img src="@/assets/images/avatar.svg" width="30" />
+          <v-icon> mdi-chevron-down </v-icon>
+        </v-btn>
+      </template>
+      <div class="bg d-flex flex-column px-4 pt-4" style="width: 200px">
+        <div class="ms-2 pb-2 d-block">
+          <span class="float-left">Theme</span>
+          <span class="float-right">
+            <DarkMode />
+          </span>
+        </div>
+        <v-divider />
+        <div class="pt-2 ms-2 d-block">
+          <span class="float-left mt-1">Language</span>
+          <span class="float-right ms-2">
+            <Locale />
+          </span>
+        </div>
+        <v-divider class="mt-10" />
+        <v-btn
+          text
+          class="d-flex justify-center align-center text-none"
+          color="red"
+          @click.prevent="logout()"
+        >
+          <v-icon left>mdi-logout</v-icon>
+          logout
+        </v-btn>
+      </div>
+    </v-menu>
   </v-app-bar>
 </template>
 
