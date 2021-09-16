@@ -149,7 +149,8 @@ export default {
       });
     },
     async sendMessage() {
-      if (!this.content.value) return;
+      if (!this.content.value.trim()) return;
+      this.content.value = this.content.value.trim();
       try {
         let message = {
           convId: this.convId,
