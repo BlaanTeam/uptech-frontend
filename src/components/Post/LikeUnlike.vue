@@ -50,6 +50,7 @@ export default {
           }
 
           this.liked = !this.liked;
+          this.post.likedByViewer = !this.post.likedByViewer;
           this.loading = false;
         }
       } catch (err) {
