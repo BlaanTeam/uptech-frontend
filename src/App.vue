@@ -31,8 +31,8 @@
           </div>
           <v-divider vertical />
           <div class="right-side">
-            <div class="trending secondarybg"></div>
-            <div class="search secondarybg"></div>
+            <div class="trending auth-secondarybg"></div>
+            <div class="search auth-secondarybg"></div>
           </div>
         </div>
       </v-main>
