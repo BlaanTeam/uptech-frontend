@@ -1,7 +1,11 @@
 <template>
   <div class="notifications">
     <div v-for="(notif, i) in notifications" :key="i" class="conv-list-item">
-      <router-link :to="getLink(notif)" class="d-flex align-center notif-item">
+      <div
+        @click="handleClick(notif)"
+        class="d-flex align-center notif-item"
+        :class="{ 'auth-secondarybg': !notif.isRead }"
+      >
         <div class="d-flex pt-4 px-4 pb-3">
           <div class="mx-4">
             <v-icon color="primary" size="30">
@@ -46,7 +50,7 @@
             </div>
           </div>
         </div>
-      </router-link>
+      </div>
       <v-divider />
     </div>
     <infinite-loading @infinite="loadNotifications"> </infinite-loading>
@@ -96,6 +100,11 @@ export default {
           name: "ViewProfile",
           params: { userName: notif.sender.userName }
         };
+    },
+    async handleClick(notif) {
+      await this.$http.patch("/notifications/" + notif._id);
+      await this.$router.push(this.getLink(notif));
+      notif.isRead = true;
     }
   },
   computed: {
@@ -110,6 +119,9 @@ export default {
 .notifications {
   overflow: hidden;
   overflow-x: hidden;
+  .conv-list-item {
+    cursor: pointer;
+  }
 }
 .theme--dark {
   .notif-item:hover {
