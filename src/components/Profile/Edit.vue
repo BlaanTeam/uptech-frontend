@@ -91,13 +91,6 @@
               max="2020"
             />
           </v-col>
-          <!-- <v-col>
-            <v-text-field
-              v-model="profile.birthDate"
-              outlined
-              label="Birth Date"
-            />
-          </v-col> -->
         </v-row>
       </v-card-text>
       <v-card-actions>
@@ -149,11 +142,14 @@ export default {
       this.loading = true;
       console.log(this.profile);
       try {
+        if (this.profile.isPrivate == undefined) this.profile.isPrivate = false;
         const res = await this.$http.patch("/users", {
           profile: {
             firstName: this.profile.firstName,
-            lastName: this.profile.firstName,
-            bio: this.profile.bio
+            lastName: this.profile.lastName,
+            bio: this.profile.bio,
+            location: this.profile.location,
+            website: this.profile.website
           }
         });
         console.log("Edit.vue(edit): Profile edited successfully :)");

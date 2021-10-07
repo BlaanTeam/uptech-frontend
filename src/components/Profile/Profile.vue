@@ -25,7 +25,7 @@
           <slot> </slot>
         </span>
         <h3 class="mt-n2">@{{ userInfo.userName }}</h3>
-        <p class="mt-4 pe-3" v-if="userInfo.profile.bio">
+        <p class="mt-4 pe-3 bio" v-if="userInfo.profile.bio">
           {{ userInfo.profile.bio }}
         </p>
         <div class="more-info d-flex flex-column mt-4">
@@ -143,5 +143,8 @@ export default {
 }
 .profile .follows-disabled {
   pointer-events: none;
+}
+.profile .bio {
+  white-space: pre-line;
 }
 </style>
