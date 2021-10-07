@@ -102,7 +102,7 @@ export default {
     },
     async handleClick(notif) {
       await this.$http.patch("/notifications/" + notif._id);
-      await this.$store.dispatch("decrNotifsCount");
+      if (!notif.isRead) await this.$store.dispatch("decrNotifsCount");
       await this.$router.push(this.getLink(notif));
       notif.isRead = true;
     }
