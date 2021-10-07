@@ -1,5 +1,5 @@
 <template>
-  <v-app dark>
+  <v-app dark class="auth-layout">
     <SideNav />
     <slot></slot>
   </v-app>

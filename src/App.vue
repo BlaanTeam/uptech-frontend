@@ -72,7 +72,7 @@ export default {
 };
 </script>
 <style lang="scss">
-.v-application--wrap {
+.auth-layout .v-application--wrap {
   max-width: 1400px !important;
   margin: 0 auto !important;
 }

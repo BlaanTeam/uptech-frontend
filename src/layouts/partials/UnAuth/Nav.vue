@@ -1,10 +1,11 @@
 <template>
-  <div class="header d-flex">
+  <div class="header d-flex px-10">
     <v-app-bar class="header__nav" flat>
       <!--------------- Brand area --------------->
       <div class="d-flex">
-        <router-link class="logo" to="/">
-          <v-icon x-large>mdi-baby-face</v-icon>
+        <router-link class="logo d-flex align-center" to="/">
+          <v-img src="@/assets/logo.png" width="30" />
+          <span class="ms-2">uptech</span>
         </router-link>
       </div>
       <v-spacer></v-spacer>

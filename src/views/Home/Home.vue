@@ -1,10 +1,10 @@
 <template>
-  <div class="home ma-0 pa-0">
-    <section class="first-section pa-4">
+  <div class="home ma-0 pa-0 ">
+    <section class="first-section pa-4 px-10">
       <v-row class="first-section__header">
         <v-col class="ms-1 align-self-center">
           <h1
-            class="first-section__title text-lg-h2 text-xl-h1 text--primary pb-2 font-weight-regular"
+            class="first-section__title display-2 text--primary pb-2 font-weight-regular"
           >
             {{ $t("home.section1.h1") }}
           </h1>
@@ -31,7 +31,7 @@
         <WaveSvg :fillColor="$theme.currentTheme.bg" />
       </div>
     </section>
-    <RealTimeChat />
+    <RealTimeChat class="px-10" />
   </div>
 </template>
 
