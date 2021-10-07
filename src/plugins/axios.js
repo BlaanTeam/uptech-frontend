@@ -55,7 +55,7 @@ axios.interceptors.response.use(
       if (error.response.status === 404 && store.getters.isLoggedIn) {
         store.dispatch("handleNotFound");
       }
-      if (error.response.data.error.notAuthorized) {
+      if (error.response.status === 401) {
         if (store.getters.isLoggedIn) {
           store.dispatch("destroySession");
         }
