@@ -11,9 +11,7 @@
       </h4>
       <NewConversation />
     </div>
-    <keep-alive v-else>
-      <router-view class="messages" :key="$route.fullPath"></router-view>
-    </keep-alive>
+    <router-view class="messages" :key="$route.fullPath"></router-view>
     <v-divider vertical />
   </div>
 </template>
