@@ -80,7 +80,6 @@ export default {
     async loadNotifications($state) {
       try {
         let notifications = await this.$store.dispatch("getNotifications");
-        console.log(notifications);
         if (notifications.length) {
           $state.loaded();
         } else {
