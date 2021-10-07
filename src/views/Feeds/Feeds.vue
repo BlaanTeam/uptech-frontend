@@ -74,6 +74,9 @@ export default {
       payload.like = false;
       this.posts.unshift(payload);
     }
+  },
+  destroyed() {
+    this.$store.dispatch("destroyPosts");
   }
 };
 </script>
