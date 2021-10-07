@@ -25,6 +25,9 @@ export default {
     },
     INCR_NOTIF_COUNT(state) {
       state.notifCount++;
+    },
+    DECR_NOTIF_COUNT(state) {
+      state.notifCount--;
     }
   },
   actions: {
@@ -51,6 +54,9 @@ export default {
     },
     incrNotifsCount(context) {
       context.commit("INCR_NOTIF_COUNT");
+    },
+    decrNotifsCount(context) {
+      context.commit("DECR_NOTIF_COUNT");
     },
     addNotif(context, payload) {
       context.commit("ADD_NOTIFICATION", payload);
