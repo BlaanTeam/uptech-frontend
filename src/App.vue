@@ -25,9 +25,9 @@
         <div class="d-flex">
           <div>
             <AppBar />
-            <keep-alive :max="4" :include="includes">
-              <router-view class="router-view"></router-view>
-            </keep-alive>
+            <!-- <keep-alive :max="4" :include="includes"> -->
+            <router-view class="router-view"></router-view>
+            <!-- </keep-alive> -->
           </div>
           <v-divider vertical />
           <div class="right-side">
