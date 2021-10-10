@@ -150,6 +150,7 @@ main {
     padding: 10px 20px;
     display: flex;
     flex-direction: column;
+    max-height: 590px;
     .trend {
       display: flex;
       flex-direction: column;
