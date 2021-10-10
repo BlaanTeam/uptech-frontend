@@ -32,33 +32,37 @@
           <v-divider vertical />
           <div class="right-side">
             <div class="trending auth-secondarybg">
+              <div class="soon">soon</div>
               <div class="title">Trends for you</div>
               <div class="trend">
                 <span class="font-weight-light caption">
                   Trending in Morocco
                 </span>
                 <span>#NFTdrop</span>
-                <span class="font-weight-light caption">128K Tweets</span>
+                <span class="font-weight-light caption">128K Posts</span>
               </div>
               <div class="trend" v-for="i in 2" :key="i">
                 <span class="font-weight-light caption">
                   Technology · Trending
                 </span>
                 <span>Google</span>
-                <span class="font-weight-light caption">561K Tweets</span>
+                <span class="font-weight-light caption">561K Posts</span>
               </div>
-              <div class="trend" v-for="i in 3" :key="i">
+              <div class="trend" v-for="i in 3" :key="i + 4">
                 <span class="font-weight-light caption">
                   Trending in Morocco
                 </span>
                 <span>#Morocco</span>
-                <span class="font-weight-light caption">1,437 Tweets</span>
+                <span class="font-weight-light caption">1,437 Posts</span>
               </div>
               <div class="mt-2">
                 <span class="primary--text">See more</span>
               </div>
             </div>
-            <div class="search auth-secondarybg">Search</div>
+            <div class="search auth-secondarybg">
+              <span class="soon">soon</span>
+              <span>Search</span>
+            </div>
           </div>
         </div>
       </v-main>
@@ -152,6 +156,15 @@ main {
       margin: 10px 0;
     }
   }
+}
+.soon {
+  position: absolute;
+  right: 0;
+  top: 10px;
+  transform: rotate(45deg);
+  background: rgb(4, 192, 67);
+  padding: 0px 6px 1px 6px;
+  border-radius: 15px;
 }
 .theme--light {
   ::-webkit-scrollbar-track {
