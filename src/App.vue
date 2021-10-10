@@ -31,8 +31,34 @@
           </div>
           <v-divider vertical />
           <div class="right-side">
-            <div class="trending auth-secondarybg"></div>
-            <div class="search auth-secondarybg"></div>
+            <div class="trending auth-secondarybg">
+              <div class="title">Trends for you</div>
+              <div class="trend">
+                <span class="font-weight-light caption">
+                  Trending in Morocco
+                </span>
+                <span>#NFTdrop</span>
+                <span class="font-weight-light caption">128K Tweets</span>
+              </div>
+              <div class="trend" v-for="i in 2" :key="i">
+                <span class="font-weight-light caption">
+                  Technology · Trending
+                </span>
+                <span>Google</span>
+                <span class="font-weight-light caption">561K Tweets</span>
+              </div>
+              <div class="trend" v-for="i in 3" :key="i">
+                <span class="font-weight-light caption">
+                  Trending in Morocco
+                </span>
+                <span>#Morocco</span>
+                <span class="font-weight-light caption">1,437 Tweets</span>
+              </div>
+              <div class="mt-2">
+                <span class="primary--text">See more</span>
+              </div>
+            </div>
+            <div class="search auth-secondarybg">Search</div>
           </div>
         </div>
       </v-main>
@@ -104,6 +130,11 @@ main {
     max-width: 380px;
     height: 45px;
     max-height: 45px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    font-weight: 300;
+    font-size: 15px;
   }
   .trending {
     position: fixed;
@@ -112,6 +143,14 @@ main {
     width: 100%;
     height: 100%;
     max-height: 90vh;
+    padding: 10px 20px;
+    display: flex;
+    flex-direction: column;
+    .trend {
+      display: flex;
+      flex-direction: column;
+      margin: 10px 0;
+    }
   }
 }
 .theme--light {
