@@ -60,7 +60,7 @@
       v-model="tabs"
       :class="{ bg: !posts.length, 'auth-bg': posts.length }"
     >
-      <v-tab-item>
+      <v-tab-item class="px-1">
         <CreatePost
           @creating="handleLoading"
           @created="addPost"
@@ -93,12 +93,12 @@
         </infinite-loading>
       </v-tab-item>
       <v-tab-item>
-        <div class="auth-bg">
+        <div style="height: 100vh">
           likes and comments
         </div>
       </v-tab-item>
       <v-tab-item>
-        <div class="auth-bg">
+        <div style="height: 100vh">
           media
         </div>
       </v-tab-item>
