@@ -3,6 +3,7 @@
     <v-toolbar-title class="text-capitalize">{{
       $route.path.split("/")[1]
     }}</v-toolbar-title>
+    <DarkMode v-show="false" />
     <v-spacer></v-spacer>
     <v-menu offset-y left :close-on-content-click="false">
       <template v-slot:activator="{ on, attrs }">
