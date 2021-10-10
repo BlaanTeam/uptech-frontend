@@ -5,7 +5,7 @@
     }}</v-toolbar-title>
     <DarkMode v-show="false" />
     <v-spacer></v-spacer>
-    <v-menu offset-y left :close-on-content-click="false">
+    <v-menu nudge-right="10" offset-y left :close-on-content-click="false">
       <template v-slot:activator="{ on, attrs }">
         <v-btn text v-bind="attrs" v-on="on" class="px-0 rounded-pill">
           <img src="@/assets/images/avatar.svg" width="30" />
@@ -13,8 +13,8 @@
         </v-btn>
       </template>
       <div
-        class="auth-secondarybg d-flex flex-column px-4 pt-4"
-        style="width: 200px"
+        class="auth-secondarybg d-flex flex-column pt-2 px-2"
+        style="width: 170px"
       >
         <div class="ms-2 pb-2 d-block">
           <span class="float-left">Theme</span>
@@ -29,7 +29,7 @@
             <Locale />
           </span>
         </div>
-        <v-divider class="mt-10" />
+        <v-divider class="mt-14" />
         <v-btn
           text
           class="d-flex justify-center align-center text-none"

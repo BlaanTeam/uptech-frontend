@@ -30,7 +30,7 @@
       <v-spacer></v-spacer>
       <DarkMode />
       <Locale />
-      <router-link class="login d-none d-sm-flex" :to="router">
+      <router-link class="login d-none d-sm-flex ms-2" :to="router">
         <v-btn color="primary" rounded elevation="0" dark>
           <v-icon left size="20">mdi-{{ auth.icon }}</v-icon>
           {{ auth.name }}

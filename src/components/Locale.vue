@@ -1,5 +1,5 @@
 <template>
-  <v-menu offset-y>
+  <v-menu nudge-left="5" offset-y>
     <template v-slot:activator="{ on, attrs }">
       <v-btn
         class="text-center"
@@ -13,11 +13,12 @@
         <v-icon small>mdi-chevron-down</v-icon>
       </v-btn>
     </template>
-    <v-list class="lang" dense>
+    <v-list class="lang auth-secondarybg pa-0 ma-0" dense>
       <v-list-item class="text-center" link @click="setLocale('en')">
         <v-list-item-title>{{ $t("langs.en") }}</v-list-item-title>
       </v-list-item>
-      <v-list-item dense class="text-center" link @click="setLocale('ar')">
+      <v-divider />
+      <v-list-item class="text-center" link @click="setLocale('ar')">
         <v-list-item-title>{{ $t("langs.ar") }}</v-list-item-title>
       </v-list-item>
     </v-list>
