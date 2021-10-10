@@ -3,7 +3,7 @@
     <Conversations class="conversations" />
     <div
       v-if="!$route.params.id"
-      class="chat-box mx-auto px-10 d-flex flex-column justify-center align-center"
+      class="bg px-10 d-flex flex-column justify-center align-center"
     >
       <h2>You don’t have any selected conversation</h2>
       <h4 class="my-1">

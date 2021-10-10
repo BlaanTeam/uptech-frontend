@@ -1,5 +1,5 @@
 <template>
-  <div class="notifications">
+  <div class="notifications bg">
     <div v-for="(notif, i) in notifications" :key="i" class="conv-list-item">
       <div
         @click="handleClick(notif)"
