@@ -59,6 +59,7 @@
         <v-row no-gutters>
           <v-col>
             <v-text-field
+              placeholder="https://example.com"
               v-model="profile.website"
               type="url"
               outlined

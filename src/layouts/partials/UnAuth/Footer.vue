@@ -1,6 +1,6 @@
 <template>
   <v-footer color="bg footer lighten-1">
-    <v-row>
+    <v-row no-gutters>
       <v-col class="mx-10 socials">
         <h2 class="ml-4 primary--text">Get connected on</h2>
         <div class="ml-6 buttons">

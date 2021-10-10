@@ -5,12 +5,10 @@
         <RealTimeChatSvg />
       </v-col>
       <v-col class="px-8">
-        <h1
-          class="text-lg-h2 text-xl-h1 text--primary py-2 font-weight-regular"
-        >
+        <h1 class="display-2 py-2 font-weight-regular">
           {{ $t("home.section2.h1") }}
         </h1>
-        <p class="text-lg-h3 text-xl-h2 font-weight-light">
+        <p class="display-1 font-weight-light">
           {{ $t("home.section2.text") }}
         </p>
       </v-col>

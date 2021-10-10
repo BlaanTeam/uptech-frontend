@@ -45,7 +45,7 @@
                 <span class="font-weight-light caption">
                   Technology · Trending
                 </span>
-                <span>Google</span>
+                <span>Uptech</span>
                 <span class="font-weight-light caption">561K Posts</span>
               </div>
               <div class="trend" v-for="i in 3" :key="i + 4">
