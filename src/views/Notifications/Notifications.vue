@@ -71,8 +71,8 @@ export default {
     ],
     text: [
       "liked your post",
-      "commented on you post",
-      "followed you",
+      "commented on your post",
+      "followed your",
       "published a new announcement"
     ]
   }),
