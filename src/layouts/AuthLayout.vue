@@ -19,6 +19,12 @@ export default {
     async message(data) {
       this.soundEffect.currentTime = 0;
       this.soundEffect.play();
+      if (this.$store.getters.conversations.length > 0)
+        await this.$store.dispatch("receiveMessage", {
+          convId: data._id,
+          user: data.user,
+          lastMessage: data.lastMessage
+        });
       await this.$store.dispatch("incrMsgsCount");
     },
     async notif(data) {
