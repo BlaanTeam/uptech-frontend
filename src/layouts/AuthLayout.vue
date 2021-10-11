@@ -25,7 +25,7 @@ export default {
           user: data.user,
           lastMessage: data.lastMessage
         });
-      await this.$store.dispatch("incrMsgsCount");
+      this.$store.state.MessagesModule.msgsCount = "socket";
     },
     async notif(data) {
       await this.$store.dispatch("addNotif", data);

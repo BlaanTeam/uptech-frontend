@@ -18,9 +18,18 @@
         <router-link :to="item.href">
           <v-btn text rounded class="mt-3 px-4 py-1 text-capitalize">
             <v-badge
-              v-if="item.title == 'Messages' && msgsCount"
+              v-if="item.title == 'Messages' && msgsCount == 'socket'"
               color="primary"
-              :content="msgsCount"
+              left
+              offset-x="-4"
+              dot
+            >
+              <v-icon left size="24" class="me-4">{{ item.icon }}</v-icon>
+            </v-badge>
+            <v-badge
+              v-else-if="item.title == 'Messages' && msgsCount"
+              color="primary"
+              :content="msgsCount <= 9 ? msgsCount : '9+'"
               left
             >
               <v-icon left size="24" class="me-4">{{ item.icon }}</v-icon>
@@ -64,9 +73,7 @@ export default {
   },
   computed: {
     msgsCount() {
-      return this.$store.getters.msgsCount <= 9
-        ? this.$store.getters.msgsCount
-        : "9+";
+      return this.$store.getters.msgsCount;
     },
     notifCount() {
       return this.$store.getters.notifCount <= 9

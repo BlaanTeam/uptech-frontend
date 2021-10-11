@@ -22,7 +22,10 @@ import NewConversation from "@/components/Chat/NewConversation.vue";
 
 export default {
   name: "ViewMessages",
-  components: { Conversations, NewConversation }
+  components: { Conversations, NewConversation },
+  mounted() {
+    this.$store.state.MessagesModule.msgsCount = 0;
+  }
 };
 </script>
 
