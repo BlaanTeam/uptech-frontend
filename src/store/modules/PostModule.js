@@ -11,6 +11,7 @@ export default {
   mutations: {
     DESTROY_POSTS(state) {
       state.posts.length = 0;
+      state.createdAt = null;
     },
     INIT_POSTS(state, payload) {
       state.posts.push(...payload);

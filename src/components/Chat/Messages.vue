@@ -28,8 +28,24 @@
           </v-btn>
         </div>
       </v-card-title>
-
-      <v-card-text class="bg messages-box__messages d-flex pt-4 px-6">
+      <div v-if="user && user.blockedByViewer" class="mt-14 text-center bg">
+        <h2>You have been blocked this user</h2>
+        <h4>Unblock to send messages</h4>
+        <Unblock :userInfo="user">
+          <v-btn elevation="0" class="text-capitalize mt-4" color="red" dark>
+            <v-icon small left>mdi-lock-open-variant-outline</v-icon>
+            unblock
+          </v-btn>
+        </Unblock>
+      </div>
+      <div
+        v-else-if="user && user.hasBlockedViewer"
+        class="mt-14 text-center bg"
+      >
+        <h2>You have been blocked from this user</h2>
+        <h4>Sorry you can't send messages</h4>
+      </div>
+      <v-card-text v-else class="bg messages-box__messages d-flex pt-4 px-6">
         <infinite-loading direction="top" @infinite="loadMessages">
         </infinite-loading>
         <div v-for="message in messages" :key="message.id">
@@ -39,7 +55,6 @@
           <Dots />
         </div>
       </v-card-text>
-
       <v-card-actions class="messages-box__actions bg px-6">
         <v-btn icon>
           <v-icon color="primary">mdi-plus-box</v-icon>
@@ -86,7 +101,12 @@ import Message from "@/components/Chat/Message";
 
 export default {
   name: "Messages",
-  components: { Emojis, Dots, Message },
+  components: {
+    Emojis,
+    Dots,
+    Message,
+    Unblock: () => import("@/components/Profile/Unblock")
+  },
   data: () => ({
     messages: [],
     user: null,
@@ -127,7 +147,11 @@ export default {
           createdAt: this.createdAt,
           convId: this.convId
         });
-        if (!this.user) this.user = res.user;
+        if (!this.user) {
+          this.user = res.user;
+          this.$set(this.user, "blockedByViewer", res.blockedByViewer);
+          this.$set(this.user, "hasBlockedViewer", res.hasBlockedViewer);
+        }
         if (res.messages.length) {
           let lastMessage = res.messages[0];
           this.createdAt = lastMessage.createdAt;
@@ -150,6 +174,8 @@ export default {
     },
     async sendMessage() {
       if (!this.content.value.trim()) return;
+      if (this.user.blockedByViewer) return;
+      if (this.user.hasBlockedViewer) return;
       this.content.value = this.content.value.trim();
       try {
         let message = {
