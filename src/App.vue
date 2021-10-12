@@ -99,9 +99,12 @@ export default {
 };
 </script>
 <style lang="scss">
-html {
-  overflow-y: auto !important;
+@media screen and (max-width: 1200px) {
+  html {
+    overflow-y: auto !important;
+  }
 }
+
 .auth-layout .v-application--wrap {
   max-width: 1260px !important;
   margin: 0 auto !important;
@@ -124,7 +127,7 @@ main {
   min-width: 45vw;
   max-width: 700px;
   min-height: 92vh;
-  padding: 52px 10px 0 10px !important;
+  padding-top: 52px !important;
 }
 .right-side {
   width: 30vw;
