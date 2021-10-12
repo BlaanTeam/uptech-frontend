@@ -77,7 +77,7 @@ export default {
   left: unset !important;
   right: unset !important;
   top: unset !important;
-  width: 50vw;
+  width: 45vw;
   max-width: 700px !important;
 }
 .theme--light {

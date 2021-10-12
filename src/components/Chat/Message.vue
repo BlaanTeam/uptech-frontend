@@ -90,8 +90,7 @@ export default {
       padding: 10px;
       border-radius: 0 10px 10px 10px;
       max-width: 400px !important;
-      color: #d8d8d8;
-      white-space: pre-wrap;
+      white-space: pre-line;
     }
   }
   &__sent {

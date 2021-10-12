@@ -99,10 +99,16 @@ export default {
 };
 </script>
 <style lang="scss">
-.auth-layout .v-application--wrap {
-  max-width: 1360px !important;
-  margin: 0 auto !important;
+html {
+  overflow-y: auto !important;
 }
+.auth-layout .v-application--wrap {
+  max-width: 1260px !important;
+  margin: 0 auto !important;
+  display: flex !important;
+  justify-content: center !important;
+}
+
 a {
   text-decoration: none;
   color: white;
@@ -115,9 +121,10 @@ main {
   color: inherit !important;
 }
 .router-view {
-  width: 50vw;
+  min-width: 45vw;
   max-width: 700px;
-  min-height: 93vh;
+  min-height: 92vh;
+  padding: 52px 10px 0 10px !important;
 }
 .right-side {
   width: 30vw;
@@ -167,9 +174,7 @@ main {
 }
 .theme--light .auth-main {
   padding-top: 0 !important ;
-  .router-view {
-    padding-top: 52px;
-  }
+
   &__container {
     border-left: 1px solid #adadad;
     border-right: 1px solid #adadad;
@@ -177,9 +182,7 @@ main {
 }
 .theme--dark .auth-main {
   padding-top: 0 !important ;
-  .router-view {
-    padding-top: 52px;
-  }
+
   &__container {
     border-left: 1px solid rgba(255, 255, 255, 0.12);
     border-right: 1px solid rgba(255, 255, 255, 0.12);
@@ -188,33 +191,33 @@ main {
 .theme--light {
   ::-webkit-scrollbar-track {
     border-radius: 10px;
-    background-color: #b9b9b9;
+    background-color: #ffffff;
   }
 
   ::-webkit-scrollbar {
     width: 8px;
-    background-color: #9e9e9e;
+    background-color: #ffffff;
   }
 
   ::-webkit-scrollbar-thumb {
     border-radius: 10px;
-    background: #999999;
+    background: #505050;
   }
 }
 .theme--dark {
   ::-webkit-scrollbar-track {
     border-radius: 10px;
-    background-color: #3d3d3d;
+    background-color: #1f2023;
   }
 
   ::-webkit-scrollbar {
     width: 8px;
-    background-color: #2b2b2b;
+    background-color: #1f2023;
   }
 
   ::-webkit-scrollbar-thumb {
     border-radius: 10px;
-    background: #19191d;
+    background: #4e4e4e;
   }
 }
 
