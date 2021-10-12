@@ -25,7 +25,10 @@
               <img src="@/assets/images/avatar.svg" width="36" alt="Avatar" />
             </v-list-item-avatar>
             <v-list-item-content>
-              <v-list-item-title class="mb-1 d-flex align-center">
+              <v-list-item-title
+                class="mb-1 d-flex align-center"
+                :class="{ 'primary--text': newMessage(conv.lastMessage) }"
+              >
                 <span>
                   {{ conv.user.profile.firstName }}
                   {{ conv.user.profile.lastName }}
@@ -112,9 +115,6 @@ export default {
   }
   .new-message {
     background: #26272b !important;
-    .v-list-item {
-      color: #f0a709 !important;
-    }
   }
 }
 .theme--light {
@@ -123,9 +123,6 @@ export default {
   }
   .new-message {
     background: #dbd9d9 !important;
-    .v-list-item {
-      color: #f0a709 !important;
-    }
   }
 }
 </style>
