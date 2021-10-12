@@ -1,8 +1,8 @@
 <template>
   <v-navigation-drawer
     :right="$vuetify.rtl === true"
-    v-model="drawer"
-    permanent
+    v-model="$store.state.drawer"
+    :permanent="!$vuetify.breakpoint.mdAndDown"
     app
     class="auth-secondarybg"
   >
@@ -55,7 +55,6 @@
 export default {
   data() {
     return {
-      drawer: true,
       group: "",
       items: [
         { title: "Feeds", icon: "mdi-home-outline", href: "/feeds" },
@@ -67,8 +66,7 @@ export default {
         },
         { title: "Profile", icon: "mdi-account-outline", href: "/profile" },
         { title: "Settings", icon: "mdi-cog-outline", href: "/settings" }
-      ],
-      mini: true
+      ]
     };
   },
   computed: {
@@ -85,11 +83,10 @@ export default {
 </script>
 <style lang="scss">
 .v-navigation-drawer {
-  width: 20vw !important;
-  max-width: 240px !important;
+  width: 40vw !important;
+  max-width: 256px !important;
   left: unset !important;
   right: unset !important;
-  margin-left: 20px !important;
   .router-link-exact-active {
     .v-badge__badge {
       color: white !important;
@@ -108,8 +105,12 @@ export default {
     }
   }
   .v-navigation-drawer__border {
-    display: block !important;
-    background: #adadad !important;
+    display: none !important;
+  }
+}
+.theme--dark {
+  .v-navigation-drawer__border {
+    display: none !important;
   }
 }
 </style>

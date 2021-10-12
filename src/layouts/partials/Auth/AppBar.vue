@@ -1,5 +1,18 @@
 <template>
   <v-app-bar flat app class="auth-secondarybg app-bar" height="52px">
+    <v-btn
+      v-if="$vuetify.breakpoint.mdAndDown"
+      text
+      icon
+      width="35"
+      height="35"
+      @click="$store.state.drawer = !$store.state.drawer"
+    >
+      <v-icon>
+        mdi-menu
+      </v-icon>
+    </v-btn>
+
     <v-toolbar-title class="text-capitalize">{{
       $route.path.split("/")[1]
     }}</v-toolbar-title>
@@ -63,6 +76,7 @@ export default {
 .app-bar {
   left: unset !important;
   right: unset !important;
+  top: unset !important;
   width: 50vw;
   max-width: 700px !important;
 }
@@ -72,12 +86,9 @@ export default {
   }
   .app-bar {
     border-bottom: 1px solid #adadad !important;
-    border-right: 1px solid #adadad !important;
   }
 }
-
 .theme--dark .app-bar {
   border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
-  border-right: 1px solid rgba(255, 255, 255, 0.12) !important;
 }
 </style>

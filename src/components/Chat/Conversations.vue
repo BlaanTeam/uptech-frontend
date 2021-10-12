@@ -1,7 +1,19 @@
 <template>
   <div class="conversations bg pt-16">
     <div class="conversations__header">
-      <div class="d-flex px-2 py-3">
+      <div class="d-flex align-center px-2 py-3">
+        <v-btn
+          v-if="$vuetify.breakpoint.mdAndDown"
+          text
+          icon
+          width="35"
+          height="35"
+          @click="$store.state.drawer = !$store.state.drawer"
+        >
+          <v-icon>
+            mdi-menu
+          </v-icon>
+        </v-btn>
         <h1 class="ms-4 ">Chats</h1>
         <div class="ms-auto me-4 align-self-center">
           <v-btn icon>

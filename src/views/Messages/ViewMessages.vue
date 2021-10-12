@@ -12,7 +12,6 @@
       <NewConversation />
     </div>
     <router-view class="messages" :key="$route.fullPath"></router-view>
-    <v-divider vertical />
   </div>
 </template>
 
@@ -33,34 +32,25 @@ export default {
 .messages-container {
   width: 100%;
   height: 100vh;
-  max-width: 1076px;
+  max-width: 1096px;
   display: flex;
   .conversations {
     position: relative;
-    max-width: 460px;
+    max-width: 470px;
     width: 40%;
     height: 100vh;
     overflow-y: auto;
-    border-right: 1px solid rgba(255, 255, 255, 0.12) !important;
   }
   .messages {
     width: 60%;
     height: 100vh;
-    max-width: 700px;
+    max-width: 730px;
   }
 }
 .theme--light .conversations {
   border-right: 1px solid #adadad !important;
 }
-
 .theme--dark .conversations {
-  border-right: 1px solid rgba(255, 255, 255, 0.12) !important;
-}
-.theme--light .messages {
-  border-right: 1px solid #adadad !important;
-}
-
-.theme--dark .messages {
   border-right: 1px solid rgba(255, 255, 255, 0.12) !important;
 }
 </style>

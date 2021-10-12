@@ -15,21 +15,22 @@
       v-else-if="$route.path.startsWith('/messages')"
       :style="authBackground"
     >
-      <v-main>
-        <router-view class="chat-view"></router-view>
+      <v-main class="auth-main">
+        <div class="auth-main__container">
+          <router-view class="chat-view"></router-view>
+        </div>
       </v-main>
     </AuthLayout>
 
     <AuthLayout v-else :style="authBackground">
-      <v-main>
+      <v-main class="auth-main">
         <div class="d-flex">
-          <div>
+          <div class="auth-main__container">
             <AppBar />
             <!-- <keep-alive :max="4" :include="includes"> -->
             <router-view class="router-view"></router-view>
             <!-- </keep-alive> -->
           </div>
-          <v-divider vertical />
           <div class="right-side">
             <div class="trending auth-secondarybg">
               <div class="soon">soon</div>
@@ -71,15 +72,11 @@
 </template>
 
 <script>
-import UnAuthLayout from "./layouts/UnAuthLayout";
-import AuthLayout from "@/layouts/AuthLayout";
-import AppBar from "@/layouts/partials/Auth/AppBar";
-
 export default {
   components: {
-    UnAuthLayout,
-    AuthLayout,
-    AppBar
+    UnAuthLayout: () => import("./layouts/UnAuthLayout"),
+    AuthLayout: () => import("@/layouts/AuthLayout"),
+    AppBar: () => import("@/layouts/partials/Auth/AppBar")
   },
   data: () => ({
     includes: ["Profile"]
@@ -103,7 +100,7 @@ export default {
 </script>
 <style lang="scss">
 .auth-layout .v-application--wrap {
-  max-width: 1355px !important;
+  max-width: 1360px !important;
   margin: 0 auto !important;
 }
 a {
@@ -125,7 +122,7 @@ main {
 .right-side {
   width: 30vw;
   position: relative;
-  padding: 4px 10px 10px 10px;
+  padding: 4px 10px 10px 15px;
   .search {
     position: fixed;
     top: 2px;
@@ -148,6 +145,7 @@ main {
     height: 100%;
     max-height: 90vh;
     padding: 10px 20px;
+    margin-top: 52px;
     display: flex;
     flex-direction: column;
     max-height: 590px;
@@ -166,6 +164,26 @@ main {
   background: rgb(4, 192, 67);
   padding: 0px 6px 1px 6px;
   border-radius: 15px;
+}
+.theme--light .auth-main {
+  padding-top: 0 !important ;
+  .router-view {
+    padding-top: 52px;
+  }
+  &__container {
+    border-left: 1px solid #adadad;
+    border-right: 1px solid #adadad;
+  }
+}
+.theme--dark .auth-main {
+  padding-top: 0 !important ;
+  .router-view {
+    padding-top: 52px;
+  }
+  &__container {
+    border-left: 1px solid rgba(255, 255, 255, 0.12);
+    border-right: 1px solid rgba(255, 255, 255, 0.12);
+  }
 }
 .theme--light {
   ::-webkit-scrollbar-track {
@@ -199,6 +217,7 @@ main {
     background: #19191d;
   }
 }
+
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
