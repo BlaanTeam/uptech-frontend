@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="not-found px-10 pt-15 fill-height ">
+  <div class="not-found px-2 pt-15 fill-height ">
     <div class="d-flex flex-column mx-auto">
       <p class="display-3 text-center">{{ $t("notFound.h1") }}</p>
 
@@ -9,7 +9,7 @@
 
       <NotFoudSvg width="400" />
     </div>
-  </v-container>
+  </div>
 </template>
 <script>
 import NotFoudSvg from "@/components/svg/NotFoundSvg";

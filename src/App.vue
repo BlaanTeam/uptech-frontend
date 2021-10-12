@@ -99,17 +99,9 @@ export default {
 };
 </script>
 <style lang="scss">
-@media screen and (max-width: 1200px) {
-  html {
-    overflow-y: auto !important;
-  }
-}
-
 .auth-layout .v-application--wrap {
-  max-width: 1260px !important;
+  max-width: 1250px !important;
   margin: 0 auto !important;
-  display: flex !important;
-  justify-content: center !important;
 }
 
 a {
@@ -124,21 +116,22 @@ main {
   color: inherit !important;
 }
 .router-view {
-  min-width: 45vw;
-  max-width: 700px;
-  min-height: 92vh;
+  width: 45vw;
+  max-width: 610px;
+  min-height: 100vh;
   padding-top: 52px !important;
 }
 .right-side {
-  width: 30vw;
+  width: 28vw;
   position: relative;
   padding: 4px 10px 10px 15px;
   .search {
+    overflow: hidden;
     position: fixed;
     top: 2px;
     border-radius: 10px;
     width: 100%;
-    max-width: 380px;
+    max-width: 360px;
     height: 45px;
     max-height: 45px;
     display: flex;
@@ -148,9 +141,10 @@ main {
     font-size: 15px;
   }
   .trending {
+    overflow: hidden;
     position: fixed;
     border-radius: 10px;
-    max-width: 380px;
+    max-width: 360px;
     width: 100%;
     height: 100%;
     max-height: 90vh;
@@ -168,12 +162,11 @@ main {
 }
 .soon {
   position: absolute;
-  right: 0;
-  top: 10px;
+  right: -20px;
+  top: 4px;
   transform: rotate(45deg);
   background: rgb(4, 192, 67);
-  padding: 0px 6px 1px 6px;
-  border-radius: 15px;
+  padding: 0px 20px 1px 20px;
 }
 .theme--light .auth-main {
   padding-top: 0 !important ;

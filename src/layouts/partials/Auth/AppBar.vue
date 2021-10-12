@@ -78,7 +78,7 @@ export default {
   right: unset !important;
   top: unset !important;
   width: 45vw;
-  max-width: 700px !important;
+  max-width: 610px !important;
 }
 .theme--light {
   .app-bar .v-toolbar .v-sheet {

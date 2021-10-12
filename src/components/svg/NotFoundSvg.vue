@@ -249,4 +249,9 @@ export default {};
     width: 200px;
   }
 }
+@media screen and (max-width: 1000px) {
+  svg {
+    width: 300px;
+  }
+}
 </style>

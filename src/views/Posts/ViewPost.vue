@@ -1,5 +1,5 @@
 <template>
-  <div class="view-post">
+  <div class="view-post mt-5">
     <template>
       <PostSkeleton v-if="!loaded">
         <CommentSkeleton v-for="n in 3" :key="n" />
