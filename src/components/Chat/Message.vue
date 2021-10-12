@@ -85,8 +85,13 @@ export default {
     display: flex;
     float: left;
     &__content {
+      max-width: 88%;
+
       padding: 10px;
       border-radius: 0 10px 10px 10px;
+      max-width: 400px !important;
+      color: #d8d8d8;
+      white-space: pre-wrap;
     }
   }
   &__sent {
@@ -102,7 +107,7 @@ export default {
       padding: 10px;
       border-radius: 10px 0 10px 10px;
       color: #d8d8d8;
-      white-space: pre-wrap;
+      white-space: pre-line;
     }
     &__menu {
       width: 6%;
