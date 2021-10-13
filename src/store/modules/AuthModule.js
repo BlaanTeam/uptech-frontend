@@ -115,7 +115,6 @@ export default {
     destroySession: async context => {
       await context.commit("DESTROY_SESSION");
       await router.push({ name: "SignIn" });
-      window.location.reload();
     },
     async handleNotFound() {
       await router.push({ name: "NotFound" });
