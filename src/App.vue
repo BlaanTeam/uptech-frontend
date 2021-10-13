@@ -184,6 +184,28 @@ main {
     border-right: 1px solid rgba(255, 255, 255, 0.12);
   }
 }
+.vue-notification-group {
+  font-family: Roboto, sans-serif;
+  width: 320px !important;
+  line-height: 16px !important;
+  .notification-content {
+    font-size: 14px !important;
+  }
+  .warn {
+    background: #e09c36 !important;
+    border-left-color: #f8bb71 !important;
+  }
+
+  .error {
+    background: #c9392f !important;
+    border-left-color: #e77e77 !important;
+  }
+
+  .success {
+    background: #03ad4d !important;
+    border-left-color: #6af1a7 !important;
+  }
+}
 .theme--light {
   ::-webkit-scrollbar-track {
     border-radius: 10px;
@@ -198,6 +220,12 @@ main {
   ::-webkit-scrollbar-thumb {
     border-radius: 10px;
     background: #505050;
+  }
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px #ffffff inset !important;
   }
 }
 .theme--dark {
@@ -214,6 +242,15 @@ main {
   ::-webkit-scrollbar-thumb {
     border-radius: 10px;
     background: #4e4e4e;
+  }
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px #343538 inset !important;
+  }
+  input:-webkit-autofill {
+    -webkit-text-fill-color: white !important;
   }
 }
 

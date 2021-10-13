@@ -21,8 +21,21 @@
       <v-card-title class="pt-0 mb-2 display-1 justify-center">
         {{ $t("signin.h1") }}
       </v-card-title>
-      <!-- <v-card-subtitle class="my-2 text-center">
+      <v-card-subtitle class="text-center">
         <v-btn
+          class="me-2 py-1 text-none my-1"
+          color="secondarybg"
+          rounded
+          elevation="0"
+          @click="generateGuest"
+        >
+          <v-icon left>mdi-account-arrow-up-outline</v-icon>
+          Generate a random user
+        </v-btn>
+      </v-card-subtitle>
+      <!--
+         <v-card-subtitle class="my-2 text-center">
+          <v-btn
           class="me-2 py-1 text-none my-1"
           color="secondarybg"
           rounded
@@ -49,69 +62,63 @@
           <v-icon right color="primary" size="22">mdi-facebook</v-icon>
         </v-btn>
       </v-card-subtitle> -->
-      <v-btn
-        @click="generateGuest"
-        block
-        class="py-6"
-        color="primary"
-        type="submit"
-        elevation="0"
-      >
-        Generate Guest
-      </v-btn>
-      <v-card-text>
-        <v-form ref="signin" v-model="validity">
-          <v-text-field
-            name="username"
-            autocomplete="false"
-            v-model="username"
-            :label="$t('signin.form.username')"
-            :rules="usernameRules"
-          ></v-text-field>
-          <v-text-field
-            class="mt-4"
-            v-model="password"
-            :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
-            :type="show ? 'text' : 'password'"
-            name="password"
-            :label="$t('signin.form.password')"
-            :rules="passwordRules"
-            @click:append="show = !show"
-          ></v-text-field>
-          <v-checkbox
-            name="rememberMe"
-            v-model="rememberMe"
-            :label="$t('signin.form.rememberMe')"
+      <v-card-text class="pa-0 ma-0">
+        <v-form
+          ref="signin"
+          v-model="validity"
+          @submit.prevent="handlesubmit()"
+        >
+          <div class="pa-4">
+            <v-text-field
+              name="username"
+              autocomplete="false"
+              v-model="username"
+              :label="$t('signin.form.username')"
+              :rules="usernameRules"
+              append-icon="mdi-account-outline"
+            />
+            <v-text-field
+              class="mt-4"
+              v-model="password"
+              :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
+              :type="show ? 'text' : 'password'"
+              name="password"
+              :label="$t('signin.form.password')"
+              :rules="passwordRules"
+              @click:append="show = !show"
+            />
+            <v-checkbox
+              name="rememberMe"
+              v-model="rememberMe"
+              :label="$t('signin.form.rememberMe')"
+            />
+            <v-row no-gutters>
+              <router-link
+                class="mb-1 d-inline primary--text"
+                to="forgot_password"
+              >
+                {{ $t("signin.form.forgotPassword") }}
+              </router-link>
+            </v-row>
+            <v-row no-gutters>
+              <router-link class="primary--text" block to="resend_confirmation">
+                {{ $t("signin.form.resendConfirmation") }}
+              </router-link>
+            </v-row>
+          </div>
+          <v-btn
+            block
+            class="py-6"
+            color="primary"
+            :dark="!loading"
+            type="submit"
+            :loading="loading"
+            :disabled="loading || !validity"
           >
-          </v-checkbox>
-          <v-row no-gutters>
-            <router-link
-              class="mb-1 d-inline primary--text"
-              to="forgot_password"
-            >
-              {{ $t("signin.form.forgotPassword") }}
-            </router-link>
-          </v-row>
-          <v-row no-gutters>
-            <router-link class="primary--text" block to="resend_confirmation">
-              {{ $t("signin.form.resendConfirmation") }}
-            </router-link>
-          </v-row>
+            {{ $t("signin.name") }}
+          </v-btn>
         </v-form>
       </v-card-text>
-      <v-btn
-        @click="handlesubmit()"
-        block
-        class="py-6"
-        color="primary"
-        :dark="!loading"
-        type="submit"
-        :loading="loading"
-        :disabled="loading || !validity"
-        elevation="0"
-      >
-        {{ $t("signin.name") }}
-      </v-btn>
     </v-card>
   </v-container>
 </template>
@@ -193,7 +200,6 @@ export default {
           })
           .catch(({ response }) => {
             this.loading = false;
-            this.password = "";
             if (response?.status === 404) {
               this.errorNotification(this.$t("signin.errors.notRegistredYet"));
             } else if (
@@ -226,9 +232,8 @@ export default {
         this.rememberMe = true;
         this.$notify({
           group: "success",
-          type: "info",
-          title: "Guest Process",
-          text: "Try to login!"
+          type: "success",
+          text: "User generated successfully just click signin!"
         });
       } catch (err) {
         console.log(err);
@@ -250,29 +255,26 @@ export default {
       left: 0;
     }
   }
+}
 
-  #one,
-  #two,
-  #three,
-  #four {
-    position: fixed;
+.theme--light .sign-in {
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px #ffffff inset !important;
   }
-  #one {
-    top: 10vw;
-    left: -15%;
+}
+.theme--dark .sign-in {
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px #343538 inset !important;
   }
-  #two {
-    top: -2vw;
-    left: 20%;
-  }
-  #three {
-    top: -5vw;
-    left: 50%;
-  }
-  #four {
-    top: 5vw;
-    right: 0;
-    color: #f5c55e;
+
+  input:-webkit-autofill {
+    -webkit-text-fill-color: white !important;
   }
 }
 </style>

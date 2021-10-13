@@ -8,11 +8,10 @@
       <v-col class="d-none d-md-flex">
         <SignupSvg width="400" />
       </v-col>
-      <v-col class="px-2 align-self-start mt-4">
+      <v-col class="px-md-8 px-sm-1 align-self-start mt-14">
         <v-form ref="signup" v-model="validity">
           <v-text-field
-            prepend-icon="mdi-account"
-            class="my-6"
+            append-icon="mdi-account"
             :counter="16"
             name="username"
             autocomplete="off"
@@ -20,21 +19,20 @@
             v-model="username"
             :label="$t('signup.form.username')"
             :rules="usernameRules"
-          ></v-text-field>
+          />
 
           <v-text-field
-            prepend-icon="mdi-email"
-            class="my-6"
+            append-icon="mdi-email"
+            class="mt-6"
             v-model="email"
             :rules="emailRules"
             :label="$t('signup.form.email')"
             required
             type="email"
             name="email"
-          ></v-text-field>
+          />
           <v-text-field
-            prepend-icon="mdi-lock"
-            class="mt-6"
+            class="mt-6 mb-6"
             v-model="password"
             :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
             :type="show1 ? 'text' : 'password'"
@@ -43,8 +41,8 @@
             :rules="passwordRules"
             required
             @click:append="show1 = !show1"
-          ></v-text-field>
-          <v-text-field
+          />
+          <!-- <v-text-field
             prepend-icon="mdi-lock"
             class="my-6"
             :error="repeatPassword !== password"
@@ -55,10 +53,9 @@
             :label="$t('signup.form.repeatPassword')"
             @click:append="show2 = !show2"
             required
-          ></v-text-field>
+         /> -->
 
           <v-checkbox
-            class="ml-2"
             v-model="agree"
             name="agreement"
             :rules="[v => !!v || $t('signup.errors.agree')]"
@@ -67,11 +64,11 @@
             <template v-slot:label>
               <div @click.stop="">
                 {{ $t("signup.form.agree") }}
-                <router-link to="/terms">
+                <router-link to="/terms" class="primary--text underlined">
                   {{ $t("signup.form.terms") }}
                 </router-link>
                 {{ $t("signup.form.and") }}
-                <router-link to="/conditions">
+                <router-link to="/conditions" class="primary--text underlined">
                   {{ $t("signup.form.conditions") }}
                 </router-link>
               </div>
@@ -81,7 +78,7 @@
           <v-btn
             @click="handleSubmit"
             color="primary"
-            class="ml-2 my-4 px-10"
+            class="my-4 px-10"
             elevation="0"
             rounded
             type="submit"
@@ -120,7 +117,7 @@ export default {
     username: "",
     email: "",
     password: "",
-    repeatPassword: "",
+    // repeatPassword: "",
     agree: false,
     validity: false,
     loading: false
@@ -215,6 +212,26 @@ export default {
   &__form {
     max-width: 90vw;
     margin: 0 auto;
+  }
+}
+.theme--light .sign-up {
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px #ffffff inset !important;
+  }
+}
+.theme--dark .sign-up {
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px #1f2023 inset !important;
+  }
+
+  input:-webkit-autofill {
+    -webkit-text-fill-color: white !important;
   }
 }
 </style>

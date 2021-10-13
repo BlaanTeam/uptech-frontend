@@ -1,6 +1,6 @@
 <template>
-  <div class="header d-flex px-10">
-    <v-app-bar class="header__nav" flat>
+  <div class="header d-flex">
+    <v-app-bar class="header__nav px-md-10" flat>
       <!--------------- Brand area --------------->
       <div class="d-flex">
         <router-link class="logo d-flex align-center" to="/">
@@ -43,6 +43,7 @@
     </v-app-bar>
     <!-- navigation drawer on mobile version -->
     <v-navigation-drawer
+      class="bg"
       :right="$vuetify.rtl === true"
       v-model="drawer"
       fixed
