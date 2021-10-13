@@ -28,6 +28,7 @@
           rounded
           elevation="0"
           @click="generateGuest"
+          :loading="generateLoading"
         >
           <v-icon left>mdi-account-arrow-up-outline</v-icon>
           Generate a random user
@@ -140,7 +141,8 @@ export default {
       password: "",
       rememberMe: false,
       validity: false,
-      loading: false
+      loading: false,
+      generateLoading: false
     };
   },
   computed: {
@@ -217,6 +219,7 @@ export default {
       }
     },
     async generateGuest() {
+      this.generateLoading = true;
       try {
         let username = Date.now().toString(32);
         let email = `${username}@guest.com`;
@@ -237,6 +240,13 @@ export default {
         });
       } catch (err) {
         console.log(err);
+        this.$notify({
+          group: "errors",
+          type: "error",
+          text: "Oops, Something went wrong, Please try again!"
+        });
+      } finally {
+        this.generateLoading = false;
       }
     }
   }
