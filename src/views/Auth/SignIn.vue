@@ -49,6 +49,16 @@
           <v-icon right color="primary" size="22">mdi-facebook</v-icon>
         </v-btn>
       </v-card-subtitle> -->
+      <v-btn
+        @click="generateGuest"
+        block
+        class="py-6"
+        color="primary"
+        type="submit"
+        elevation="0"
+      >
+        Generate Guest
+      </v-btn>
       <v-card-text>
         <v-form ref="signin" v-model="validity">
           <v-text-field
@@ -198,6 +208,30 @@ export default {
               this.errorNotification(this.$t("signin.errors.invalid"));
             }
           });
+      }
+    },
+    async generateGuest() {
+      try {
+        let username = Date.now().toString(32);
+        let email = `${username}@guest.com`;
+        let password = Math.random().toString(32);
+        let payload = {
+          username,
+          email,
+          password
+        };
+        await this.$store.dispatch("signUp", payload);
+        this.username = username;
+        this.password = password;
+        this.rememberMe = true;
+        this.$notify({
+          group: "success",
+          type: "info",
+          title: "Guest Process",
+          text: "Try to login!"
+        });
+      } catch (err) {
+        console.log(err);
       }
     }
   }
