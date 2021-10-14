@@ -24,8 +24,6 @@ export default {
     DESTROY_SESSION: state => {
       localStorage.removeItem("access_token");
       localStorage.removeItem("user");
-      state.accessToken = "";
-      state.user = {};
     },
     UPDATE_TOKEN: (state, accessToken) => {
       state.accessToken = accessToken;
@@ -114,7 +112,7 @@ export default {
     },
     destroySession: async context => {
       await context.commit("DESTROY_SESSION");
-      await router.push({ name: "SignIn" });
+      window.location.reload();
     },
     async handleNotFound() {
       await router.push({ name: "NotFound" });
