@@ -1,7 +1,7 @@
 <template>
   <div class="profile">
-    <v-row class="pt-10">
-      <v-col cols="3" class="px-4 lighten-1 text-center ms-4 align-self-center">
+    <v-row class="pt-10 align-center" no-gutters>
+      <v-col cols="3" class="ms-2 lighten-1 text-center ">
         <img
           src="@/assets/images/avatar.svg"
           width="150"
@@ -9,7 +9,7 @@
           color="primary"
         />
       </v-col>
-      <v-col cols="8" class="align-self-center">
+      <v-col class="ms-2 pe-2">
         <h2
           v-if="userInfo.profile.firstName || userInfo.profile.lastName"
           class="font-weight-regular mt-n3 d-inline-block"
@@ -17,12 +17,12 @@
           {{ userInfo.profile.firstName }} {{ userInfo.profile.lastName }}
         </h2>
         <span
-          class="d-inline-block float-right me-8"
+          class="d-inline-block float-right"
           :class="{
             'mt-n2': !userInfo.profile.firstName && !userInfo.profile.lastName
           }"
         >
-          <slot> </slot>
+          <slot />
         </span>
         <h3 class="mt-n2">@{{ userInfo.userName }}</h3>
         <p class="mt-4 pe-3 bio" v-if="userInfo.profile.bio">
