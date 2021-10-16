@@ -26,7 +26,13 @@
                 placeholder="What's on your mind"
                 label=""
                 auto-grow
-                :rows="parseInt(content.value.length / 30)"
+                :rows="
+                  parseInt(
+                    content.value.length > 100
+                      ? content.value.length / 30
+                      : content.value.length / 10
+                  )
+                "
                 height="auto"
                 counter="5000"
                 v-model="content.value"
