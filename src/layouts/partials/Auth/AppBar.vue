@@ -18,7 +18,13 @@
     }}</v-toolbar-title>
     <DarkMode v-show="false" />
     <v-spacer></v-spacer>
-    <v-menu nudge-right="10" offset-y left :close-on-content-click="false">
+    <v-menu
+      nudge-right="10"
+      offset-y
+      left
+      :close-on-content-click="false"
+      transition="slide-y-transition"
+    >
       <template v-slot:activator="{ on, attrs }">
         <v-btn text v-bind="attrs" v-on="on" class="px-0 rounded-pill">
           <img src="@/assets/images/avatar.svg" width="30" />
