@@ -9,6 +9,7 @@ import post from "./post";
 import profile from "./profile";
 import messages from "./messages";
 import notifications from "./notifications";
+import settings from "./settings";
 
 Vue.use(VueRouter);
 
@@ -21,6 +22,7 @@ const routes = [
   ...profile,
   ...messages,
   ...notifications,
+  ...settings,
   {
     path: "/not_found",
     alias: "*",
