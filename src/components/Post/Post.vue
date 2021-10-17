@@ -94,18 +94,15 @@
       </v-row>
     </v-card-title>
 
-    <div
-      class="title post-content font-weight-light ps-6 pe-2 pb-2"
-      v-html="content"
-    >
+    <div class="title post-content font-weight-light ps-6 pe-2 pb-2">
+      {{ content }}
       <a
-        id="read-more"
         text
-        v-if="post.content.length > 300"
-        @click="readActivated = !readActivated"
-        class="mx-auto"
-        v-html="toggleMoreLess"
+        v-if="post.content.length > 300 && !readActivated"
+        @click="readActivated = true"
+        class="underlined subtitle-1 primary--text"
       >
+        read&nbsp;more
       </a>
     </div>
     <v-divider></v-divider>
@@ -199,13 +196,9 @@ export default {
       return this.$store.getters.getUserId;
     },
     content() {
-      if (this.post.content.length > 300 && !this.readActivated) {
+      if (this.post.content.length > 300 && !this.readActivated)
         return this.post.content.slice(0, 300) + "...";
-      } else return this.parseBody(this.post.content);
-    },
-    toggleMoreLess() {
-      if (!this.readActivated) return "read&nbsp;more";
-      else return "read&nbsp;less";
+      else return this.post.content;
     }
   },
   methods: {
@@ -224,7 +217,7 @@ export default {
 <style lang="scss">
 .post {
   .post-content {
-    white-space: pre-wrap;
+    white-space: pre-line;
   }
   .slide-enter-active {
     transition: all 0.4s linear;
