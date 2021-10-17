@@ -36,7 +36,7 @@
                 height="auto"
                 counter="5000"
                 v-model="content.value"
-              ></v-textarea>
+              />
             </v-col>
           </v-row>
         </v-card-title>
@@ -74,10 +74,10 @@
             <v-btn
               class="pa-0 px-1 ma-0 caption text-capitalize"
               elevation="0"
-              dark
               text
               color="red"
               @click="dialog = false"
+              height="30"
             >
               Delete
             </v-btn>
@@ -85,19 +85,20 @@
           <v-btn
             class="mx-1 px-1 ma-0  text-capitalize"
             elevation="0"
-            dark
             text
             color="info"
-            @click="dialog = false"
+            @click="close"
+            height="30"
           >
             Cancel
           </v-btn>
           <v-btn
             :disabled="btnDisabler"
             elevation="0"
-            dark
+            class="white--text"
             color="primary"
             @click="editPost"
+            height="30"
           >
             <v-icon left size="20">mdi-content-save</v-icon>
             Save
@@ -136,6 +137,10 @@ export default {
   methods: {
     clearTextArea() {
       this.content.value = "";
+    },
+    close() {
+      this.dialog = false;
+      this.content.value = this.post.content;
     },
     async editPost() {
       if (this.content.value.trim() === "" || this.content.value.length < 2)
