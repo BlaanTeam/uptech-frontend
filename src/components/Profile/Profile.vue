@@ -12,7 +12,7 @@
       <v-col class="ms-2 pe-2">
         <h2
           v-if="userInfo.profile.firstName || userInfo.profile.lastName"
-          class="font-weight-regular mt-n3 d-inline-block"
+          class="title mt-n3 d-inline-block"
         >
           {{ userInfo.profile.firstName }} {{ userInfo.profile.lastName }}
         </h2>
@@ -24,7 +24,7 @@
         >
           <slot />
         </span>
-        <h3 class="mt-n2">@{{ userInfo.userName }}</h3>
+        <h3 class="mt-n2 subtitle-1">@{{ userInfo.userName }}</h3>
         <p class="mt-4 pe-3 bio" v-if="userInfo.profile.bio">
           {{ userInfo.profile.bio }}
         </p>
