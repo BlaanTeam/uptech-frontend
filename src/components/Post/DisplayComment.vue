@@ -8,7 +8,6 @@
               name: 'ViewProfile',
               params: { userName: comment.user.userName }
             }"
-            class="underlined"
           >
             <img class="ms-2" src="@/assets/images/avatar.svg" width="36" />
           </router-link>
@@ -26,6 +25,7 @@
                 name: 'ViewProfile',
                 params: { userName: comment.user.userName }
               }"
+              class="underlined"
             >
               <span text class="body-2 font-weight-bold">
                 {{ comment.user.userName }}
