@@ -3,7 +3,7 @@
     <v-col cols="1" class=" pa-0 ma-0">
       <img src="@/assets/images/avatar.svg" width="44" class="mt-3" />
     </v-col>
-    <v-col cols="8" class="pa-0 ma-0">
+    <v-col cols="8" class="pa-0 ma-0 ms-1">
       <v-row no-gutters>
         <v-col>
           <v-textarea
@@ -15,7 +15,7 @@
             row-height="10"
             v-model="comment.value"
             auto-grow
-          ></v-textarea>
+          />
         </v-col>
         <v-col cols="1" class="ms-1 align-self-center">
           <Emojis
@@ -27,7 +27,7 @@
         </v-col>
       </v-row>
     </v-col>
-    <v-col cols="2" class="ma-0 pa-0 align-self-center ms-4">
+    <v-col cols="2" class="ma-0 pa-0 align-self-center ms-2">
       <v-btn
         height="34"
         class="pa-0 px-2"
