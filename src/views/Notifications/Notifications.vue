@@ -4,7 +4,7 @@
       <div
         @click="handleClick(notif)"
         class="d-flex align-center notif-item"
-        :class="{ 'auth-secondarybg': !notif.isRead }"
+        :class="{ 'unread-notif': !notif.isRead }"
       >
         <div class="d-flex pt-4 px-4 pb-3">
           <div class="mx-4">
@@ -127,10 +127,16 @@ export default {
   .notif-item:hover {
     background: #26272b !important;
   }
+  .unread-notif {
+    background: #28292e !important;
+  }
 }
 .theme--light {
   .notif-item:hover {
     background: #dbd9d9 !important;
+  }
+  .unread-notif {
+    background: #f3f3f3 !important;
   }
 }
 </style>
