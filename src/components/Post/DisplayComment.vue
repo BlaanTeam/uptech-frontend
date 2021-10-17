@@ -8,6 +8,7 @@
               name: 'ViewProfile',
               params: { userName: comment.user.userName }
             }"
+            class="underlined"
           >
             <img class="ms-2" src="@/assets/images/avatar.svg" width="36" />
           </router-link>
@@ -16,16 +17,21 @@
 
       <v-col cols="9" class="auth-bg rounded-lg ps-3 pe-2 me-1 pt-1 pb-2">
         <v-row no-gutters>
-          <router-link
-            :to="{
-              name: 'ViewProfile',
-              params: { userName: comment.user.userName }
-            }"
+          <PopoverProfile
+            :index="comment._id"
+            :userName="comment.user.userName"
           >
-            <span text class="body-2 font-weight-bold">
-              {{ comment.user.userName }}
-            </span>
-          </router-link>
+            <router-link
+              :to="{
+                name: 'ViewProfile',
+                params: { userName: comment.user.userName }
+              }"
+            >
+              <span text class="body-2 font-weight-bold">
+                {{ comment.user.userName }}
+              </span>
+            </router-link>
+          </PopoverProfile>
         </v-row>
         <v-row no-gutters>
           <v-row v-if="editMode" no-gutters>
@@ -37,7 +43,7 @@
                 auto-grow
                 :rows="1"
                 v-model="content.value"
-              ></v-textarea>
+              />
             </v-col>
             <v-col cols="1" class="ms-1 align-self-center">
               <Emojis
@@ -59,7 +65,7 @@
               </v-btn>
             </v-col>
           </v-row>
-          <p v-else class="body-2 font-weight-light ma-0">
+          <p v-else class="body-2 font-weight-light ma-0 comment__content">
             {{ comment.content }}
           </p>
         </v-row>
@@ -222,5 +228,8 @@ export default {
 .display-comments[data-delete="true"] {
   transform: translateX(-100vh);
   opacity: 0;
+}
+.comment__content {
+  word-break: break-word;
 }
 </style>
