@@ -33,7 +33,7 @@
               class="justify-self-start"
             />
             <div class="ms-4 justify-self-center">
-              <h3 class="title mt-n1">
+              <h3 class="subtitle-1 mt-n1">
                 {{ user.profile.firstName }} {{ user.profile.lastName }}
               </h3>
               <h5 class="caption mt-n2">@{{ user.userName }}</h5>
