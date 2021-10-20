@@ -4,7 +4,8 @@ export default {
   state: {
     createdAt: null,
     notifications: [],
-    notifCount: 0
+    notifCount: 0,
+    notifsLoaded: false
   },
   getters: {
     notifications: state => state.notifications,
@@ -44,6 +45,7 @@ export default {
               context.state.createdAt = lastNotif.createdAt;
               context.commit("INIT_NOTIFICATIONS", res.data);
             }
+            context.state.notifsLoaded = true;
             resolve(res.data);
           })
           .catch(err => reject(err));
@@ -59,7 +61,8 @@ export default {
       context.commit("DECR_NOTIF_COUNT");
     },
     addNotif(context, payload) {
-      context.commit("ADD_NOTIFICATION", payload);
+      if (context.state.notifsLoaded)
+        context.commit("ADD_NOTIFICATION", payload);
     }
   }
 };
