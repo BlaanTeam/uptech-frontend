@@ -28,7 +28,8 @@ export default {
     createdAt: null,
     convIds: new Map(),
     conversations: [],
-    msgsCount: 0
+    msgsCount: 0,
+    convLoaded: false
   },
   getters: {
     conversations: state => state.conversations,
@@ -86,6 +87,7 @@ export default {
               context.state.createdAt = lastConv.timestamp;
               context.commit("INIT_CONVERSATIONS", res.data);
             }
+            context.state.convLoaded = true;
             resolve(res.data);
           })
           .catch(err => reject(err));
@@ -121,7 +123,8 @@ export default {
       await context.commit("MARK_READ", convId);
     },
     async receiveMessage(context, { convId, user, lastMessage }) {
-      handleConvs(context, convId, user, lastMessage);
+      if (context.state.convLoaded)
+        handleConvs(context, convId, user, lastMessage);
     },
     generateConvIds(context, payload) {
       context.commit("ADD_CONV_ID", payload);
