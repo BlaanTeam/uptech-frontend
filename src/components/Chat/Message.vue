@@ -16,10 +16,10 @@
     >
       {{ message.content }}
     </div>
-    <div class="message__sent__menu mx-1">
-      <span v-show="Menu"
-        ><MessageMenu :message="message" @unsent="deleted = true"
-      /></span>
+    <div class="message__sent__menu me-4">
+      <span v-show="Menu">
+        <MessageMenu :message="message" @unsend="$emit('unsend')" />
+      </span>
     </div>
   </div>
 
@@ -76,6 +76,10 @@ export default {
 </script>
 
 <style lang="scss">
+.message[data-delete="true"] {
+  transform: translateX(-100vh);
+  opacity: 0;
+}
 .message {
   clear: both;
   margin: 1px 0;

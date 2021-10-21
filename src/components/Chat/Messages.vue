@@ -48,8 +48,8 @@
       <v-card-text v-else class="bg messages-box__messages d-flex pt-4 px-6">
         <infinite-loading direction="top" @infinite="loadMessages">
         </infinite-loading>
-        <div v-for="message in messages" :key="message.id">
-          <Message :message="message" />
+        <div v-for="(message, i) in messages" :key="message.id">
+          <Message :message="message" @unsend="unsent(i)" />
         </div>
         <div v-if="typing" class="ps-2">
           <Dots />
@@ -76,7 +76,7 @@
           @keydown.enter.exact.prevent
           @keyup.enter.exact="sendMessage()"
           v-model="content.value"
-        ></v-textarea>
+        />
         <div class="ms-n14">
           <Emojis
             left
@@ -171,6 +171,9 @@ export default {
         convId: this.convId,
         userId: this.user._id
       });
+    },
+    unsent(index) {
+      this.messages.splice(index, 1);
     },
     async sendMessage() {
       if (!this.content.value.trim()) return;

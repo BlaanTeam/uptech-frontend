@@ -32,8 +32,7 @@ export default {
         const res = await this.$http.delete(
           "/chats/messages/" + this.message._id
         );
-        this.message.content = "Message unsent";
-        this.$emit("unsent");
+        this.$emit("unsend");
       } catch (err) {
         console.log("MessageMenu(unsentMessage): delete failed");
         console.log(err);
