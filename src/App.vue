@@ -61,7 +61,6 @@
               </div>
             </div>
             <div class="search auth-secondarybg">
-              <span class="soon">soon</span>
               <span>Search</span>
             </div>
           </div>
@@ -165,7 +164,7 @@ main {
   right: -20px;
   top: 4px;
   transform: rotate(45deg);
-  background: rgb(4, 192, 67);
+  background: rgb(2, 179, 82);
   padding: 0px 20px 1px 20px;
 }
 .theme--light .auth-main {
