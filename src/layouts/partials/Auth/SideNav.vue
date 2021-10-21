@@ -8,8 +8,8 @@
   >
     <div class="d-flex ms-9 my-5">
       <router-link to="/" class="d-flex align-center">
-        <v-img src="@/assets/logo.png" width="24" />
-        <span class="ms-2">Uptech</span>
+        <Logo width="32" />
+        <span class="ms-2">UpTech</span>
       </router-link>
     </div>
 
@@ -52,7 +52,10 @@
 </template>
 
 <script>
+import Logo from "@/components/svg/Logo.vue";
 export default {
+  name: "SideNav",
+  components: { Logo },
   data() {
     return {
       group: "",

@@ -4,8 +4,8 @@
       <!--------------- Brand area --------------->
       <div class="d-flex">
         <router-link class="logo d-flex align-center" to="/">
-          <v-img src="@/assets/logo.png" width="30" />
-          <span class="ms-2">uptech</span>
+          <Logo width="32" />
+          <span class="ms-2">UpTech</span>
         </router-link>
       </div>
       <v-spacer></v-spacer>
@@ -89,11 +89,11 @@
 <script defer>
 import DarkMode from "@/components/DarkMode";
 import Locale from "@/components/Locale.vue";
+import Logo from "@/components/svg/Logo.vue";
+
 export default {
-  components: {
-    DarkMode,
-    Locale
-  },
+  name: "Nav",
+  components: { DarkMode, Locale, Logo },
   data: () => ({
     // Links ----------------------
     drawer: false,
