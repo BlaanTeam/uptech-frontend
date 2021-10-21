@@ -17,46 +17,57 @@
           </div>
           <div class="d-flex flex-column">
             <h3 class="font-weight-regular">Change password</h3>
-            <span class="mt-4">
-              <v-text-field
-                outlined
-                dense
-                v-model="currentPassword"
-                :append-icon="showPassword1 ? 'mdi-eye' : 'mdi-eye-off'"
-                :type="showPassword1 ? 'text' : 'password'"
-                name="password"
-                label="Current password"
-                :rules="passwordRules"
-                required
-                @click:append="showPassword1 = !showPassword1"
-              />
-              <v-text-field
-                outlined
-                dense
-                v-model="newPassword"
-                :append-icon="showPassword2 ? 'mdi-eye' : 'mdi-eye-off'"
-                :type="showPassword2 ? 'text' : 'password'"
-                name="password"
-                label="New password"
-                :rules="passwordRules"
-                required
-                @click:append="showPassword2 = !showPassword2"
-              />
-              <v-text-field
-                outlined
-                dense
-                v-model="repeatPassword"
-                :error="repeatPassword !== newPassword"
-                :append-icon="showPassword3 ? 'mdi-eye' : 'mdi-eye-off'"
-                :type="showPassword3 ? 'text' : 'password'"
-                name="password"
-                label="Repeat new password"
-                :rules="passwordRules"
-                required
-                @click:append="showPassword3 = !showPassword3"
-              />
-            </span>
-            <v-btn class="text-capitalize" elevation="0" color="#039c56">
+            <v-form class="mt-4" ref="password">
+              <span>
+                <v-text-field
+                  outlined
+                  dense
+                  v-model="currentPassword"
+                  :append-icon="showPassword1 ? 'mdi-eye' : 'mdi-eye-off'"
+                  :type="showPassword1 ? 'text' : 'password'"
+                  name="password"
+                  label="Current password"
+                  :rules="passwordRules"
+                  :error="error"
+                  required
+                  @click:append="showPassword1 = !showPassword1"
+                />
+                <v-text-field
+                  outlined
+                  dense
+                  v-model="newPassword"
+                  :append-icon="showPassword2 ? 'mdi-eye' : 'mdi-eye-off'"
+                  :type="showPassword2 ? 'text' : 'password'"
+                  name="password"
+                  label="New password"
+                  :rules="passwordRules"
+                  required
+                  @click:append="showPassword2 = !showPassword2"
+                />
+                <v-text-field
+                  outlined
+                  dense
+                  v-model="repeatPassword"
+                  :error="repeatPassword !== newPassword"
+                  :append-icon="showPassword3 ? 'mdi-eye' : 'mdi-eye-off'"
+                  :type="showPassword3 ? 'text' : 'password'"
+                  name="password"
+                  label="Repeat new password"
+                  :rules="passwordRules"
+                  required
+                  @click:append="showPassword3 = !showPassword3"
+                />
+              </span>
+            </v-form>
+            <v-btn
+              :loading="loading"
+              :disabled="loading"
+              @click="saveAccountChanges"
+              class="text-capitalize"
+              elevation="0"
+              dark
+              color="#039c56"
+            >
               Save changes
             </v-btn>
           </div>
@@ -93,8 +104,49 @@ export default {
     showPassword1: false,
     showPassword2: false,
     showPassword3: false,
-    sound: true
-  })
+    sound: true,
+    loading: false,
+    error: false
+  }),
+  computed: {
+    valid() {
+      return this.$refs.password.validate();
+    },
+    passwordRules() {
+      return [
+        v => !!v || this.$t("signin.errors.prequired"),
+        v => this.$pattern.password.test(v) || this.$t("signin.errors.invalidp")
+      ];
+    }
+  },
+  methods: {
+    async saveAccountChanges() {
+      try {
+        let data = { isPrivate: this.isPrivate };
+        if (this.currentPassword && this.newPassword) {
+          if (!this.valid) return;
+          data.currPass = this.currentPassword;
+          data.newPass = this.newPassword;
+        }
+        this.loading = true;
+        this.error = false;
+        const res = await this.$http.patch("/users", data);
+        this.loading = false;
+        this.$notify({
+          group: "success",
+          type: "success",
+          text: "Changes has been saved successfully"
+        });
+      } catch (err) {
+        this.loading = false;
+        this.error = true;
+        console.log(err);
+      }
+    }
+  },
+  mounted() {
+    this.isPrivate = this.$store.getters.user.isPrivate;
+  }
 };
 </script>
 
