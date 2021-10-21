@@ -187,7 +187,8 @@ export default {
           user: this.user,
           isOwner: true,
           read: false,
-          sent: 1
+          sent: 1,
+          createAt: new Date()
         };
         this.messages.push(message);
         const content = this.content.value;

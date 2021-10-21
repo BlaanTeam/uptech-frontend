@@ -3,7 +3,7 @@
     @mouseenter="Menu = true"
     @mouseleave="Menu = false"
     v-if="message.isOwner"
-    class="message message__sent"
+    class="message message__sent d-flex"
     :data-read="!message.read"
   >
     <div class="message__sent__state ms-1" v-if="!deleted">
@@ -16,7 +16,10 @@
     >
       {{ message.content }}
     </div>
-    <div class="message__sent__menu me-4">
+    <div class="message__sent__menu d-flex align-center me-1">
+      <span v-show="Menu" class="me-4">
+        {{ new Date(message.createdAt).toLocaleString() }}
+      </span>
       <span v-show="Menu">
         <MessageMenu :message="message" @unsend="$emit('unsend')" />
       </span>
@@ -31,6 +34,11 @@
   >
     <div class="message__received__content secondarybg darken-1">
       {{ message.content }}
+    </div>
+    <div class="message__sent__menu d-flex align-center me-1">
+      <span v-show="Menu" class="ms-4">
+        {{ new Date(message.createdAt).toLocaleString() }}
+      </span>
     </div>
   </div>
 </template>
@@ -83,14 +91,13 @@ export default {
 .message {
   clear: both;
   margin: 1px 0;
-  width: 80%;
+  width: 99%;
 
   &__received {
     display: flex;
     float: left;
     &__content {
-      max-width: 88%;
-
+      max-width: 60%;
       padding: 10px;
       border-radius: 0 10px 10px 10px;
       max-width: 400px !important;
@@ -106,14 +113,11 @@ export default {
       width: 3%;
     }
     &__content {
-      max-width: 88%;
+      max-width: 60%;
       padding: 10px;
       border-radius: 10px 0 10px 10px;
       color: #d8d8d8;
       white-space: pre-line;
-    }
-    &__menu {
-      width: 6%;
     }
   }
 }
