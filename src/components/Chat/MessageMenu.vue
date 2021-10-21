@@ -1,5 +1,5 @@
 <template>
-  <v-menu offset-y nudge-left="20" transition="slide-y-transition">
+  <v-menu offset-y nudge-left="40" transition="slide-y-transition">
     <template v-slot:activator="{ on, attrs }">
       <v-btn v-bind="attrs" v-on="on" text icon>
         <v-icon size="30">mdi-dots-horizontal</v-icon>
@@ -24,16 +24,17 @@
 export default {
   name: "MessageMenu",
   props: {
-    message: { type: Object, required: true }
+    message: { type: Object, required: true },
+    index: { type: Number, required: true }
   },
   methods: {
     async unsentMessage() {
       try {
-        const res = await this.$http.delete(
-          "/chats/messages/" + this.message._id
-        );
-        this.message.content = "Message unsent";
-        this.$emit("unsent");
+        await this.$store.dispatch("deleteMessage", {
+          id: this.message._id,
+          index: this.index,
+          convId: this.$route.params.id
+        });
       } catch (err) {
         console.log("MessageMenu(unsentMessage): delete failed");
         console.log(err);
@@ -42,5 +43,3 @@ export default {
   }
 };
 </script>
-
-<style></style>

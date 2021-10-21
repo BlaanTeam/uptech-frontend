@@ -4,6 +4,7 @@
     @mouseleave="Menu = false"
     v-if="message.isOwner"
     class="message message__sent"
+    :id="'message' + message._id"
     :data-read="!message.read"
   >
     <div class="message__sent__state ms-1" v-if="!deleted">
@@ -16,10 +17,10 @@
     >
       {{ message.content }}
     </div>
-    <div class="message__sent__menu mx-1">
-      <span v-show="Menu"
-        ><MessageMenu :message="message" @unsent="deleted = true"
-      /></span>
+    <div class="message__sent__menu me-4">
+      <span v-show="Menu">
+        <MessageMenu :message="message" :index="index" />
+      </span>
     </div>
   </div>
 
@@ -45,7 +46,8 @@ export default {
     deleted: false
   }),
   props: {
-    message: { type: Object, required: true }
+    message: { type: Object, required: true },
+    index: { type: Number, required: true }
   },
   sockets: {
     read(data) {
@@ -76,6 +78,10 @@ export default {
 </script>
 
 <style lang="scss">
+.message[data-delete="true"] {
+  transform: translateX(-100vh);
+  opacity: 0;
+}
 .message {
   clear: both;
   margin: 1px 0;

@@ -102,7 +102,11 @@ export default {
       await this.$store.dispatch("generateConvIds", { _id, index });
     },
     newMessage(message) {
-      return !message.read && message.userId != this.$store.getters.getUserId;
+      return (
+        !message.read &&
+        message.userId != this.$store.getters.getUserId &&
+        !message.isOwner
+      );
     }
   },
   computed: {

@@ -28,19 +28,52 @@ export default {
     createdAt: null,
     convIds: new Map(),
     conversations: [],
+    messages: [],
     msgsCount: 0,
     convLoaded: false
   },
   getters: {
     conversations: state => state.conversations,
-    msgsCount: state => state.msgsCount
+    msgsCount: state => state.msgsCount,
+    messages: state => state.messages
   },
   mutations: {
     INIT_CONVERSATIONS(state, payload) {
       state.conversations.push(...payload);
     },
+    INIT_MESSAGES(state, payload) {
+      state.messages = payload;
+    },
     REMOVE_CONVERSATION(state, index) {
       state.conversations.splice(index, 1);
+    },
+    REMOVE_MESSAGE(state, { id, index, convId }) {
+      let el = document.querySelector("#message" + id);
+      // el.setAttribute("data-delete", "true");
+      // el.style.transition = "all 0.5s ease-in-out";
+      setTimeout(() => {
+        // el.remove();
+        let i = state.convIds.get(convId);
+        let conv = state.conversations[i];
+        let lastMessage = state.messages[state.messages.length - 1];
+        let message = state.messages[index];
+
+        if (lastMessage.content == message.content) {
+          lastMessage = state.messages[state.messages.length - 2];
+          lastMessage.isOwner = true;
+          conv.lastMessage = lastMessage;
+        }
+        state.messages.splice(index, 1);
+      }, 500);
+    },
+    PUSH_MESSAGE(state, message) {
+      state.messages.push(message);
+    },
+    UNSHIFT_MESSAGES(state, messages) {
+      state.messages.unshift(...messages);
+    },
+    CLEAR_MESSAGES(state) {
+      state.messages.length = 0;
     },
     ADD_CONVERSATION(state, conv) {
       state.conversations.unshift(conv);
@@ -100,6 +133,7 @@ export default {
         axios
           .get(path)
           .then(res => {
+            context.commit("UNSHIFT_MESSAGES", res.data.messages);
             resolve(res.data);
           })
           .catch(err => reject(err));
@@ -118,6 +152,26 @@ export default {
             reject(err);
           });
       });
+    },
+    deleteMessage(context, { id, index, convId }) {
+      return new Promise((resolve, reject) => {
+        axios
+          .delete("/chats/messages/" + id)
+          .then(async res => {
+            await context.commit("REMOVE_MESSAGE", { id, index, convId });
+            resolve(res);
+          })
+          .catch(err => reject(err));
+      });
+    },
+    async clearMessages(context) {
+      await context.commit("CLEAR_MESSAGES");
+    },
+    async pushMessage(context, message) {
+      await context.commit("PUSH_MESSAGE", message);
+    },
+    async unshiftMessages(context, messages) {
+      await context.commit("UNSHIFT_MESSAGES", messages);
     },
     async markRead(context, { convId }) {
       await context.commit("MARK_READ", convId);

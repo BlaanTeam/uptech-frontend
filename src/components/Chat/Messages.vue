@@ -46,10 +46,14 @@
         <h4>Sorry you can't send messages</h4>
       </div>
       <v-card-text v-else class="bg messages-box__messages d-flex pt-4 px-6">
-        <infinite-loading direction="top" @infinite="loadMessages">
-        </infinite-loading>
-        <div v-for="message in messages" :key="message.id">
-          <Message :message="message" />
+        <infinite-loading direction="top" @infinite="loadMessages" />
+        <div>
+          <Message
+            v-for="(message, index) in messages"
+            :key="message.id"
+            :message="message"
+            :index="index"
+          />
         </div>
         <div v-if="typing" class="ps-2">
           <Dots />
@@ -108,7 +112,6 @@ export default {
     Unblock: () => import("@/components/Profile/Unblock")
   },
   data: () => ({
-    messages: [],
     user: null,
     convId: "",
     content: { value: "" },
@@ -137,6 +140,9 @@ export default {
   computed: {
     currentConvId() {
       return this.$route.params.id;
+    },
+    messages() {
+      return this.$store.getters.messages;
     }
   },
   methods: {
@@ -155,7 +161,6 @@ export default {
         if (res.messages.length) {
           let lastMessage = res.messages[0];
           this.createdAt = lastMessage.createdAt;
-          this.messages.unshift(...res.messages);
           $state.loaded();
         } else {
           $state.loaded();
@@ -186,7 +191,7 @@ export default {
           read: false,
           sent: 1
         };
-        this.messages.push(message);
+        this.$store.dispatch("pushMessage", message);
         const content = this.content.value;
         this.content.value = "";
         this.scrollBottom();
@@ -207,11 +212,18 @@ export default {
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
       }, 0);
     }
+  },
+  destroyed() {
+    this.$store.dispatch("clearMessages");
   }
 };
 </script>
 
 <style lang="scss">
+.message__container[data-delete="true"] {
+  transform: translateX(-100vh);
+  opacity: 0;
+}
 .messages-box__header {
   box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.2);
   position: absolute;
