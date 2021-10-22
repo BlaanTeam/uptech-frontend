@@ -28,6 +28,10 @@ export default {
     },
     UPDATE_TOKEN: (state, accessToken) => {
       state.accessToken = accessToken;
+    },
+    UPDATE_USER_DATA: (state, data) => {
+      state.user = data;
+      localStorage.setItem("user", JSON.stringify(state.user));
     }
   },
   actions: {
@@ -110,6 +114,9 @@ export default {
             reject(err);
           });
       });
+    },
+    updateUserData: async (context, payload) => {
+      await context.commit("UPDATE_USER_DATA", payload);
     },
     destroySession: async context => {
       await context.commit("DESTROY_SESSION");
