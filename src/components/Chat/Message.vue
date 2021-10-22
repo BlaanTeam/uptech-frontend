@@ -6,18 +6,19 @@
     class="message message__sent d-flex"
     :data-read="!message.read"
   >
-    <div class="message__sent__state ms-1" v-if="!deleted">
+    <div class="message__sent__state ms-1">
       <v-icon v-if="messageSent" small>mdi-check</v-icon>
       <v-icon color="teal" v-if="message.read" small>mdi-check-all</v-icon>
     </div>
     <div
-      class="message__sent__content primary"
-      :class="{ 'lighten-1 bg me-5': deleted, 'darken-2': !deleted }"
+      @mouseenter="showDate = true"
+      @mouseleave="showDate = false"
+      class="message__sent__content primary darken-2"
     >
       {{ message.content }}
     </div>
     <div class="message__sent__menu d-flex align-center me-1">
-      <span v-show="Menu" class="me-4">
+      <span v-show="showDate" class="me-4 message__date secondarybg">
         {{ new Date(message.createdAt).toLocaleString() }}
       </span>
       <span v-show="Menu">
@@ -32,11 +33,16 @@
     @mouseleave="Menu = false"
     class="message message__received"
   >
-    <div class="message__received__content secondarybg darken-1">
+    <div
+      @mouseenter="showDate = true"
+      @mouseleave="showDate = false"
+      class="message__received__content secondarybg darken-1"
+    >
+      <span></span>
       {{ message.content }}
     </div>
     <div class="message__sent__menu d-flex align-center me-1">
-      <span v-show="Menu" class="ms-4">
+      <span v-show="showDate" class="ms-4 message__date bg secondarybg">
         {{ new Date(message.createdAt).toLocaleString() }}
       </span>
     </div>
@@ -50,7 +56,7 @@ export default {
   components: { MessageMenu },
   data: () => ({
     Menu: false,
-    deleted: false
+    showDate: false
   }),
   props: {
     message: { type: Object, required: true }
@@ -92,6 +98,13 @@ export default {
   clear: both;
   margin: 1px 0;
   width: 99%;
+  &__date {
+    padding: 4px 6px;
+    box-shadow: 1px 4px 4px rgba(#000000, 0.2);
+    opacity: 0.8;
+    z-index: 11;
+    border-radius: 6px;
+  }
 
   &__received {
     display: flex;

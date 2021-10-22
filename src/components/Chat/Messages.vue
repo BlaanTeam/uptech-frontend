@@ -188,7 +188,7 @@ export default {
           isOwner: true,
           read: false,
           sent: 1,
-          createAt: new Date()
+          createdAt: new Date().toISOString()
         };
         this.messages.push(message);
         const content = this.content.value;
