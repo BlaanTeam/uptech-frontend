@@ -9,7 +9,7 @@
     <div class="d-flex ms-9 my-5">
       <router-link to="/" class="d-flex align-center">
         <Logo width="32" />
-        <span class="ms-2">UpTech</span>
+        <span class="ms-2 logo__text">UpTech</span>
       </router-link>
     </div>
 
@@ -85,6 +85,9 @@ export default {
 };
 </script>
 <style lang="scss">
+.logo__text {
+  font-family: "Pacifico", cursive;
+}
 .v-navigation-drawer {
   width: 40vw !important;
   max-width: 256px !important;
