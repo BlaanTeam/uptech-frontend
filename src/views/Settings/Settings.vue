@@ -89,12 +89,42 @@
           </div>
         </v-expansion-panel-content>
       </v-expansion-panel>
+      <v-expansion-panel class="bg">
+        <v-expansion-panel-header>
+          <span>
+            <v-icon class="me-1 mt-n2" size="23">
+              mdi-application-cog-outline
+            </v-icon>
+            Theme and language
+          </span>
+        </v-expansion-panel-header>
+        <v-expansion-panel-content>
+          <div class="d-inline-flex flex-column">
+            <div class="ms-2 pb-2 d-flex">
+              <span>Theme</span>
+              <span class="ms-8">
+                <DarkMode />
+              </span>
+            </div>
+            <v-divider />
+            <div class="pt-2 ms-2 d-flex">
+              <span>Language</span>
+              <span class="ms-8">
+                <Locale />
+              </span>
+            </div>
+          </div>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
     </v-expansion-panels>
   </div>
 </template>
 
 <script>
+import DarkMode from "@/components/DarkMode";
+import Locale from "@/components/Locale";
 export default {
+  components: { DarkMode, Locale },
   name: "Settings",
   data: () => ({
     isPrivate: false,
