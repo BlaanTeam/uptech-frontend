@@ -39,8 +39,7 @@
                       params: { userName: notif.sender.userName }
                     }"
                   >
-                    {{ notif.sender.profile.firstName }}
-                    {{ notif.sender.profile.lastName }}
+                    {{ notif.sender.userName }}
                   </router-link>
                 </PopoverProfile>
               </span>

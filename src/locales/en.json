@@ -34,7 +34,10 @@
     "resendConfirmation": "Resend Confirmation",
     "feeds": "Feeds",
     "myProfile": "My Profile",
-    "viewProfile": " Profile of {userName}"
+    "viewProfile": " Profile of {userName}",
+    "viewPost": "Post of {username}",
+    "notifications": "Notifications",
+    "settings": "Settings"
   },
 
   "home": {

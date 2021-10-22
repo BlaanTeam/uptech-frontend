@@ -123,6 +123,8 @@ export default {
     async saveAccountChanges() {
       try {
         let data = { isPrivate: this.isPrivate };
+        let user = this.$store.getters.user;
+        user.isPrivate = this.isPrivate;
         if (this.currentPassword && this.newPassword) {
           if (!this.valid) return;
           data.currPass = this.currentPassword;
@@ -131,6 +133,7 @@ export default {
         this.loading = true;
         this.error = false;
         const res = await this.$http.patch("/users", data);
+        this.$store.dispatch("updateUserData", user);
         this.loading = false;
         this.$notify({
           group: "success",
