@@ -2,7 +2,7 @@
   <div class="notifications bg">
     <div v-for="(notif, i) in notifications" :key="i" class="conv-list-item">
       <div
-        @click="handleClick(notif)"
+        @click="handleClick($event, notif)"
         class="d-flex align-center notif-item"
         :class="{ 'unread-notif': !notif.isRead }"
       >
@@ -100,7 +100,8 @@ export default {
           params: { userName: notif.sender.userName }
         };
     },
-    async handleClick(notif) {
+    async handleClick(e, notif) {
+      if (e.target.nodeName != "DIV") return;
       await this.$http.patch("/notifications/" + notif._id);
       if (!notif.isRead) await this.$store.dispatch("decrNotifsCount");
       await this.$router.push(this.getLink(notif));
