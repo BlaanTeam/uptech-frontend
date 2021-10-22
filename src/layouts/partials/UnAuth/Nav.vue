@@ -5,7 +5,7 @@
       <div class="d-flex">
         <router-link class="logo d-flex align-center" to="/">
           <Logo width="32" />
-          <span class="ms-2">UpTech</span>
+          <span class="ms-2 logo__text">UpTech</span>
         </router-link>
       </div>
       <v-spacer></v-spacer>
@@ -112,6 +112,9 @@ export default {
 };
 </script>
 <style lang="scss">
+.logo__text {
+  font-family: "Pacifico", cursive;
+}
 .header {
   &__nav {
     background: inherit !important;
