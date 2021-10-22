@@ -15,7 +15,12 @@
 
     <div class="d-flex flex-column align-start justify-center ms-6">
       <span v-for="item in items" :key="item.title">
-        <router-link :to="item.href">
+        <router-link
+          :to="{
+            name: item.name,
+            params: item.params
+          }"
+        >
           <v-btn text rounded class="mt-3 px-4 py-1 text-capitalize">
             <v-badge
               v-if="item.title == 'Messages' && msgsCount == 'socket'"
@@ -60,15 +65,22 @@ export default {
     return {
       group: "",
       items: [
-        { title: "Feeds", icon: "mdi-home-outline", href: "/feeds" },
-        { title: "Messages", icon: "mdi-message-outline", href: "/messages" },
+        { title: "Feeds", icon: "mdi-home-outline", name: "Feeds" },
+        { title: "Messages", icon: "mdi-message-outline", name: "Messages" },
         {
           title: "Notifications",
           icon: "mdi-bell-outline",
-          href: "/notifications"
+          name: "Notifications"
         },
-        { title: "Profile", icon: "mdi-account-outline", href: "/profile" },
-        { title: "Settings", icon: "mdi-cog-outline", href: "/settings" }
+        {
+          title: "Profile",
+          icon: "mdi-account-outline",
+          name: "ViewProfile",
+          params: {
+            userName: this.$store.getters.user.userName
+          }
+        },
+        { title: "Settings", icon: "mdi-cog-outline", name: "Settings" }
       ]
     };
   },
