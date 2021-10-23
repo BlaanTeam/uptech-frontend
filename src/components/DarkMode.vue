@@ -31,7 +31,7 @@ export default {
       }
     }
   },
-  mounted() {
+  created() {
     this.darkMode = localStorage.getItem("dark");
     if (this.darkMode === "true") {
       this.enableDarkMode();

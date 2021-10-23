@@ -34,6 +34,10 @@ export default {
   },
   mounted() {
     this.$socket.emit("count-unread");
+    this.$socket.io.opts.extraHeaders[
+      "x-auth-token"
+    ] = this.$store.getters.getToken;
+    this.$socket.open();
   }
 };
 </script>

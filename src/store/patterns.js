@@ -1,4 +1,5 @@
-export default {
+import Vue from "vue";
+const patterns = {
   objectId: /^[a-fA-F0-9]{24}$/,
   username: /^[a-z0-9_-]{4,16}$/,
   password: /(?=.{4,16})/,
@@ -12,3 +13,5 @@ export default {
   tagRegex: new RegExp(/\#\w+/, "gi"),
   mentionRegex: new RegExp(/\B\@([\w\_\-]+)/, "gi")
 };
+
+Vue.prototype.$pattern = patterns;

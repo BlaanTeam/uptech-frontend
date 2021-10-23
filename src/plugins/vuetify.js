@@ -3,7 +3,7 @@ import Vuetify from "vuetify/lib";
 
 Vue.use(Vuetify);
 
-export default new Vuetify({
+const vuetify = new Vuetify({
   theme: {
     dark: true,
     themes: {
@@ -41,3 +41,5 @@ export default new Vuetify({
     }
   }
 });
+Vue.prototype.$theme = vuetify.framework.theme;
+export default vuetify;

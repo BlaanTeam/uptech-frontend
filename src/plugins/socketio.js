@@ -5,7 +5,7 @@ import io from "socket.io-client";
 let baseURL = `${process.env.VUE_APP_WS}://${process.env.VUE_APP_API_HOST}:${process.env.VUE_APP_API_PORT}`;
 Vue.use(
   new VueSocket({
-    debug: true,
+    debug: process.env.NODE_ENV == "development" ? true : false,
     connection: io(baseURL, {
       autoConnect: false,
       extraHeaders: {

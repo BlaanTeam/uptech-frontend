@@ -1,5 +1,7 @@
 <template>
   <div>
+    <DarkMode v-show="false" />
+    <Locale v-show="false" />
     <notifications :duration="10000" position="bottom right" group="errors">
     </notifications>
     <notifications :duration="10000" position="bottom left" group="success">
