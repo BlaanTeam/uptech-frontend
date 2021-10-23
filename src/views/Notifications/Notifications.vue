@@ -1,10 +1,11 @@
 <template>
   <div class="notifications bg">
-    <div v-for="(notif, i) in notifications" :key="i" class="conv-list-item">
+    <div v-for="notif in notifications" :key="notif._id" class="conv-list-item">
       <div
         @click="handleClick($event, notif)"
         class="d-flex align-center notif-item"
         :class="{ 'unread-notif': !notif.isRead }"
+        :id="'notif' + notif._id"
       >
         <div class="d-flex pt-4 px-4 pb-3">
           <div class="mx-4">
@@ -26,7 +27,6 @@
                 <img src="@/assets/images/avatar.svg" width="30" alt="Avatar" />
               </router-link>
             </PopoverProfile>
-            <span> </span>
             <div class="d-flex align-center">
               <span class="font-weight-bold me-1 underlined">
                 <PopoverProfile
@@ -46,6 +46,21 @@
               <span>
                 {{ text[notif.notifType] }}
               </span>
+            </div>
+            <div class="notif__date caption text--disabled">
+              {{ dateTimeFormat(notif.createdAt) }}
+            </div>
+            <div class="notif__delete">
+              <v-btn
+                @click="removeNotif(notif)"
+                icon
+                text
+                width="25"
+                height="25"
+                color="red darken-2"
+              >
+                <v-icon size="20">mdi-delete-outline</v-icon>
+              </v-btn>
             </div>
           </div>
         </div>
@@ -84,6 +99,9 @@ export default {
         console.log(err);
       }
     },
+    async removeNotif(notif) {
+      await this.$store.dispatch("removeNotif", notif);
+    },
     getLink(notif) {
       if (notif.notifType == 0 || notif.notifType == 1)
         return { name: "ViewPost", params: { postId: notif.postId } };
@@ -113,11 +131,33 @@ export default {
 </script>
 
 <style lang="scss">
+.notif-item[data-delete="true"] {
+  transform: translateX(-100vh);
+  opacity: 0;
+}
 .notifications {
   overflow: hidden;
   overflow-x: hidden;
   .conv-list-item {
     cursor: pointer;
+  }
+  .notif-item {
+    position: relative;
+    &:hover .notif__delete {
+      opacity: 1;
+    }
+  }
+  .notif__date {
+    position: absolute;
+    bottom: 0;
+    right: 10px;
+  }
+  .notif__delete {
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
   }
 }
 .theme--dark {

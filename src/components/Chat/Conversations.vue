@@ -56,7 +56,7 @@
             </v-list-item-content>
           </v-list-item>
         </router-link>
-        <div class="float-right caption mt-n4 me-1 font-weight-light">
+        <div class="conv__date caption text--disabled">
           <timeago
             :converterOptions="{ addSuffix: false }"
             :datetime="conv.timestamp"
@@ -111,7 +111,14 @@ export default {
   width: 100%;
   height: 11vh !important;
 }
-
+.conv-list-item {
+  position: relative;
+  .conv__date {
+    position: absolute;
+    bottom: 0;
+    right: 5px;
+  }
+}
 .theme--dark {
   .conv-list-item:hover {
     background: #26272b !important;

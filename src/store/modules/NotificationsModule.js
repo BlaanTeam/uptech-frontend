@@ -15,8 +15,16 @@ export default {
     INIT_NOTIFICATIONS(state, payload) {
       state.notifications.push(...payload);
     },
-    REMOVE_NOTIFICATION(state, index) {
-      state.notifications.splice(index, 1);
+    REMOVE_NOTIFICATION(state, notif) {
+      const el = document.querySelector("#notif" + notif._id);
+      el.setAttribute("data-delete", "true");
+      el.style.transition = "all 0.5s ease-in-out";
+      setTimeout(() => {
+        el.remove();
+        const index = state.notifications.indexOf(notif);
+        if (state.notifications.length && index != undefined)
+          state.notifications.splice(index, 1);
+      }, 500);
     },
     ADD_NOTIFICATION(state, notif) {
       state.notifications.unshift(notif);
@@ -50,6 +58,10 @@ export default {
           })
           .catch(err => reject(err));
       });
+    },
+    async removeNotif(context, notif) {
+      await axios.delete("/notifications/" + notif._id);
+      context.commit("REMOVE_NOTIFICATION", notif);
     },
     initNotifsCount(context, { notifsCount }) {
       context.commit("INIT_NOTIF_COUNT", notifsCount);

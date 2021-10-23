@@ -11,7 +11,7 @@ import "./plugins/infiniteLoading";
 import "./plugins/notification";
 import "./plugins/emojiPicker";
 import i18n from "./plugins/i18n";
-import "./utils/globalComponents";
+import "./utils";
 
 Vue.prototype.soundEffect = new Audio(
   "https://static.xx.fbcdn.net/rsrc.php/yy/r/XFhtdTsftOC.ogg"
