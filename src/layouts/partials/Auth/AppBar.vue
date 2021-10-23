@@ -64,11 +64,7 @@
 </template>
 
 <script>
-import DarkMode from "@/components/DarkMode";
-import Locale from "@/components/Locale";
 export default {
-  components: { DarkMode, Locale },
-
   name: "AppBar",
   methods: {
     async logout() {

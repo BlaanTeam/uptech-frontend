@@ -87,13 +87,11 @@
   </div>
 </template>
 <script defer>
-import DarkMode from "@/components/DarkMode";
-import Locale from "@/components/Locale.vue";
 import Logo from "@/components/svg/Logo.vue";
 
 export default {
   name: "Nav",
-  components: { DarkMode, Locale, Logo },
+  components: { Logo },
   data: () => ({
     // Links ----------------------
     drawer: false,
