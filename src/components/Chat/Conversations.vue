@@ -1,6 +1,6 @@
 <template>
   <div class="conversations bg pt-16">
-    <div class="conversations__header">
+    <div class="conversations__header bg">
       <div class="d-flex align-center px-2 py-3">
         <v-btn
           v-if="$vuetify.breakpoint.mdAndDown"
@@ -23,7 +23,7 @@
       </div>
       <v-divider />
     </div>
-    <v-list class="bg">
+    <v-list class="conversations__container bg">
       <div
         v-for="conv in conversations"
         :key="conv._id"
@@ -101,11 +101,15 @@ export default {
 </script>
 
 <style lang="scss">
+.conversations__container {
+  height: 90vh;
+  overflow-y: auto;
+}
 .conversations__header {
   position: absolute;
   top: 0;
   width: 100%;
-  height: 10vh;
+  height: 11vh !important;
 }
 
 .theme--dark {

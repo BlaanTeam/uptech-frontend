@@ -49,11 +49,7 @@ export default {
     },
     MARK_READ(state, convId) {
       const conv = state.conversations.find(conv => conv._id == convId);
-      const index = state.conversations.indexOf(conv);
-      if (conv && !conv.lastMessage.read) {
-        conv.lastMessage.read = true;
-        state.conversations.splice(index, 1, conv);
-      }
+      if (conv && !conv.lastMessage.read) conv.lastMessage.read = true;
     },
     INIT_MSGS_COUNT(state, msgsCount) {
       state.msgsCount = msgsCount;

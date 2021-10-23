@@ -39,7 +39,6 @@ export default {
     max-width: 470px;
     width: 40%;
     height: 100vh;
-    overflow-y: auto;
   }
   .messages {
     width: 60%;
