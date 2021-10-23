@@ -59,9 +59,16 @@ export default {
           .catch(err => reject(err));
       });
     },
-    async removeNotif(context, notif) {
-      await axios.delete("/notifications/" + notif._id);
-      context.commit("REMOVE_NOTIFICATION", notif);
+    removeNotif(context, notif) {
+      return new Promise((resolve, reject) => {
+        axios
+          .delete("/notifications/" + notif._id)
+          .then(async res => {
+            await context.commit("REMOVE_NOTIFICATION", notif);
+            resolve(res);
+          })
+          .catch(err => reject(err));
+      });
     },
     initNotifsCount(context, { notifsCount }) {
       context.commit("INIT_NOTIF_COUNT", notifsCount);

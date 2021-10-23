@@ -53,8 +53,6 @@
             <div class="notif__delete">
               <v-btn
                 @click.once="removeNotif(notif)"
-                :loading="loading"
-                :disabled="loading"
                 icon
                 text
                 width="25"
@@ -104,13 +102,10 @@ export default {
     },
     async removeNotif(notif) {
       try {
-        this.loading = true;
         await this.$store.dispatch("removeNotif", notif);
         if (!notif.isRead) await this.$store.dispatch("decrNotifsCount");
       } catch (err) {
         console.log(err);
-      } finally {
-        this.loading = false;
       }
     },
     getLink(notif) {
