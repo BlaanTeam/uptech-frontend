@@ -1,5 +1,5 @@
 import { encode } from "html-entities";
-import pattern from "../store/patterns";
+import pattern from "./patterns";
 export default function(content) {
   this.text = content;
   this.parseMention = function() {

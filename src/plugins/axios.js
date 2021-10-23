@@ -39,8 +39,6 @@ axios.interceptors.request.use(
 // Add a response interceptor
 axios.interceptors.response.use(
   function(response) {
-    // Any status code that lie within the range of 2xx cause this function to trigger
-    // Do something with response data
     return response;
   },
   function(error) {
@@ -51,22 +49,31 @@ axios.interceptors.response.use(
         title: i18n.t("globals.errors.connectionError"),
         text: i18n.t("globals.errors.lostConnection")
       });
-    } else {
-      if (error.response.status === 404 && store.getters.isLoggedIn) {
-        store.dispatch("handleNotFound");
-      }
-      if (error.response.status === 401) {
-        if (store.getters.isLoggedIn) {
-          store.dispatch("destroySession");
-        }
-        Vue.prototype.$notify({
-          group: "errors",
-          type: "error",
-          title: i18n.t("globals.errors.authError"),
-          text: i18n.t("globals.errors.authorizationError")
-        });
-      }
+      return Promise.reject(error);
     }
+    if (error.response.status === 404 && store.getters.isLoggedIn) {
+      store.dispatch("handleNotFound");
+      return Promise.reject(error);
+    }
+    if (error.response.status === 401) {
+      if (store.getters.isLoggedIn) store.dispatch("destroySession");
+
+      Vue.prototype.$notify({
+        group: "errors",
+        type: "error",
+        title: i18n.t("globals.errors.authError"),
+        text: i18n.t("globals.errors.authorizationError")
+      });
+      return Promise.reject(error);
+    }
+
+    Vue.prototype.$notify({
+      group: "errors",
+      type: "error",
+      title: "",
+      text: i18n.t("globals.errors.unknownError")
+    });
+
     return Promise.reject(error);
   }
 );

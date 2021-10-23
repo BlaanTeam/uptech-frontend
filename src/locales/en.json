@@ -1,253 +1,254 @@
 {
-	"about": {},
-	"accountAndPrivacy": "Account And Privacy",
-	"appName": "UpTech",
-	"birthDay": "Birth Day",
-	"block": "Block",
-	"cancel": "Cancel",
-	"changePassword": "Change Password",
-	"chats": "Chats",
-	"comment": "Comment",
-	"confirmAccount": {
-		"errors": {
-			"name": "Confirm Account Error",
-			"invOrExp": "Invalid or expired token",
-			"alreadyConfirmed": "This account already confirmed"
-		},
-		"success": {
-			"name": "Confirm Account success",
-			"confirmed": "Your account has been confirmed successfully"
-		}
-	},
-	"copy": "Copy",
-	"createPost": {
-		"placeholder": "What's on your mind !",
-		"post": "Post",
-		"private": "Private",
-		"public": "Public"
-	},
-	"currentPassword": "Current Password",
-	"day": "Day",
-	"delete": "Delete",
-	"edit": "Edit",
-	"firstName": "First Name",
-	"follow": "Follow",
-	"followers": "Followers",
-	"following": "Following",
-	"forgotPassword": {
-		"h1": "Find your account",
-		"h2": "Please enter your email",
-		"search": "Search",
-		"errors": {
-			"name": "Forgot Password Error",
-			"erequired": "Email Required !",
-			"invalidEmail": "Sorry but we didn't find any account matching this email !",
-			"tooManyReq": "Sorry, You've been sent too many requests you're blocked for 24h"
-		},
-		"success": {
-			"name": "Forgot Password success",
-			"msgSent": "Reset password link has been sent checkout your inbox"
-		}
-	},
-	"globals": {
-		"errors": {
-			"connectionError": "Connection Error",
-			"wentWrong": "Opps, something went wrong",
-			"lostConnection": "You lost your connection !",
-			"authError": "Authorization Error",
-			"authorizationError": "Please before doing anything, you should sign in!"
-		}
-	},
-	"home": {
-		"title": "Home",
-		"section1": {
-			"h1": "Hey, Welcome to our open source social network",
-			"h2": "Fell free to join us",
-			"btn": "Create an account"
-		},
-		"section2": {
-			"h1": "Real time chat",
-			"text": "light and fast messaging app communicate and interact in real-time with you friends"
-		}
-	},
-	"langs": {
-		"en": "English",
-		"ar": "Arabic"
-	},
-	"language": "Language",
-	"lastName": "Last Name",
-	"like": "Like",
-	"liked": "Liked",
-	"location": "Location",
-	"month": "Month",
-	"months": [
-		"January",
-		"February",
-		"March",
-		"April",
-		"May",
-		"June",
-		"July",
-		"August",
-		"September",
-		"October",
-		"November",
-		"December"
-	],
-	"name": "English",
-	"nav": {
-		"home": "Home",
-		"about": "About",
-		"support": "Support",
-		"signin": "Sign In",
-		"signup": "Sign Up"
-	},
-	"newPassword": "New Password",
-	"notFound": {
-		"name": "Not Found",
-		"h1": "WHOOPS !",
-		"h2": "The page you are trying to get to never existed in this reality, or has migrated to a parallel universe"
-	},
-	"notificationsAlert": [
-		"liked your post",
-		"commented on your post",
-		"followed you",
-		"published a new announcement"
-	],
-	"notificationsAndSound": "Notifications And Sound",
-	"posts": "Posts",
-	"private": "Private",
-	"repeatNewPassword": "Repeat New Password",
-	"report": "Report",
-	"resendConfirmation": {
-		"h1": "Find your account",
-		"h2": "Please enter your email",
-		"send": "Re-Send",
-		"errors": {
-			"name": "Forgot Password Error",
-			"invalidEmail": "Sorry, But we didn't find any account matching this email !",
-			"tooManyReq": "Sorry, You've been sent too many requests you're blocked for 24h"
-		},
-		"success": {
-			"name": "Forgot Password success",
-			"msgSent": "Account confirmation link has been sent, checkout your inbox"
-		}
-	},
-	"resetPassword": {
-		"h1": "Reset your password",
-		"h2": "Please enter a new password",
-		"change": "Change",
-		"form": {
-			"password": "Password",
-			"repeatPassword": "Repeat Password"
-		},
-		"errors": {
-			"prequired": "Password Required !",
-			"invalidp": "Invalid Password !"
-		},
-		"success": {
-			"name": "Reset Password Success",
-			"passwordReset": "Congrats, The password updated successfully"
-		}
-	},
-	"save": "Save",
-	"saved": "Saved",
-	"search": "Search",
-	"share": "Share",
-	"shortcut": "en",
-	"sideNav": {
-		"feeds": "Feeds",
-		"messages": "Messages",
-		"notifications": "Notifications",
-		"profile": "Profile",
-		"settings": "Settings"
-	},
-	"signin": {
-		"name": "Sign In",
-		"h1": "welcome back",
-		"google": "Log in with Google",
-		"facebook": "Log in with Facebook",
-		"form": {
-			"username": "Username",
-			"password": "Password",
-			"forgotPassword": "Forgot my password ?",
-			"resendConfirmation": "Resend Confirmation ?",
-			"rememberMe": "Remember me"
-		},
-		"errors": {
-			"auth": "Authentication Error",
-			"prequired": "Password Required !",
-			"urequired": "Username Required !",
-			"invalidp": "Invalid Password !",
-			"invalidu": "Invalid Username !",
-			"invalid": "Invalid username or password !",
-			"notRegistredYet": "This account is not registred yet !",
-			"notConfirmed": "Account not confirmed yet please checkout you email !"
-		}
-	},
-	"signup": {
-		"name": "Sign Up",
-		"form": {
-			"username": "Username",
-			"password": "Password",
-			"repeatPassword": "Repeat Password",
-			"email": "E-mail",
-			"agree": "Do you agree to the",
-			"terms": "terms",
-			"and": "and",
-			"conditions": "conditions ?",
-			"alreadySigned": "Already signed up ?"
-		},
-		"errors": {
-			"auth": "Authentication Error",
-			"prequired": "Password Required !",
-			"urequired": "Username Required !",
-			"erequired": "Email Required !",
-			"invalidp": "Invalid Password !",
-			"invalidu": "Invalid Username !",
-			"invalide": "Invalid Email !",
-			"agree": "You must agree to continue !",
-			"emailAlreadyRegistred": "Email already registered try a different one !",
-			"usernameAlreadyRegistred": "Username already registered try a different one !",
-			"invalid": "Invalid username or password !"
-		},
-		"success": {
-			"auth": "Authentication Success",
-			"registred": "Account registered successfully"
-		}
-	},
-	"soon": "Soon",
-	"sound": "Sound",
-	"theme": "Theme",
-	"themeAndLanguage": "Theme And Langauge",
-	"titles": {
-		"home": "Home",
-		"about": "About",
-		"support": "Support",
-		"signin": "Sign In",
-		"signup": "Sign Up",
-		"notFound": "Not Found",
-		"resetPassword": "Reset Passord",
-		"forgotPassword": "Forgot Password",
-		"resendConfirmation": "Resend Confirmation",
-		"feeds": "Feeds",
-		"myProfile": "My Profile",
-		"viewProfile": " Profile of {userName}",
-		"viewPost": "Post of {username}",
-		"notifications": "Notifications",
-		"settings": "Settings"
-	},
-	"unblock": "UnBlock",
-	"unfollow": "Unfollow",
-	"unsent": "Unsent",
-	"viewComment": {
-		"placeholder": "what do you think"
-	},
-	"viewPost": "View Post",
-	"viewProfile": {
-		"likesAndComments": "Likes And Comments",
-		"editProfile": "Edit Profile"
-	},
-	"website": "Website",
-	"year": "Year"
+  "about": {},
+  "accountAndPrivacy": "Account And Privacy",
+  "appName": "UpTech",
+  "birthDay": "Birth Day",
+  "block": "Block",
+  "cancel": "Cancel",
+  "changePassword": "Change Password",
+  "chats": "Chats",
+  "comment": "Comment",
+  "confirmAccount": {
+    "errors": {
+      "name": "Confirm Account Error",
+      "invOrExp": "Invalid or expired token",
+      "alreadyConfirmed": "This account already confirmed"
+    },
+    "success": {
+      "name": "Confirm Account success",
+      "confirmed": "Your account has been confirmed successfully"
+    }
+  },
+  "copy": "Copy",
+  "createPost": {
+    "placeholder": "What's on your mind !",
+    "post": "Post",
+    "private": "Private",
+    "public": "Public"
+  },
+  "currentPassword": "Current Password",
+  "day": "Day",
+  "delete": "Delete",
+  "edit": "Edit",
+  "firstName": "First Name",
+  "follow": "Follow",
+  "followers": "Followers",
+  "following": "Following",
+  "forgotPassword": {
+    "h1": "Find your account",
+    "h2": "Please enter your email",
+    "search": "Search",
+    "errors": {
+      "name": "Forgot Password Error",
+      "erequired": "Email Required !",
+      "invalidEmail": "Sorry but we didn't find any account matching this email !",
+      "tooManyReq": "Sorry, You've been sent too many requests you're blocked for 24h"
+    },
+    "success": {
+      "name": "Forgot Password success",
+      "msgSent": "Reset password link has been sent checkout your inbox"
+    }
+  },
+  "globals": {
+    "errors": {
+      "connectionError": "Connection Error",
+      "wentWrong": "Opps, something went wrong",
+      "lostConnection": "You lost your connection !",
+      "authError": "Authorization Error",
+      "authorizationError": "Please before doing anything, you should sign in!",
+      "unknownError": "Oops, An error occured please try again :("
+    }
+  },
+  "home": {
+    "title": "Home",
+    "section1": {
+      "h1": "Hey, Welcome to our open source social network",
+      "h2": "Fell free to join us",
+      "btn": "Create an account"
+    },
+    "section2": {
+      "h1": "Real time chat",
+      "text": "light and fast messaging app communicate and interact in real-time with you friends"
+    }
+  },
+  "langs": {
+    "en": "English",
+    "ar": "Arabic"
+  },
+  "language": "Language",
+  "lastName": "Last Name",
+  "like": "Like",
+  "liked": "Liked",
+  "location": "Location",
+  "month": "Month",
+  "months": [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+  ],
+  "name": "English",
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "support": "Support",
+    "signin": "Sign In",
+    "signup": "Sign Up"
+  },
+  "newPassword": "New Password",
+  "notFound": {
+    "name": "Not Found",
+    "h1": "WHOOPS !",
+    "h2": "The page you are trying to get to never existed in this reality, or has migrated to a parallel universe"
+  },
+  "notificationsAlert": [
+    "liked your post",
+    "commented on your post",
+    "followed you",
+    "published a new announcement"
+  ],
+  "notificationsAndSound": "Notifications And Sound",
+  "posts": "Posts",
+  "private": "Private",
+  "repeatNewPassword": "Repeat New Password",
+  "report": "Report",
+  "resendConfirmation": {
+    "h1": "Find your account",
+    "h2": "Please enter your email",
+    "send": "Re-Send",
+    "errors": {
+      "name": "Forgot Password Error",
+      "invalidEmail": "Sorry, But we didn't find any account matching this email !",
+      "tooManyReq": "Sorry, You've been sent too many requests you're blocked for 24h"
+    },
+    "success": {
+      "name": "Forgot Password success",
+      "msgSent": "Account confirmation link has been sent, checkout your inbox"
+    }
+  },
+  "resetPassword": {
+    "h1": "Reset your password",
+    "h2": "Please enter a new password",
+    "change": "Change",
+    "form": {
+      "password": "Password",
+      "repeatPassword": "Repeat Password"
+    },
+    "errors": {
+      "prequired": "Password Required !",
+      "invalidp": "Invalid Password !"
+    },
+    "success": {
+      "name": "Reset Password Success",
+      "passwordReset": "Congrats, The password updated successfully"
+    }
+  },
+  "save": "Save",
+  "saved": "Saved",
+  "search": "Search",
+  "share": "Share",
+  "shortcut": "en",
+  "sideNav": {
+    "feeds": "Feeds",
+    "messages": "Messages",
+    "notifications": "Notifications",
+    "profile": "Profile",
+    "settings": "Settings"
+  },
+  "signin": {
+    "name": "Sign In",
+    "h1": "welcome back",
+    "google": "Log in with Google",
+    "facebook": "Log in with Facebook",
+    "form": {
+      "username": "Username",
+      "password": "Password",
+      "forgotPassword": "Forgot my password ?",
+      "resendConfirmation": "Resend Confirmation ?",
+      "rememberMe": "Remember me"
+    },
+    "errors": {
+      "auth": "Authentication Error",
+      "prequired": "Password Required !",
+      "urequired": "Username Required !",
+      "invalidp": "Invalid Password !",
+      "invalidu": "Invalid Username !",
+      "invalid": "Invalid username or password !",
+      "notRegistredYet": "This account is not registred yet !",
+      "notConfirmed": "Account not confirmed yet please checkout you email !"
+    }
+  },
+  "signup": {
+    "name": "Sign Up",
+    "form": {
+      "username": "Username",
+      "password": "Password",
+      "repeatPassword": "Repeat Password",
+      "email": "E-mail",
+      "agree": "Do you agree to the",
+      "terms": "terms",
+      "and": "and",
+      "conditions": "conditions ?",
+      "alreadySigned": "Already signed up ?"
+    },
+    "errors": {
+      "auth": "Authentication Error",
+      "prequired": "Password Required !",
+      "urequired": "Username Required !",
+      "erequired": "Email Required !",
+      "invalidp": "Invalid Password !",
+      "invalidu": "Invalid Username !",
+      "invalide": "Invalid Email !",
+      "agree": "You must agree to continue !",
+      "emailAlreadyRegistred": "Email already registered try a different one !",
+      "usernameAlreadyRegistred": "Username already registered try a different one !",
+      "invalid": "Invalid username or password !"
+    },
+    "success": {
+      "auth": "Authentication Success",
+      "registred": "Account registered successfully"
+    }
+  },
+  "soon": "Soon",
+  "sound": "Sound",
+  "theme": "Theme",
+  "themeAndLanguage": "Theme And Langauge",
+  "titles": {
+    "home": "Home",
+    "about": "About",
+    "support": "Support",
+    "signin": "Sign In",
+    "signup": "Sign Up",
+    "notFound": "Not Found",
+    "resetPassword": "Reset Passord",
+    "forgotPassword": "Forgot Password",
+    "resendConfirmation": "Resend Confirmation",
+    "feeds": "Feeds",
+    "myProfile": "My Profile",
+    "viewProfile": " Profile of {userName}",
+    "viewPost": "Post of {username}",
+    "notifications": "Notifications",
+    "settings": "Settings"
+  },
+  "unblock": "UnBlock",
+  "unfollow": "Unfollow",
+  "unsent": "Unsent",
+  "viewComment": {
+    "placeholder": "what do you think"
+  },
+  "viewPost": "View Post",
+  "viewProfile": {
+    "likesAndComments": "Likes And Comments",
+    "editProfile": "Edit Profile"
+  },
+  "website": "Website",
+  "year": "Year"
 }

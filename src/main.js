@@ -1,16 +1,16 @@
 import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";
-import "./store/patterns";
 import store from "./store";
+
 import vuetify from "./plugins/vuetify";
+import i18n from "./plugins/i18n";
 import "./plugins/axios";
 import "./plugins/timeago";
 import "./plugins/socketio";
 import "./plugins/infiniteLoading";
 import "./plugins/notification";
 import "./plugins/emojiPicker";
-import i18n from "./plugins/i18n";
 import "./utils";
 
 Vue.prototype.soundEffect = new Audio(
