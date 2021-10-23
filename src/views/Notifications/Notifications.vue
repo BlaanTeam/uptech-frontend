@@ -52,7 +52,9 @@
             </div>
             <div class="notif__delete">
               <v-btn
-                @click="removeNotif(notif)"
+                @click.once="removeNotif(notif)"
+                :loading="loading"
+                :disabled="loading"
                 icon
                 text
                 width="25"
@@ -77,6 +79,7 @@ export default {
   name: "Notifications",
   components: { PopoverProfile },
   data: () => ({
+    loading: false,
     icons: [
       "mdi-heart-outline",
       "mdi-comment-outline",
@@ -100,7 +103,15 @@ export default {
       }
     },
     async removeNotif(notif) {
-      await this.$store.dispatch("removeNotif", notif);
+      try {
+        this.loading = true;
+        await this.$store.dispatch("removeNotif", notif);
+        if (!notif.isRead) await this.$store.dispatch("decrNotifsCount");
+      } catch (err) {
+        console.log(err);
+      } finally {
+        this.loading = false;
+      }
     },
     getLink(notif) {
       if (notif.notifType == 0 || notif.notifType == 1)
