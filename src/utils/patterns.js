@@ -15,3 +15,4 @@ const patterns = {
 };
 
 Vue.prototype.$pattern = patterns;
+export default patterns;
