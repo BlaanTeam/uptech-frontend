@@ -1,6 +1,6 @@
 <template>
   <div class="conversations bg pt-16">
-    <div class="conversations__header">
+    <div class="conversations__header bg">
       <div class="d-flex align-center px-2 py-3">
         <v-btn
           v-if="$vuetify.breakpoint.mdAndDown"
@@ -23,14 +23,13 @@
       </div>
       <v-divider />
     </div>
-    <v-list class="bg">
+    <v-list class="conversations__container bg">
       <div
-        v-for="(conv, i) in conversations"
+        v-for="conv in conversations"
         :key="conv._id"
         class="conv-list-item"
         :class="{ 'new-message': newMessage(conv.lastMessage) }"
       >
-        <span v-if="generateConvIds(conv._id, i)"></span>
         <router-link :to="{ name: 'ViewMessages', params: { id: conv._id } }">
           <v-list-item class="py-2">
             <v-list-item-avatar>
@@ -89,9 +88,6 @@ export default {
         console.log(err);
       }
     },
-    async generateConvIds(_id, index) {
-      await this.$store.dispatch("generateConvIds", { _id, index });
-    },
     newMessage(message) {
       return !message.read && message.userId != this.$store.getters.getUserId;
     }
@@ -105,11 +101,15 @@ export default {
 </script>
 
 <style lang="scss">
+.conversations__container {
+  height: 90vh;
+  overflow-y: auto;
+}
 .conversations__header {
   position: absolute;
   top: 0;
   width: 100%;
-  height: 10vh;
+  height: 11vh !important;
 }
 
 .theme--dark {

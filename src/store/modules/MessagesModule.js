@@ -1,35 +1,36 @@
 import axios from "../../plugins/axios";
 
-let handleConvs = (context, convId, user, lastMessage) => {
-  let convIndex = context.state.convIds.get(convId);
+const handleConvs = (context, convId, user, lastMessage) => {
+  const conv = context.state.conversations.find(conv => conv._id == convId);
+  const index = context.state.conversations.indexOf(conv);
 
-  if (convIndex === undefined) {
-    let conv = {
-      _id: convId,
-      lastMessage: lastMessage,
-      timestamp: Date.now(),
-      user
-    };
-    context.commit("ADD_CONVERSATION", conv);
-  } else if (convIndex === 0) {
-    context.state.conversations[convIndex].lastMessage = lastMessage;
-    context.state.conversations[convIndex].timestamp = Date.now();
-  } else {
-    let conv = context.state.conversations[convIndex];
+  if (conv && index == 0) {
     conv.lastMessage = lastMessage;
     conv.timestamp = Date.now();
-    context.commit("REMOVE_CONVERSATION", convIndex);
-    context.commit("ADD_CONVERSATION", conv);
+    return;
   }
+  if (conv && index != 0) {
+    conv.lastMessage = lastMessage;
+    conv.timestamp = Date.now();
+    context.commit("REMOVE_CONVERSATION", conv);
+    context.commit("ADD_CONVERSATION", conv);
+    return;
+  }
+
+  let newConv = {
+    _id: convId,
+    lastMessage: lastMessage,
+    timestamp: Date.now(),
+    user
+  };
+  context.commit("ADD_CONVERSATION", newConv);
 };
 
 export default {
   state: {
     createdAt: null,
-    convIds: new Map(),
     conversations: [],
-    msgsCount: 0,
-    convLoaded: false
+    msgsCount: 0
   },
   getters: {
     conversations: state => state.conversations,
@@ -39,22 +40,16 @@ export default {
     INIT_CONVERSATIONS(state, payload) {
       state.conversations.push(...payload);
     },
-    REMOVE_CONVERSATION(state, index) {
+    REMOVE_CONVERSATION(state, conv) {
+      const index = state.conversations.indexOf(conv);
       state.conversations.splice(index, 1);
     },
     ADD_CONVERSATION(state, conv) {
       state.conversations.unshift(conv);
     },
-    ADD_CONV_ID(state, payload) {
-      state.convIds.set(payload._id, payload.index);
-    },
     MARK_READ(state, convId) {
-      let i = state.convIds.get(convId);
-      let conv = state.conversations[i];
-      if (conv && !conv.lastMessage.read) {
-        conv.lastMessage.read = true;
-        state.conversations.splice(i, 1, conv);
-      }
+      const conv = state.conversations.find(conv => conv._id == convId);
+      if (conv && !conv.lastMessage.read) conv.lastMessage.read = true;
     },
     INIT_MSGS_COUNT(state, msgsCount) {
       state.msgsCount = msgsCount;
@@ -125,9 +120,6 @@ export default {
     async receiveMessage(context, { convId, user, lastMessage }) {
       if (context.state.convLoaded)
         handleConvs(context, convId, user, lastMessage);
-    },
-    generateConvIds(context, payload) {
-      context.commit("ADD_CONV_ID", payload);
     },
     initMsgsCount(context, { msgsCount }) {
       context.commit("INIT_MSGS_COUNT", msgsCount);
