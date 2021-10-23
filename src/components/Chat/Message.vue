@@ -19,10 +19,10 @@
     </div>
     <div class="message__sent__menu d-flex align-center me-1">
       <span v-show="showDate" class="me-4 message__date secondarybg">
-        {{ new Date(message.createdAt).toLocaleString() }}
+        {{ dateTimeFormat(message.createdAt) }}
       </span>
       <span v-show="Menu">
-        <MessageMenu :message="message" @unsend="$emit('unsend')" />
+        <MessageMenu :message="message" @unsend="$emit('unsend', message)" />
       </span>
     </div>
   </div>
@@ -43,7 +43,7 @@
     </div>
     <div class="message__sent__menu d-flex align-center me-1">
       <span v-show="showDate" class="ms-4 message__date bg secondarybg">
-        {{ new Date(message.createdAt).toLocaleString() }}
+        {{ dateTimeFormat(message.createdAt) }}
       </span>
     </div>
   </div>
@@ -90,7 +90,7 @@ export default {
 </script>
 
 <style lang="scss">
-.message[data-delete="true"] {
+.message__container[data-delete="true"] {
   transform: translateX(-100vh);
   opacity: 0;
 }

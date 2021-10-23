@@ -48,8 +48,13 @@
       <v-card-text v-else class="bg messages-box__messages d-flex pt-4 px-6">
         <infinite-loading direction="top" @infinite="loadMessages">
         </infinite-loading>
-        <div v-for="(message, i) in messages" :key="message.id">
-          <Message :message="message" @unsend="unsent(i)" />
+        <div
+          v-for="message in messages"
+          :key="message.id"
+          class="message__container"
+          :id="'message' + message._id"
+        >
+          <Message :message="message" @unsend="unsent(message)" />
         </div>
         <div v-if="typing" class="ps-2">
           <Dots />
@@ -172,8 +177,15 @@ export default {
         userId: this.user._id
       });
     },
-    unsent(index) {
-      this.messages.splice(index, 1);
+    unsent(message) {
+      const el = document.querySelector("#message" + message._id);
+      el.setAttribute("data-delete", "true");
+      el.style.transition = "all 0.5s ease-in-out";
+      setTimeout(() => {
+        el.remove();
+        const index = this.messages.indexOf(message);
+        this.messages.splice(index, 1);
+      }, 500);
     },
     async sendMessage() {
       if (!this.content.value.trim()) return;
