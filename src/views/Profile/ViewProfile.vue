@@ -6,7 +6,7 @@
       <Edit v-else :profile="userInfo.profile">
         <v-btn class="ms-2 mt-n2 text-capitalize" color="primary" dark text>
           <v-icon left size="18">mdi-square-edit-outline</v-icon>
-          Edit
+          {{ $t("edit") }}
         </v-btn>
       </Edit>
     </Profile>

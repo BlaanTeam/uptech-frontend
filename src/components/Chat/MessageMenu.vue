@@ -14,7 +14,7 @@
         class="subtitle-2 text-none"
       >
         <v-icon size="13" class="me-1">mdi-delete</v-icon>
-        unsent
+        {{ $t("unsent") }}
       </v-btn>
     </div>
   </v-menu>

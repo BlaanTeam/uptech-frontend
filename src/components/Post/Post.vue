@@ -42,7 +42,7 @@
                 <v-icon size="15">mdi-eye</v-icon>
               </v-btn>
             </template>
-            <span>View Post</span>
+            <span>{{ $t("viewPost") }}</span>
           </v-tooltip>
         </router-link>
 
@@ -68,23 +68,29 @@
             <v-list-item-group class="auth-secondarybg">
               <v-list-item dense @click="copyPostLink">
                 <v-icon left small>mdi-content-copy</v-icon>
-                <v-list-item-title>Copy</v-list-item-title>
+                <v-list-item-title>
+                  {{ $t("copy") }}
+                </v-list-item-title>
               </v-list-item>
               <v-list-item dense>
                 <v-icon left small>mdi-content-save</v-icon>
-                <v-list-item-title>Save</v-list-item-title>
+                <v-list-item-title>
+                  {{ $t("save") }}
+                </v-list-item-title>
               </v-list-item>
               <EditPost :post="post" :index="index" v-if="post.isOwner">
                 <v-list-item dense>
                   <v-icon left small>mdi-square-edit-outline</v-icon>
-                  <v-list-item-title>Edit</v-list-item-title>
+                  <v-list-item-title>
+                    {{ $t("edit") }}
+                  </v-list-item-title>
                 </v-list-item>
               </EditPost>
               <DeletePost :post="post" :index="index" v-if="post.isOwner">
                 <v-list-item dense class="text-start">
                   <v-icon left color="red" small>mdi-delete</v-icon>
                   <v-list-item-title class="red--text">
-                    Delete
+                    {{ $t("delete") }}
                   </v-list-item-title>
                 </v-list-item>
               </DeletePost>
@@ -121,14 +127,14 @@
               color="auth-secondarybg text-lowercase body-2"
             >
               <v-icon left size="16">mdi-comment</v-icon>
-              comment
+              {{ $t("comment") }}
             </v-btn>
           </div>
         </v-col>
         <v-col class="pa-2">
           <v-btn elevation="0" color="auth-secondarybg text-lowercase body-2">
             <v-icon left size="16">mdi-share-variant</v-icon>
-            share
+            {{ $t("share") }}
           </v-btn>
         </v-col>
       </v-row>

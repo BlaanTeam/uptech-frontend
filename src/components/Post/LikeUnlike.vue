@@ -31,7 +31,7 @@ export default {
   }),
   computed: {
     toggleLikeUnlike() {
-      return this.liked ? "unlike" : "like";
+      return this.liked ? this.$t("liked") : this.$t("like");
     }
   },
   methods: {

@@ -1,6 +1,6 @@
 <template>
   <v-app-bar flat app class="auth-secondarybg search" height="52px">
-    <v-toolbar-title>UpTech</v-toolbar-title>
+    <v-toolbar-title>{{ $t("appName") }}</v-toolbar-title>
     <v-spacer></v-spacer>
     <v-btn text class="mr-2" @click.prevent="logout()">
       <v-icon left>mdi-logout</v-icon>

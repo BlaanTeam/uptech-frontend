@@ -90,7 +90,7 @@
             @click="close"
             height="30"
           >
-            Cancel
+            {{ $t("cancel") }}
           </v-btn>
           <v-btn
             :disabled="btnDisabler"

@@ -43,7 +43,7 @@
           class="text-capitalize justify-center"
           @click="dialog = false"
         >
-          Cancel
+          {{ $t("cancel") }}
         </v-btn>
       </v-row>
     </div>

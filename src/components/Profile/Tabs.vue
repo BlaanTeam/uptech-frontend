@@ -2,13 +2,13 @@
   <div class="tabs mt-8 px-4">
     <v-tabs v-model="tabs" centered grow background-color="bg">
       <v-tab>
-        Posts
+        {{ $t("posts") }}
       </v-tab>
       <v-tab>
-        Likes and comments
+        {{ $t("viewProfile.likesAndComments") }}
       </v-tab>
       <v-tab>
-        Media
+        {{ $t("saved") }}
       </v-tab>
     </v-tabs>
 
@@ -49,7 +49,7 @@
             dark
           >
             <v-icon small left>mdi-lock-open-variant-outline</v-icon>
-            unblock
+            {{ $t("unblock") }}
           </v-btn>
         </Unblock>
       </div>
@@ -94,12 +94,12 @@
       </v-tab-item>
       <v-tab-item>
         <div style="height: 100vh">
-          likes and comments
+          {{ $t("viewProfile.likesAndComments") }}
         </div>
       </v-tab-item>
       <v-tab-item>
         <div style="height: 100vh">
-          media
+          {{ $t("saved") }}
         </div>
       </v-tab-item>
     </v-tabs-items>

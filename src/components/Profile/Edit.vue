@@ -27,7 +27,7 @@
               outlined
               dense
               required
-              label="First Name"
+              :label="$t('firstName')"
             />
           </v-col>
           <v-col>
@@ -35,13 +35,18 @@
               v-model="profile.lastName"
               outlined
               dense
-              label="Last Name"
+              :label="$t('lastName')"
             />
           </v-col>
         </v-row>
         <v-row no-gutters>
           <v-col>
-            <v-textarea v-model="profile.bio" outlined dense label="Bio" />
+            <v-textarea
+              v-model="profile.bio"
+              outlined
+              dense
+              :label="$t('bio')"
+            />
           </v-col>
         </v-row>
         <v-row no-gutters>
@@ -51,7 +56,7 @@
               type="country"
               outlined
               dense
-              label="Location"
+              :label="$t('location')"
             />
           </v-col>
         </v-row>
@@ -63,18 +68,18 @@
               v-model="profile.website"
               type="url"
               outlined
-              label="Website"
+              :label="$t('website')"
             />
           </v-col>
         </v-row>
-        <div>Birth Date</div>
+        <div>{{ $t("birthDay") }}</div>
         <v-row no-gutters class="mt-2">
           <v-col class="me-4">
-            <v-select :items="months" label="Month" dense outlined />
+            <v-select :items="months" :label="$t('Month')" dense outlined />
           </v-col>
           <v-col class="me-4">
             <v-text-field
-              label="Day"
+              :label="$t('day')"
               dense
               outlined
               type="number"
@@ -84,7 +89,7 @@
           </v-col>
           <v-col>
             <v-text-field
-              label="Year"
+              :label="$t('year')"
               dense
               outlined
               type="number"
@@ -95,10 +100,10 @@
         </v-row>
       </v-card-text>
       <v-card-actions>
-        <h1 class="title ms-2">Edit Profile</h1>
+        <h1 class="title ms-2">{{ $t("viewProfile.editProfile") }}</h1>
         <v-spacer></v-spacer>
         <a class="text-capitalize caption me-8" text @click="dialog = false">
-          Cancel
+          {{ $t("cancel") }}
         </a>
         <v-btn
           elevation="0"
@@ -110,7 +115,7 @@
           @click="edit"
         >
           <v-icon left size="16" class="">mdi-content-save</v-icon>
-          Save
+          {{ $t("save") }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -122,22 +127,13 @@ export default {
   props: { profile: { type: Object, required: true } },
   data: () => ({
     dialog: false,
-    loading: false,
-    months: [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December"
-    ]
+    loading: false
   }),
+  computed: {
+    months() {
+      return this.$t("months");
+    }
+  },
   methods: {
     async edit() {
       this.loading = true;

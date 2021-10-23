@@ -7,16 +7,16 @@
             <v-icon class="me-1 mt-n2" size="25">
               mdi-account-outline
             </v-icon>
-            Account and privacy
+            {{ $t("accountAndPrivacy") }}
           </span>
         </v-expansion-panel-header>
         <v-expansion-panel-content>
           <div class="d-flex align-center">
-            <h3 class="font-weight-regular">Private</h3>
+            <h3 class="font-weight-regular">{{ $t("private") }}</h3>
             <v-switch v-model="isPrivate" class="ms-6" />
           </div>
           <div class="d-flex flex-column">
-            <h3 class="font-weight-regular">Change password</h3>
+            <h3 class="font-weight-regular">{{ $t("changePassword") }}</h3>
             <v-form class="mt-4" ref="password">
               <span>
                 <v-text-field
@@ -26,7 +26,7 @@
                   :append-icon="showPassword1 ? 'mdi-eye' : 'mdi-eye-off'"
                   :type="showPassword1 ? 'text' : 'password'"
                   name="password"
-                  label="Current password"
+                  :label="$t('currentPassword')"
                   :rules="passwordRules"
                   :error="error"
                   required
@@ -39,7 +39,7 @@
                   :append-icon="showPassword2 ? 'mdi-eye' : 'mdi-eye-off'"
                   :type="showPassword2 ? 'text' : 'password'"
                   name="password"
-                  label="New password"
+                  :label="$t('newPassword')"
                   :rules="passwordRules"
                   required
                   @click:append="showPassword2 = !showPassword2"
@@ -52,7 +52,7 @@
                   :append-icon="showPassword3 ? 'mdi-eye' : 'mdi-eye-off'"
                   :type="showPassword3 ? 'text' : 'password'"
                   name="password"
-                  label="Repeat new password"
+                  :label="$t('repeatNewPassword')"
                   :rules="passwordRules"
                   required
                   @click:append="showPassword3 = !showPassword3"
@@ -79,12 +79,12 @@
             <v-icon class="me-1 mt-n2" size="25">
               mdi-bell-outline
             </v-icon>
-            Notifications and sound
+            {{ $t("notificationsAndSound") }}
           </span>
         </v-expansion-panel-header>
         <v-expansion-panel-content>
           <div class="d-flex align-center">
-            <h3 class="font-weight-regular">Sound</h3>
+            <h3 class="font-weight-regular">{{ $t("Sound") }}</h3>
             <v-switch v-model="sound" class="ms-6" />
           </div>
         </v-expansion-panel-content>
@@ -95,20 +95,20 @@
             <v-icon class="me-1 mt-n2" size="23">
               mdi-application-cog-outline
             </v-icon>
-            Theme and language
+            {{ $t("themeAndLanguage") }}
           </span>
         </v-expansion-panel-header>
         <v-expansion-panel-content>
           <div class="d-inline-flex flex-column">
             <div class="ms-2 pb-2 d-flex">
-              <span>Theme</span>
+              <span>{{ $t("theme") }}</span>
               <span class="ms-8">
                 <DarkMode />
               </span>
             </div>
             <v-divider />
             <div class="pt-2 ms-2 d-flex">
-              <span>Language</span>
+              <span>{{ $t("language") }}</span>
               <span class="ms-8">
                 <Locale />
               </span>

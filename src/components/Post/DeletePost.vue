@@ -34,7 +34,7 @@
             @click="dialog = false"
             color="secondarybg"
           >
-            Cancel
+            {{ $t("cancel") }}
           </v-btn>
         </v-card-actions>
       </v-card>

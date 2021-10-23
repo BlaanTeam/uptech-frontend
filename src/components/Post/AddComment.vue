@@ -9,7 +9,7 @@
           <v-textarea
             id="addCommentTextArea"
             autofocus
-            placeholder="What you do think"
+            :placeholder="$t('viewComment.placeholder')"
             label=""
             rows="1"
             row-height="10"

@@ -50,7 +50,8 @@
         <div class="statistics mt-4">
           <v-row>
             <v-col cols="3">
-              <span class="font-weight-bold">{{ userInfo.posts }}</span> Posts
+              <span class="font-weight-bold">{{ userInfo.posts }}</span>
+              {{ $t("posts") }}
             </v-col>
             <v-col
               cols="4"
@@ -65,7 +66,7 @@
             >
               <a text @click="followers.value = true">
                 <span class="font-weight-bold">{{ userInfo.followers }}</span>
-                Followers
+                {{ $t("followers") }}
               </a>
               <Followers
                 v-if="!userInfo.isOwner || !userInfo.blockedByViewer"
@@ -87,7 +88,7 @@
             >
               <a text @click="following.value = true">
                 <span class="font-weight-bold">{{ userInfo.following }}</span>
-                Following
+                {{ $t("following") }}
               </a>
               <Following
                 v-if="!userInfo.isOwner || !userInfo.blockedByViewer"

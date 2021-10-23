@@ -5,7 +5,7 @@
         <slot>
           <v-btn tile block text class="text-capitalize justify-start pe-6">
             <v-icon small left>mdi-cancel</v-icon>
-            block
+            {{ $t("block") }}
           </v-btn>
         </slot>
       </span>
@@ -31,7 +31,7 @@
           color="red"
         >
           <v-icon small left>mdi-cancel</v-icon>
-          block
+          {{ $t("block") }}
         </v-btn>
       </v-row>
       <v-divider></v-divider>
@@ -43,7 +43,7 @@
           class="text-capitalize justify-center"
           @click="dialog = false"
         >
-          Cancel
+          {{ $t("cancel") }}
         </v-btn>
       </v-row>
     </div>

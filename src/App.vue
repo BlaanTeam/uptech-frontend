@@ -1,7 +1,5 @@
 <template>
   <div>
-    <DarkMode v-show="false" />
-    <Locale v-show="false" />
     <notifications :duration="10000" position="bottom right" group="errors">
     </notifications>
     <notifications :duration="10000" position="bottom left" group="success">
@@ -35,7 +33,7 @@
           </div>
           <div class="right-side">
             <div class="trending auth-secondarybg">
-              <div class="soon">soon</div>
+              <div class="soon">{{ $t("soon") }}</div>
               <div class="title">Trends for you</div>
               <div class="trend">
                 <span class="font-weight-light caption">
@@ -48,7 +46,7 @@
                 <span class="font-weight-light caption">
                   Technology · Trending
                 </span>
-                <span>Uptech</span>
+                <span>{{ $t("appName") }}</span>
                 <span class="font-weight-light caption">561K Posts</span>
               </div>
               <div class="trend" v-for="i in 3" :key="i + 4">
@@ -63,7 +61,7 @@
               </div>
             </div>
             <div class="search auth-secondarybg">
-              <span>Search</span>
+              <span>{{ $t("search") }}</span>
             </div>
           </div>
         </div>

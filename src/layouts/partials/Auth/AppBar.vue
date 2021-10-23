@@ -13,9 +13,9 @@
       </v-icon>
     </v-btn>
 
-    <v-toolbar-title class="text-capitalize">{{
-      $route.path.split("/")[1]
-    }}</v-toolbar-title>
+    <v-toolbar-title>
+      {{ $t($route.meta.title, $route.params) }}
+    </v-toolbar-title>
     <DarkMode v-show="false" />
     <v-spacer></v-spacer>
     <v-menu
@@ -36,14 +36,14 @@
         style="width: 170px"
       >
         <div class="ms-2 pb-2 d-block">
-          <span class="float-left">Theme</span>
+          <span class="float-left">{{ $t("theme") }}</span>
           <span class="float-right">
             <DarkMode />
           </span>
         </div>
         <v-divider />
         <div class="pt-2 ms-2 d-block">
-          <span class="float-left mt-1">Language</span>
+          <span class="float-left mt-1">{{ $t("language") }}</span>
           <span class="float-right ms-2">
             <Locale />
           </span>

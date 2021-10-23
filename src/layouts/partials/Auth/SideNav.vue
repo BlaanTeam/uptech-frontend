@@ -9,7 +9,7 @@
     <div class="d-flex ms-9 my-5">
       <router-link to="/" class="d-flex align-center">
         <Logo width="32" />
-        <span class="ms-2 logo__text">UpTech</span>
+        <span class="ms-2 logo__text">{{ $t("appName") }}</span>
       </router-link>
     </div>
 
@@ -63,28 +63,42 @@ export default {
   components: { Logo },
   data() {
     return {
-      group: "",
-      items: [
-        { title: "Feeds", icon: "mdi-home-outline", name: "Feeds" },
-        { title: "Messages", icon: "mdi-message-outline", name: "Messages" },
+      group: ""
+    };
+  },
+  computed: {
+    items() {
+      return [
         {
-          title: "Notifications",
+          title: this.$t("sideNav.feeds"),
+          icon: "mdi-home-outline",
+          name: "Feeds"
+        },
+        {
+          title: this.$t("sideNav.messages"),
+          icon: "mdi-message-outline",
+          name: "Messages"
+        },
+        {
+          title: this.$t("sideNav.notifications"),
           icon: "mdi-bell-outline",
           name: "Notifications"
         },
         {
-          title: "Profile",
+          title: this.$t("sideNav.profile"),
           icon: "mdi-account-outline",
           name: "ViewProfile",
           params: {
             userName: this.$store.getters.user.userName
           }
         },
-        { title: "Settings", icon: "mdi-cog-outline", name: "Settings" }
-      ]
-    };
-  },
-  computed: {
+        {
+          title: this.$t("sideNav.settings"),
+          icon: "mdi-cog-outline",
+          name: "Settings"
+        }
+      ];
+    },
     msgsCount() {
       return this.$store.getters.msgsCount;
     },

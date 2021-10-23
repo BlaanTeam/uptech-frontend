@@ -14,7 +14,7 @@
             mdi-menu
           </v-icon>
         </v-btn>
-        <h1 class="ms-4 ">Chats</h1>
+        <h1 class="ms-4 ">{{ $t("chats") }}</h1>
         <div class="ms-auto me-4 align-self-center">
           <v-btn icon>
             <v-icon size="25">mdi-cog</v-icon>

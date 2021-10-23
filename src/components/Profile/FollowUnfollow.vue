@@ -12,7 +12,7 @@
       height="30"
     >
       <v-icon small left>mdi-account-plus-outline</v-icon>
-      Follow
+      {{ $t("follow") }}
     </v-btn>
 
     <v-dialog v-model="dialog" max-width="250px">
@@ -61,7 +61,7 @@
             color="red"
           >
             <v-icon small left>mdi-account-minus-outline</v-icon>
-            Unfollow
+            {{ $t("unfollow") }}
           </v-btn>
         </v-row>
         <v-divider></v-divider>
@@ -73,7 +73,7 @@
             class="text-capitalize justify-center"
             @click="closeDialog"
           >
-            Cancel
+            {{ $t("cancel") }}
           </v-btn>
         </v-row>
       </div>

@@ -67,12 +67,6 @@ export default {
       "mdi-comment-outline",
       "mdi-account-outline",
       "mdi-bullhorn-outline"
-    ],
-    text: [
-      "liked your post",
-      "commented on your post",
-      "followed you",
-      "published a new announcement"
     ]
   }),
   methods: {
@@ -110,6 +104,9 @@ export default {
   computed: {
     notifications() {
       return this.$store.getters.notifications;
+    },
+    text() {
+      return this.$t("notificationsAlert");
     }
   }
 };

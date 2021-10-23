@@ -6,7 +6,7 @@
     <v-card-subtitle class="ms-10 ps-4 pt-3 d-block">
       <v-textarea
         id="CreateTextArea"
-        placeholder="What's on your mind"
+        :placeholder="$t('createPost.placeholder')"
         label=""
         auto-grow
         rows="1"
@@ -49,7 +49,7 @@
         class="ms-auto primary"
         elevation="0"
       >
-        Post
+        {{ $t("createPost.post") }}
         <v-icon right>mdi-send</v-icon>
       </v-btn>
     </v-card-actions>
@@ -68,7 +68,9 @@ export default {
   }),
   computed: {
     togglePrivatePublic() {
-      return this.isPrivate ? "private" : "public";
+      return this.isPrivate
+        ? this.$t("createPost.private")
+        : this.$t("createPost.public");
     }
   },
   methods: {

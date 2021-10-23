@@ -105,7 +105,7 @@
               @click="editMode = false"
             >
               <v-icon left small>mdi-file-undo</v-icon>
-              cancel
+              {{ $t("cancel") }}
             </v-btn>
             <v-btn
               v-if="userId === comment.user._id"
@@ -117,7 +117,7 @@
               @click="editMode = true"
             >
               <v-icon left small>mdi-square-edit-outline</v-icon>
-              edit
+              {{ $t("edit") }}
             </v-btn>
             <v-btn
               v-if="userId === comment.user._id || post.isOwner"
@@ -132,7 +132,7 @@
               class="text-capitalize subtitle-2 justify-start"
             >
               <v-icon left small color="red">mdi-delete</v-icon>
-              delete
+              {{ $t("delete") }}
             </v-btn>
           </v-list-item-group>
         </v-menu>

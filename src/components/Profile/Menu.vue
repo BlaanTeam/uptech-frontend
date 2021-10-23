@@ -44,7 +44,7 @@
         <Unblock v-else :userInfo="userInfo" />
         <v-btn tile block text class="text-capitalize justify-start">
           <v-icon small left>mdi-flag-outline</v-icon>
-          Report
+          {{ $t("report") }}
         </v-btn>
       </div>
     </v-menu>
