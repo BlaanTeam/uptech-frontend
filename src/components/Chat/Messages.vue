@@ -50,7 +50,7 @@
         </infinite-loading>
         <div
           v-for="message in messages"
-          :key="message.id"
+          :key="message._id"
           class="message__container"
           :id="'message' + message._id"
         >
@@ -228,6 +228,10 @@ export default {
 </script>
 
 <style lang="scss">
+.message__container[data-delete="true"] {
+  transform: translateX(-100vh);
+  opacity: 0;
+}
 .messages-box__header {
   box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.2);
   position: absolute;

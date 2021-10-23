@@ -1,50 +1,52 @@
 <template>
-  <div
-    @mouseenter="Menu = true"
-    @mouseleave="Menu = false"
-    v-if="message.isOwner"
-    class="message message__sent d-flex"
-    :data-read="!message.read"
-  >
-    <div class="message__sent__state ms-1">
-      <v-icon v-if="messageSent" small>mdi-check</v-icon>
-      <v-icon color="teal" v-if="message.read" small>mdi-check-all</v-icon>
-    </div>
+  <div>
     <div
-      @mouseenter="showDate = true"
-      @mouseleave="showDate = false"
-      class="message__sent__content primary darken-2"
+      @mouseenter="Menu = true"
+      @mouseleave="Menu = false"
+      v-if="message.isOwner"
+      class="message message__sent d-flex"
+      :data-read="!message.read"
     >
-      {{ message.content }}
+      <div class="message__sent__state ms-1">
+        <v-icon v-if="messageSent" small>mdi-check</v-icon>
+        <v-icon color="teal" v-if="message.read" small>mdi-check-all</v-icon>
+      </div>
+      <div
+        @mouseenter="showDate = true"
+        @mouseleave="showDate = false"
+        class="message__sent__content primary darken-2"
+      >
+        {{ message.content }}
+      </div>
+      <div class="message__sent__menu d-flex align-center me-1">
+        <span v-show="showDate" class="me-4 message__date secondarybg">
+          {{ dateTimeFormat(message.createdAt) }}
+        </span>
+        <span v-show="Menu">
+          <MessageMenu :message="message" @unsend="$emit('unsend', message)" />
+        </span>
+      </div>
     </div>
-    <div class="message__sent__menu d-flex align-center me-1">
-      <span v-show="showDate" class="me-4 message__date secondarybg">
-        {{ dateTimeFormat(message.createdAt) }}
-      </span>
-      <span v-show="Menu">
-        <MessageMenu :message="message" @unsend="$emit('unsend', message)" />
-      </span>
-    </div>
-  </div>
 
-  <div
-    v-else
-    @mouseenter="Menu = true"
-    @mouseleave="Menu = false"
-    class="message message__received"
-  >
     <div
-      @mouseenter="showDate = true"
-      @mouseleave="showDate = false"
-      class="message__received__content secondarybg darken-1"
+      v-else
+      @mouseenter="Menu = true"
+      @mouseleave="Menu = false"
+      class="message message__received"
     >
-      <span></span>
-      {{ message.content }}
-    </div>
-    <div class="message__sent__menu d-flex align-center me-1">
-      <span v-show="showDate" class="ms-4 message__date bg secondarybg">
-        {{ dateTimeFormat(message.createdAt) }}
-      </span>
+      <div
+        @mouseenter="showDate = true"
+        @mouseleave="showDate = false"
+        class="message__received__content secondarybg darken-1"
+      >
+        <span></span>
+        {{ message.content }}
+      </div>
+      <div class="message__sent__menu d-flex align-center me-1">
+        <span v-show="showDate" class="ms-4 message__date bg secondarybg">
+          {{ dateTimeFormat(message.createdAt) }}
+        </span>
+      </div>
     </div>
   </div>
 </template>
@@ -90,10 +92,6 @@ export default {
 </script>
 
 <style lang="scss">
-.message__container[data-delete="true"] {
-  transform: translateX(-100vh);
-  opacity: 0;
-}
 .message {
   clear: both;
   margin: 1px 0;

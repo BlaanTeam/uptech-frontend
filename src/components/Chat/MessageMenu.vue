@@ -8,6 +8,8 @@
     <div class="bg d-flex flex-column align-start">
       <v-btn
         @click="unsentMessage"
+        :loading="loading"
+        :disabled="loading"
         color="red"
         tile
         text
@@ -26,9 +28,13 @@ export default {
   props: {
     message: { type: Object, required: true }
   },
+  data: () => ({
+    loading: false
+  }),
   methods: {
     async unsentMessage() {
       try {
+        this.loading = true;
         const res = await this.$http.delete(
           "/chats/messages/" + this.message._id
         );
@@ -36,6 +42,8 @@ export default {
       } catch (err) {
         console.log("MessageMenu(unsentMessage): delete failed");
         console.log(err);
+      } finally {
+        this.loading = false;
       }
     }
   }
