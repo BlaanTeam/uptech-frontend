@@ -25,12 +25,11 @@
     </div>
     <v-list class="bg">
       <div
-        v-for="(conv, i) in conversations"
+        v-for="conv in conversations"
         :key="conv._id"
         class="conv-list-item"
         :class="{ 'new-message': newMessage(conv.lastMessage) }"
       >
-        <span v-if="generateConvIds(conv._id, i)"></span>
         <router-link :to="{ name: 'ViewMessages', params: { id: conv._id } }">
           <v-list-item class="py-2">
             <v-list-item-avatar>
@@ -88,9 +87,6 @@ export default {
         $state.error();
         console.log(err);
       }
-    },
-    async generateConvIds(_id, index) {
-      await this.$store.dispatch("generateConvIds", { _id, index });
     },
     newMessage(message) {
       return !message.read && message.userId != this.$store.getters.getUserId;
