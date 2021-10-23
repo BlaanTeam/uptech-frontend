@@ -5,7 +5,7 @@
       <div class="d-flex">
         <router-link class="logo d-flex align-center" to="/">
           <Logo width="32" />
-          <span class="ms-2 logo__text">{{ $("appName") }}</span>
+          <span class="ms-2 logo__text">{{ $t("appName") }}</span>
         </router-link>
       </div>
       <v-spacer></v-spacer>
