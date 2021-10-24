@@ -1,7 +1,7 @@
 <template>
   <div class="conversations bg pt-16">
     <div class="conversations__header bg">
-      <div class="d-flex align-center px-2 py-3">
+      <div class="d-flex px-2 py-3">
         <v-btn
           v-if="$vuetify.breakpoint.mdAndDown"
           text
@@ -108,6 +108,7 @@ export default {
 .conversations__header {
   position: absolute;
   top: 0;
+  z-index: 10;
   width: 100%;
   height: 11vh !important;
 }

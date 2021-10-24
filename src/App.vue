@@ -1,68 +1,26 @@
 <template>
   <div>
-    <notifications :duration="10000" position="bottom right" group="errors">
-    </notifications>
-    <notifications :duration="10000" position="bottom left" group="success">
-    </notifications>
+    <notifications :duration="10000" position="bottom right" group="errors" />
+    <notifications :duration="10000" position="bottom left" group="success" />
 
-    <UnAuthLayout v-if="!$store.getters.isLoggedIn" :style="unAuthBackground">
+    <UnAuthLayout v-if="!loggedIn" :style="unAuthBackground">
       <v-main>
         <router-view></router-view>
       </v-main>
     </UnAuthLayout>
 
-    <AuthLayout
-      v-else-if="$route.path.startsWith('/messages')"
-      :style="authBackground"
-    >
-      <v-main class="auth-main">
-        <div class="auth-main__container">
-          <router-view class="chat-view"></router-view>
-        </div>
-      </v-main>
-    </AuthLayout>
-
     <AuthLayout v-else :style="authBackground">
-      <v-main class="auth-main">
-        <div class="d-flex">
+      <v-main class="auth-main pt-0">
+        <div :class="{ 'd-flex': !chatRoute }">
           <div class="auth-main__container">
-            <AppBar />
-            <!-- <keep-alive :max="4" :include="includes"> -->
-            <router-view class="router-view"></router-view>
-            <!-- </keep-alive> -->
+            <AppBar v-show="!chatRoute" />
+            <router-view
+              :class="{ 'router-view': !chatRoute, 'chat-view': chatRoute }"
+            />
           </div>
-          <div class="right-side">
-            <div class="trending auth-secondarybg">
-              <div class="soon">{{ $t("soon") }}</div>
-              <div class="title">Trends for you</div>
-              <div class="trend">
-                <span class="font-weight-light caption">
-                  Trending in Morocco
-                </span>
-                <span>#NFTdrop</span>
-                <span class="font-weight-light caption">128K Posts</span>
-              </div>
-              <div class="trend" v-for="i in 2" :key="i">
-                <span class="font-weight-light caption">
-                  Technology · Trending
-                </span>
-                <span>{{ $t("appName") }}</span>
-                <span class="font-weight-light caption">561K Posts</span>
-              </div>
-              <div class="trend" v-for="i in 3" :key="i + 4">
-                <span class="font-weight-light caption">
-                  Trending in Morocco
-                </span>
-                <span>#Morocco</span>
-                <span class="font-weight-light caption">1,437 Posts</span>
-              </div>
-              <div class="mt-2">
-                <span class="primary--text">See more</span>
-              </div>
-            </div>
-            <div class="search auth-secondarybg">
-              <span>{{ $t("search") }}</span>
-            </div>
+          <div v-show="!chatRoute" class="right-side">
+            <Trends />
+            <Search />
           </div>
         </div>
       </v-main>
@@ -75,17 +33,25 @@ export default {
   components: {
     UnAuthLayout: () => import("./layouts/UnAuthLayout"),
     AuthLayout: () => import("@/layouts/AuthLayout"),
-    AppBar: () => import("@/layouts/partials/Auth/AppBar")
+    AppBar: () => import("@/layouts/partials/Auth/AppBar"),
+    Trends: () => import("@/components/Trends/Trends"),
+    Search: () => import("@/components/Search/Search")
   },
   data: () => ({
     includes: ["Profile"]
   }),
   computed: {
     unAuthBackground() {
-      return { background: this.$vuetify.theme.currentTheme.bg };
+      return { background: this.$theme.currentTheme.bg };
     },
     authBackground() {
-      return { background: this.$vuetify.theme.currentTheme["auth-bg"] };
+      return { background: this.$theme.currentTheme["auth-bg"] };
+    },
+    chatRoute() {
+      return this.$route.path.startsWith("/messages");
+    },
+    loggedIn() {
+      return this.$store.getters.isLoggedIn;
     }
   },
   watch: {
@@ -102,86 +68,52 @@ export default {
   max-width: 1250px !important;
   margin: 0 auto !important;
 }
-
-a {
-  text-decoration: none;
-  color: white;
+.theme--light {
+  .auth-main__container {
+    border-left: 1px solid #adadad;
+    border-right: 1px solid #adadad;
+  }
+  .chat-view {
+    border-right: 1px solid #adadad;
+  }
+}
+.theme--dark {
+  .auth-main__container {
+    border-left: 1px solid rgba(255, 255, 255, 0.12);
+    border-right: 1px solid rgba(255, 255, 255, 0.12);
+  }
+  .chat-view {
+    border-right: 1px solid rgba(255, 255, 255, 0.12);
+  }
 }
 main {
   min-height: 100vh;
   width: 100%;
 }
-.v-application a {
-  color: inherit !important;
-}
+
 .router-view {
   width: 45vw;
   max-width: 610px;
   min-height: 100vh;
   padding-top: 52px !important;
 }
+.chat-view {
+  width: 80vw !important;
+  max-width: 1000px !important;
+  min-height: 100vh;
+}
+
 .right-side {
   width: 28vw;
   position: relative;
   padding: 4px 10px 10px 15px;
-  .search {
-    overflow: hidden;
-    position: fixed;
-    top: 2px;
-    border-radius: 10px;
-    width: 100%;
-    max-width: 360px;
-    height: 45px;
-    max-height: 45px;
-    display: flex;
-    align-items: center;
-    padding: 0 10px;
-    font-weight: 300;
-    font-size: 15px;
-  }
-  .trending {
-    overflow: hidden;
-    position: fixed;
-    border-radius: 10px;
-    max-width: 360px;
-    width: 100%;
-    height: 100%;
-    max-height: 90vh;
-    padding: 10px 20px;
-    margin-top: 52px;
-    display: flex;
-    flex-direction: column;
-    max-height: 590px;
-    .trend {
-      display: flex;
-      flex-direction: column;
-      margin: 10px 0;
-    }
-  }
 }
-.soon {
-  position: absolute;
-  right: -20px;
-  top: 4px;
-  transform: rotate(45deg);
-  background: rgb(2, 179, 82);
-  padding: 0px 20px 1px 20px;
+.v-application a {
+  color: inherit !important;
 }
-.theme--light .auth-main {
-  padding-top: 0 !important ;
-
-  &__container {
-    border-left: 1px solid #adadad;
-    border-right: 1px solid #adadad;
-  }
-}
-.theme--dark .auth-main {
-  padding-top: 0 !important ;
-
-  &__container {
-    border-left: 1px solid rgba(255, 255, 255, 0.12);
-    border-right: 1px solid rgba(255, 255, 255, 0.12);
-  }
+a {
+  text-decoration: none;
+  color: white;
 }
 .vue-notification-group {
   font-family: Roboto, sans-serif;
