@@ -120,19 +120,19 @@ export default {
   }
 }
 .theme--dark {
-  .conv-list-item:hover {
-    background: #26272b !important;
+  .conv-list-item:not(.new-message):hover {
+    background: hsla(228, 6%, 16%, 0.5) !important;
   }
   .new-message {
     background: #26272b !important;
   }
 }
 .theme--light {
-  .conv-list-item:hover {
-    background: #dbd9d9 !important;
+  .conv-list-item:not(.new-message):hover {
+    background: hsla(0, 0%, 93%, 0.6) !important;
   }
   .new-message {
-    background: #dbd9d9 !important;
+    background: #eeeeee !important;
   }
 }
 </style>

@@ -167,19 +167,19 @@ export default {
   }
 }
 .theme--dark {
-  .notif-item:hover {
-    background: #26272b !important;
+  .notif-item:not(.unread-notif):hover {
+    background: hsla(228, 6%, 16%, 0.5) !important;
   }
   .unread-notif {
-    background: #28292e !important;
+    background: #26272b !important;
   }
 }
 .theme--light {
-  .notif-item:hover {
-    background: #dbd9d9 !important;
+  .notif-item:not(.unread-notif):hover {
+    background: hsla(0, 0%, 93%, 0.6) !important;
   }
   .unread-notif {
-    background: #f3f3f3 !important;
+    background: #eeeeee !important;
   }
 }
 </style>
