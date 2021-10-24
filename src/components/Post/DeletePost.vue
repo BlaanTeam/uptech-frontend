@@ -9,7 +9,7 @@
       <v-card class="auth-bg py-4 px-1">
         <v-card-title class="pb-6 justify-center">
           <h1 class="subtitle-1">
-            This post is going to be deleted
+            {{ $t("deletePostAlert") }}
             <v-icon size="18" class="ms-1 mt-n1">mdi-delete-alert</v-icon>
           </h1>
         </v-card-title>
@@ -19,12 +19,12 @@
             elevation="0"
             color="red"
             width="100"
-            class="mr-10 text-capitalize px-4"
+            class="mr-10 text-capitalize pe-4"
             :loading="loading"
             :disabled="loading"
           >
             <v-icon left size="18" class="mt-n1">mdi-delete-empty</v-icon>
-            Delete
+            {{ $t("delete") }}
           </v-btn>
 
           <v-btn
@@ -65,6 +65,7 @@ export default {
         if (this.$route.path.startsWith("/post"))
           await this.$router.push({ name: "Feeds" });
       } catch (err) {
+        this.loading = false;
         console.log(err);
       }
     }
