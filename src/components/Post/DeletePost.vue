@@ -15,7 +15,7 @@
         </v-card-title>
         <v-card-actions class="justify-center">
           <v-btn
-            @click="deletePost(post._id, index)"
+            @click="deletePost"
             elevation="0"
             color="red"
             width="100"
@@ -53,14 +53,15 @@ export default {
     loading: false
   }),
   methods: {
-    async deletePost(id) {
+    async deletePost() {
       this.loading = true;
       try {
-        let res = await this.$store.dispatch("deletePost", { id });
-        if (res.status === 204) {
-          this.loading = false;
-          this.dialog = false;
-        }
+        await this.$store.dispatch("deletePost", {
+          id: this.post._id,
+          index: this.index
+        });
+        this.loading = false;
+        this.dialog = false;
         if (this.$route.path.startsWith("/post"))
           await this.$router.push({ name: "Feeds" });
       } catch (err) {

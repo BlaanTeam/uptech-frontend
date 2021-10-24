@@ -55,11 +55,7 @@
       </div>
     </v-tabs-items>
 
-    <v-tabs-items
-      v-else
-      v-model="tabs"
-      :class="{ bg: !posts.length, 'auth-bg': posts.length }"
-    >
+    <v-tabs-items v-else v-model="tabs" class="auth-bg">
       <v-tab-item class="px-1">
         <CreatePost
           @creating="handleLoading"
@@ -68,29 +64,26 @@
         />
         <div class="pb-10">
           <PostSkeleton v-if="loading.value" />
-          <div v-if="loaded && posts.length">
-            <span v-for="(post, index) in posts" :key="post._id">
-              <Post
-                :post="post"
-                :comments="(post.commentsData = [])"
-                :index="index"
-                class="my-6"
-                transition="scale-transition"
-              />
-            </span>
-          </div>
+          <Post
+            v-for="(post, index) in posts"
+            :key="post._id"
+            :post="post"
+            :comments="(post.commentsData = [])"
+            :index="index"
+            class="my-6"
+            transition="scale-transition"
+          />
+          <infinite-loading @infinite="infiniteHandler">
+            <template slot="no-results">
+              <div v-if="!posts.length" class="text-center py-4 auth-bg">
+                <v-icon size="80" color="#b68d06">
+                  mdi-database-alert-outline
+                </v-icon>
+                <h2>This user doesn't have any posts yet</h2>
+              </div>
+            </template>
+          </infinite-loading>
         </div>
-        <infinite-loading @infinite="infiniteHandler">
-          <template slot="no-results">
-            <span></span>
-            <div v-if="!posts.length" class="text-center py-4 bg">
-              <v-icon size="80" color="#b68d06">
-                mdi-database-alert-outline
-              </v-icon>
-              <h2>This user doesn't have any posts yet</h2>
-            </div>
-          </template>
-        </infinite-loading>
       </v-tab-item>
       <v-tab-item>
         <div style="height: 100vh">
@@ -124,40 +117,29 @@ export default {
     posts: [],
     comments: [],
     page: 1,
-    pageInfo: {},
-    loaded: false,
-    blockLoading: false,
     loading: { value: false }
   }),
 
   methods: {
     async infiniteHandler($state) {
       try {
-        let userName = this.userInfo.userName;
+        const userName = this.userInfo.userName;
         const api = `/users/${userName}/posts?page=${this.page}`;
-
-        let res = await this.$http.get(api);
-        if (res.status === 200) {
-          if (res.data.posts.length) {
-            this.page += 1;
-            this.posts.push(...res.data.posts);
-            $state.loaded();
-            if (res.data.posts.length < 20) $state.complete();
-            this.loaded = true;
-          } else {
-            this.loaded = true;
-            $state.complete();
-          }
+        const res = await this.$http.get(api);
+        if (res.data.posts.length) {
+          this.page += 1;
+          this.posts.push(...res.data.posts);
+          $state.loaded();
+        } else {
+          $state.complete();
         }
       } catch (err) {
-        this.loaded = true;
         $state.error();
         console.log(err);
       }
     },
     handleLoading(loading) {
       this.loading = loading;
-      console.log(this.loading);
     },
     addPost({ content, isPrivate, payload }) {
       payload.comments = 0;
