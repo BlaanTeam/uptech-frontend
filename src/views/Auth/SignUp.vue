@@ -42,19 +42,6 @@
             required
             @click:append="show1 = !show1"
           />
-          <!-- <v-text-field
-            prepend-icon="mdi-lock"
-            class="my-6"
-            :error="repeatPassword !== password"
-            v-model="repeatPassword"
-            :append-icon="show2 ? 'mdi-eye' : 'mdi-eye-off'"
-            :type="show2 ? 'text' : 'password'"
-            name="password"
-            :label="$t('signup.form.repeatPassword')"
-            @click:append="show2 = !show2"
-            required
-         /> -->
-
           <v-checkbox
             v-model="agree"
             name="agreement"
@@ -123,24 +110,6 @@ export default {
     loading: false
   }),
   computed: {
-    usernameRules() {
-      return [
-        v => !!v || this.$t("signup.errors.urequired"),
-        v => this.$pattern.username.test(v) || this.$t("signup.errors.invalidu")
-      ];
-    },
-    emailRules() {
-      return [
-        v => !!v || this.$t("signup.errors.erequired"),
-        v => this.$pattern.email.test(v) || this.$t("signup.errors.invalide")
-      ];
-    },
-    passwordRules() {
-      return [
-        v => !!v || this.$t("signup.errors.prequired"),
-        v => this.$pattern.password.test(v) || this.$t("signup.errors.invalidp")
-      ];
-    },
     valid() {
       return this.$refs.signup.validate();
     }
@@ -168,30 +137,25 @@ export default {
         text: text
       });
     },
-    handleSubmit() {
-      if (this.valid) {
-        this.loading = true;
-        this.$store
-          .dispatch("signUp", {
-            username: this.username,
-            email: this.email,
-            password: this.password
-          })
-          .then(res => {
-            this.loading = false;
-            if (res.status === 201) {
-              this.$router.push({ name: "SignIn" });
-              this.successNotification(this.$t("signup.success.registred"));
-            }
-          })
-          .catch(({ response }) => {
-            this.loading = false;
-            if (response?.status === 409) {
-              this.errorNotification(
-                this.$t("signup.errors.usernameAlreadyRegistred")
-              );
-            }
-          });
+    async handleSubmit() {
+      if (!this.valid) return;
+      this.loading = true;
+      try {
+        await this.$store.dispatch("signUp", {
+          username: this.username,
+          email: this.email,
+          password: this.password
+        });
+        this.$router.push({ name: "SignIn" });
+        this.successNotification(this.$t("signup.success.registred"));
+      } catch ({ response }) {
+        if (response?.status === 409) {
+          this.errorNotification(
+            this.$t("signup.errors.usernameAlreadyRegistred")
+          );
+        }
+      } finally {
+        this.loading = false;
       }
     }
   }
