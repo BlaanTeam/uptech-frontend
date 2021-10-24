@@ -17,25 +17,24 @@ export default {
     },
     REMOVE_NOTIFICATION(state, notif) {
       const el = document.querySelector("#notif" + notif._id);
-      el.setAttribute("data-delete", "true");
       el.style.transition = "all 0.5s ease-in-out";
+      el.setAttribute("data-delete", "true");
       setTimeout(() => {
         el.remove();
         const index = state.notifications.indexOf(notif);
-        if (state.notifications.length && index != undefined)
-          state.notifications.splice(index, 1);
+        state.notifications.splice(index, 1);
       }, 500);
     },
     ADD_NOTIFICATION(state, notif) {
       state.notifications.unshift(notif);
     },
-    INIT_NOTIF_COUNT(state, notifCount) {
+    INIT_NOTIFS_COUNT(state, notifCount) {
       state.notifCount = notifCount;
     },
-    INCR_NOTIF_COUNT(state) {
+    INCR_NOTIFS_COUNT(state) {
       state.notifCount++;
     },
-    DECR_NOTIF_COUNT(state) {
+    DECR_NOTIFS_COUNT(state) {
       state.notifCount--;
     }
   },
@@ -59,6 +58,17 @@ export default {
           .catch(err => reject(err));
       });
     },
+    async removeNotifs(context) {
+      try {
+        await axios.delete("/notifications/");
+        context.state.notifications.forEach(notif => {
+          context.commit("REMOVE_NOTIFICATION", notif);
+        });
+        context.commit("INIT_NOTIFS_COUNT", 0);
+      } catch (err) {
+        console.log(err);
+      }
+    },
     removeNotif(context, notif) {
       return new Promise((resolve, reject) => {
         axios
@@ -71,13 +81,13 @@ export default {
       });
     },
     initNotifsCount(context, { notifsCount }) {
-      context.commit("INIT_NOTIF_COUNT", notifsCount);
+      context.commit("INIT_NOTIFS_COUNT", notifsCount);
     },
     incrNotifsCount(context) {
-      context.commit("INCR_NOTIF_COUNT");
+      context.commit("INCR_NOTIFS_COUNT");
     },
     decrNotifsCount(context) {
-      context.commit("DECR_NOTIF_COUNT");
+      context.commit("DECR_NOTIFS_COUNT");
     },
     addNotif(context, payload) {
       if (context.state.notifsLoaded)
