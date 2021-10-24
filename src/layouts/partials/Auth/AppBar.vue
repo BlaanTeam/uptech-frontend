@@ -17,24 +17,7 @@
       {{ $t($route.meta.title, $route.params) }}
     </v-toolbar-title>
     <div v-if="$route.fullPath.split('/')[1] == 'notifications'">
-      <v-tooltip bottom color="#2F3136" nudge-top="10" nudge-right="5">
-        <template #activator="{attrs,on}">
-          <v-btn
-            v-bind="attrs"
-            v-on="on"
-            @click="$store.dispatch('removeNotifs')"
-            icon
-            text
-            width="32"
-            height="32"
-            color="primary"
-            class="ms-3"
-          >
-            <v-icon size="20">mdi-check-all</v-icon>
-          </v-btn>
-        </template>
-        <span>{{ $t("clearAll") }}</span>
-      </v-tooltip>
+      <RemoveNotifs />
     </div>
     <DarkMode v-show="false" />
     <v-spacer></v-spacer>
@@ -84,8 +67,10 @@
 </template>
 
 <script>
+import RemoveNotifs from "@/components/Notifications/RemoveNotifs";
 export default {
   name: "AppBar",
+  components: { RemoveNotifs },
   methods: {
     async logout() {
       this.$socket.close();

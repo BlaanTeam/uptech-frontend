@@ -28,8 +28,11 @@
     "public": "Public"
   },
   "currentPassword": "Current Password",
+  "clear": "Clear",
   "day": "Day",
   "delete": "Delete",
+  "deletePostAlert": "This post is going to be deleted!",
+  "deleteNotifsAlert": "You are going to clear all notifications!",
   "edit": "Edit",
   "firstName": "First Name",
   "follow": "Follow",
