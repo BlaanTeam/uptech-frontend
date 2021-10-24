@@ -194,9 +194,26 @@ export default {
   data: props => ({
     commentExpanded: false,
     readActivated: false,
-    snackbar: false
+    snackbar: false,
+    likersCache: new Map()
   }),
-
+  sockets: {
+    notif(data) {
+      if (data.postId === this.post._id) {
+        switch (data.notifType) {
+          case 0:
+            if (this.likersCache.get(data.sender._id) !== true) {
+              this.post.likes++;
+              this.likersCache.set(data.sender._id, true);
+            }
+            break;
+          case 1:
+            this.post.comments++;
+            break;
+        }
+      }
+    }
+  },
   computed: {
     userId() {
       return this.$store.getters.getUserId;
