@@ -16,7 +16,7 @@
     </p>
 
     <span class="mt-4">
-      <h1>Made with love by</h1>
+      <h1>Made with ❤️ by</h1>
       <v-divider />
     </span>
 
