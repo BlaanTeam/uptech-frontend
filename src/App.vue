@@ -19,8 +19,11 @@
             />
           </div>
           <div v-show="!chatRoute" class="right-side">
-            <Trends />
             <Search />
+            <div class="trends-and-suggestions">
+              <Trends />
+              <UsersSuggestion />
+            </div>
           </div>
         </div>
       </v-main>
@@ -35,7 +38,8 @@ export default {
     AuthLayout: () => import("@/layouts/AuthLayout"),
     AppBar: () => import("@/layouts/partials/Auth/AppBar"),
     Trends: () => import("@/components/Trends/Trends"),
-    Search: () => import("@/components/Search/Search")
+    Search: () => import("@/components/Search/Search"),
+    UsersSuggestion: () => import("@/components/Suggestions/UsersSuggestion")
   },
   data: () => ({
     includes: ["Profile"]
@@ -107,6 +111,16 @@ main {
   width: 28vw;
   position: relative;
   padding: 4px 10px 10px 15px;
+  .trends-and-suggestions {
+    position: fixed;
+    max-width: 360px;
+    width: 100%;
+    height: 100%;
+    margin-top: 52px;
+    display: flex;
+    flex-direction: column;
+    max-height: 590px;
+  }
 }
 .v-application a {
   color: inherit !important;

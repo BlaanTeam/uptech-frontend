@@ -107,6 +107,7 @@ export default {
             this.userInfo.requestedByViewer = true;
             console.log("FollowUnfollow.vue: Follow request sent :)");
           }
+          this.$emit("followed");
         } else
           console.log(
             "FollowUnfollow.vue(followUser): No error but nothing changed :("
