@@ -110,7 +110,8 @@ export default {
   top: 0;
   z-index: 10;
   width: 100%;
-  height: 11vh !important;
+  height: 72px !important;
+  background: yellowgreen;
 }
 .conv-list-item {
   position: relative;
