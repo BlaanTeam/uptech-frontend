@@ -86,6 +86,9 @@ export default {
   top: unset !important;
   width: 45vw;
   max-width: 610px !important;
+  @media screen and (max-width: 800px) {
+    width: 100vw;
+  }
 }
 .theme--light {
   .app-bar .v-toolbar .v-sheet {

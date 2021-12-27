@@ -104,6 +104,9 @@ main {
   max-width: 610px;
   min-height: 100vh;
   padding-top: 52px !important;
+  @media screen and (max-width: 800px) {
+    width: 100vw;
+  }
 }
 .chat-view {
   width: 80vw !important;
@@ -124,6 +127,9 @@ main {
     display: flex;
     flex-direction: column;
     max-height: 590px;
+  }
+  @media screen and (max-width: 800px) {
+    display: none;
   }
 }
 .v-application a {
