@@ -4,11 +4,11 @@
       :fillColor="$theme.currentTheme.secondarybg"
       class="background"
     />
-    <v-row no-gutters class="sign-up__form align-center">
+    <v-row no-gutters class="sign-up__form app-width">
       <v-col class="d-none d-md-flex">
         <SignupSvg width="400" />
       </v-col>
-      <v-col class="px-md-8 px-sm-1 align-self-start mt-14">
+      <v-col class="px-md-8 px-sm-1 mt-14">
         <v-form ref="signup" v-model="validity">
           <v-text-field
             append-icon="mdi-account"
@@ -164,7 +164,8 @@ export default {
 <style lang="scss">
 .sign-up {
   position: relative;
-  height: 100%;
+  height: 100vh;
+  padding-top: 4vh !important;
   z-index: 1;
   .background {
     position: absolute;

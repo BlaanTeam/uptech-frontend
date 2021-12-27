@@ -1,6 +1,6 @@
 <template>
   <div class="header d-flex">
-    <v-app-bar class="header__nav px-md-10" flat>
+    <v-app-bar class="header__nav app-width" flat>
       <!--------------- Brand area --------------->
       <div class="d-flex">
         <router-link class="logo d-flex align-center" to="/">

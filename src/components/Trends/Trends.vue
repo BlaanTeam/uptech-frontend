@@ -54,7 +54,7 @@ export default {};
   right: -20px;
   top: 4px;
   transform: rotate(45deg);
-  background: rgb(2, 179, 82);
+  background: rgb(0, 161, 94);
   padding: 0px 20px 1px 20px;
 }
 </style>

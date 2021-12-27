@@ -3,7 +3,7 @@
     <div class="sign-in__background">
       <WaveSvg :fillColor="$theme.currentTheme.secondarybg" />
     </div>
-    <v-card class="mx-auto bg lighten-1" width="550">
+    <v-card class="mx-auto my-0 bg lighten-1 app-width" width="550">
       <div class="text-center">
         <span class="d-inline-block rounded-xl mt-1 primary">
           <v-icon size="37">

@@ -4,7 +4,7 @@
     <notifications :duration="10000" position="bottom left" group="success" />
 
     <UnAuthLayout v-if="!loggedIn" :style="unAuthBackground">
-      <v-main>
+      <v-main class="main">
         <router-view></router-view>
       </v-main>
     </UnAuthLayout>
@@ -68,6 +68,10 @@ export default {
 };
 </script>
 <style lang="scss">
+.app-width {
+  max-width: 1250px !important;
+  margin: 0 auto !important;
+}
 .auth-layout .v-application--wrap {
   max-width: 1250px !important;
   margin: 0 auto !important;

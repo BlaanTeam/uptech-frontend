@@ -1,5 +1,5 @@
 <template>
-  <v-container class="about pt-10 d-flex flex-column align-center">
+  <div class="about pt-10 d-flex flex-column align-center app-width">
     <span>
       <h1>Hello there 👋</h1>
       <v-divider />
@@ -71,7 +71,7 @@
       </v-col>
     </v-row>
     <span class="mt-10">
-      <h1>Contributers</h1>
+      <h1>Contributors</h1>
       <v-divider />
     </span>
     <v-row class="pb-10 pt-4">
@@ -114,7 +114,7 @@
         </v-card>
       </v-col>
     </v-row>
-  </v-container>
+  </div>
 </template>
 
 <script>

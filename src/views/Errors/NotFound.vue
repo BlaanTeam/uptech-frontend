@@ -1,5 +1,5 @@
 <template>
-  <div class="not-found px-2 pt-15 fill-height ">
+  <div class="not-found px-2 pt-15 fill-height app-width">
     <div class="d-flex flex-column mx-auto">
       <p class="display-3 text-center">{{ $t("notFound.h1") }}</p>
 

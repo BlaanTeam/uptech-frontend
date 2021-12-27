@@ -1,7 +1,7 @@
 <template>
   <div class="home ma-0 pa-0 ">
-    <section class="first-section pa-4 px-10">
-      <v-row class="first-section__header">
+    <section class="first-section pa-4 px-10 ">
+      <v-row class="first-section__header app-width">
         <v-col class="ms-1 align-self-center">
           <h1
             class="first-section__title display-2 text--primary pb-2 font-weight-regular"
@@ -59,6 +59,7 @@ export default {
   .first-section {
     min-height: 80vh;
     position: relative;
+    padding-top: 8vh !important;
     &__background {
       width: 100vw;
       height: 100px;
@@ -66,13 +67,6 @@ export default {
       position: absolute;
       bottom: -100px;
       left: 0;
-    }
-  }
-}
-@media screen and (max-width: 700px) {
-  .home {
-    .first-section {
-      margin-top: 50px;
     }
   }
 }

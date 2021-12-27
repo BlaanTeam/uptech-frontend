@@ -1,5 +1,5 @@
 <template>
-  <v-app dark>
+  <v-app dark class="unauth-layout">
     <Nav />
     <slot></slot>
     <Footer />

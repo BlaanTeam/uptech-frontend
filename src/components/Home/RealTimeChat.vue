@@ -1,8 +1,8 @@
 <template>
-  <section class="real-time-chat pa-4 secondarybg">
-    <v-row class="align-center">
-      <v-col class="mt-4 image">
-        <RealTimeChatSvg />
+  <section class="real-time-chat secondarybg">
+    <v-row class="align-center app-width">
+      <v-col class="image me-14">
+        <RealTimeChatSvg class="mt-4" />
       </v-col>
       <v-col class="px-8">
         <h1 class="display-2 py-2 font-weight-regular">
@@ -13,19 +13,19 @@
         </p>
       </v-col>
     </v-row>
-    <div class="real-time-chat__background">
+    <!-- <div class="real-time-chat__background">
       <WaveSvg :fillColor="$theme.currentTheme.secondarybg" />
-    </div>
+    </div> -->
   </section>
 </template>
 
 <script>
-import WaveSvg from "@/components/svg/WaveSvg";
+// import WaveSvg from "@/components/svg/WaveSvg";
 import RealTimeChatSvg from "@/components/svg/RealTimeChatSvg";
 
 export default {
   components: {
-    WaveSvg,
+    // WaveSvg,
     RealTimeChatSvg
   }
 };
@@ -34,7 +34,7 @@ export default {
 .real-time-chat {
   min-height: 80vh;
   position: relative;
-  padding: 100px 0 60px 0;
+  padding: 20vh 0 10vh 0;
   z-index: 1;
   .image {
     svg {
