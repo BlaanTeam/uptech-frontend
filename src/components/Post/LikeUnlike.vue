@@ -1,9 +1,10 @@
 <template>
-  <div class="toggle-like-unlike">
+  <div class="toggle-like-unlike d-flex align-center">
     <span class="caption">{{ post.likes }}</span>
     <v-btn
-      class="ml-2 px-4 py-0  text-lowercase body-2"
+      class="ml-1 ps-2 pe-3 text-lowercase body-2"
       elevation="0"
+      height="32px"
       color="auth-secondarybg"
       @click="toggleLike"
       :loading="loading"

@@ -1,11 +1,14 @@
 <template>
-  <v-row :class="'justify-end add-comment' + post._id" no-gutters>
-    <v-col cols="1" class=" pa-0 ma-0">
-      <img src="@/assets/images/avatar.svg" width="44" class="mt-3" />
+  <v-row
+    :class="'align-center mx-auto px-1 py-0 add-comment add-comment' + post._id"
+    no-gutters
+  >
+    <v-col cols="1" class="d-flex align-center me-4">
+      <img src="@/assets/images/avatar.svg" width="36" />
     </v-col>
-    <v-col cols="8" class="pa-0 ma-0 ms-1">
+    <v-col class="d-flex align-center">
       <v-row no-gutters>
-        <v-col>
+        <v-col class="d-flex">
           <v-textarea
             id="addCommentTextArea"
             autofocus
@@ -17,7 +20,7 @@
             auto-grow
           />
         </v-col>
-        <v-col cols="1" class="ms-1 align-self-center">
+        <v-col cols="1" class="d-flex align-center justify-center">
           <Emojis
             left
             :attach="'.add-comment' + post._id"
@@ -27,10 +30,9 @@
         </v-col>
       </v-row>
     </v-col>
-    <v-col cols="2" class="ma-0 pa-0 align-self-center ms-2">
+    <v-col cols="1" class="mx-1">
       <v-btn
-        height="34"
-        class="pa-0 px-2"
+        icon
         :loading="loading"
         :disabled="loading"
         @click="addComment()"
@@ -78,4 +80,8 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+.add-comment {
+  max-width: 500px;
+}
+</style>

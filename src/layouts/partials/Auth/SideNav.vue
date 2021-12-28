@@ -117,6 +117,7 @@ export default {
 .v-navigation-drawer {
   width: 40vw !important;
   max-width: 256px !important;
+  min-width: 200px !important;
   left: unset !important;
   right: unset !important;
   .router-link-exact-active {

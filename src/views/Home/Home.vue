@@ -2,7 +2,7 @@
   <div class="home ma-0 pa-0 ">
     <section class="first-section pa-4 px-10 ">
       <v-row class="first-section__header app-width">
-        <v-col class="ms-1 align-self-center">
+        <v-col class="align-self-center">
           <h1
             class="first-section__title display-2 text--primary pb-2 font-weight-regular"
           >
@@ -23,7 +23,7 @@
             </v-btn>
           </div>
         </v-col>
-        <v-col class="align-self-end">
+        <v-col>
           <SocialSvg width="500" height="420" />
         </v-col>
       </v-row>

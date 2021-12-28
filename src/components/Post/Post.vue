@@ -2,7 +2,7 @@
   <v-card class="mb-2 py-0 post auth-secondarybg" :id="'card' + post._id">
     <v-card-title :class="'ma-0 pt-2 pb-3 card-title' + index">
       <v-row no-gutters>
-        <v-col lg="1" md="1" sm="2" class="pa-0 ma-0 ms-2">
+        <v-col lg="1" md="1" sm="4" class="pa-0 ma-0 me-2">
           <PopoverProfile :index="post._id" :userName="post.user.userName">
             <router-link
               :to="{
@@ -14,7 +14,7 @@
             </router-link>
           </PopoverProfile>
         </v-col>
-        <v-col lg="3" md="3" sm="5" class="pa-0 ma-0 ms-1 mt-n1">
+        <v-col lg="3" md="3" sm="6" cols="4" class="pa-0 ma-0 mt-n1">
           <PopoverProfile :index="post._id" :userName="post.user.userName">
             <router-link
               :to="{
@@ -112,16 +112,17 @@
       </a>
     </div>
     <v-divider></v-divider>
-    <v-card-actions class="px-4 py-0">
-      <v-row class="text-center py-0" no-gutters>
-        <v-col class="pa-2">
+    <v-card-actions class="py-0">
+      <v-row class="py-1" no-gutters>
+        <v-col class="d-flex justify-center align-center">
           <LikeUnlike :post="post" />
         </v-col>
-        <v-col class="pa-2">
-          <div>
+        <v-col class="d-flex justify-center">
+          <div class="d-flex align-center">
             <span class="caption">{{ post.comments }}</span>
             <v-btn
-              class="ml-2 caption"
+              class="ml-1 px-2 caption"
+              height="32px"
               @click="commentExpanded = !commentExpanded"
               elevation="0"
               color="auth-secondarybg text-lowercase body-2"
@@ -131,8 +132,12 @@
             </v-btn>
           </div>
         </v-col>
-        <v-col class="pa-2">
-          <v-btn elevation="0" color="auth-secondarybg text-lowercase body-2">
+        <v-col class="d-flex justify-center">
+          <v-btn
+            elevation="0"
+            color="auth-secondarybg"
+            class="text-lowercase body-2 px-2 ms-2"
+          >
             <v-icon left size="16">mdi-share-variant</v-icon>
             {{ $t("share") }}
           </v-btn>

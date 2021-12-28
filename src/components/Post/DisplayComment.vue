@@ -1,7 +1,7 @@
 <template>
-  <div class="display-comments py-2" :id="'comment' + comment._id">
-    <v-row class="justify-center" no-gutters>
-      <v-col cols="1">
+  <div class="display-comments mx-auto py-2" :id="'comment' + comment._id">
+    <v-row class="px-1 ma-0" no-gutters>
+      <v-col cols="1" class="me-3">
         <PopoverProfile :index="comment._id" :userName="comment.user.userName">
           <router-link
             :to="{
@@ -9,7 +9,7 @@
               params: { userName: comment.user.userName }
             }"
           >
-            <img class="ms-2" src="@/assets/images/avatar.svg" width="36" />
+            <img src="@/assets/images/avatar.svg" width="36" />
           </router-link>
         </PopoverProfile>
       </v-col>
@@ -71,7 +71,7 @@
         </v-row>
       </v-col>
 
-      <v-col cols="1" class="align-self-center">
+      <v-col class="align-self-center">
         <v-menu
           :attach="'#comment' + comment._id"
           nudge-right="25"
@@ -138,7 +138,7 @@
         </v-menu>
       </v-col>
       <v-row no-gutters>
-        <v-col cols="4" class="ms-auto text-end pe-2">
+        <v-col cols="5" class="ms-auto text-end pe-2">
           <timeago
             class="font-weight-light text--disabled caption"
             :datetime="comment.createdAt"
@@ -228,6 +228,9 @@ export default {
 .display-comments[data-delete="true"] {
   transform: translateX(-100vh);
   opacity: 0;
+}
+.display-comments {
+  max-width: 500px;
 }
 .comment__content {
   word-break: break-word;
