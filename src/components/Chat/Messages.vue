@@ -1,7 +1,7 @@
 <template>
-  <div class="messages-box ms-auto">
+  <div class="bg messages-box ms-auto">
     <v-card flat height="100%" class="bg messages-box__card">
-      <v-card-title class="bg messages-box__header px-2 py-2">
+      <v-card-title class="bg messages-box__header px-2 py-2 mb-1">
         <v-btn
           class="me-2"
           v-if="$vuetify.breakpoint.smAndDown"
@@ -62,7 +62,7 @@
         <h4>Sorry you can't send messages</h4>
       </div>
       <div v-else class="messages-box__messages__container">
-        <v-card-text class="bg messages-box__messages d-flex px-6">
+        <v-card-text class="messages-box__messages d-flex px-6">
           <infinite-loading direction="top" @infinite="loadMessages">
           </infinite-loading>
           <div
@@ -85,22 +85,7 @@
         <v-btn icon width="30" height="30">
           <v-icon color="primary">mdi-image</v-icon>
         </v-btn>
-        <v-textarea
-          id="sendMessageTextArea"
-          class="mx-2"
-          hide-details
-          autofocus
-          rounded
-          filled
-          auto-grow
-          dense
-          :rows="1"
-          @input="emitTyping"
-          @keydown.enter.exact.prevent
-          @keyup.enter.exact="sendMessage()"
-          v-model="content.value"
-        />
-        <div class="ms-n14">
+        <div class="d-flex justify-center ms-1 me-n6" style="width: 20px">
           <Emojis
             left
             top
@@ -109,6 +94,22 @@
             :inputModel="content"
           />
         </div>
+        <v-textarea
+          id="sendMessageTextArea"
+          class="px-0 py-0"
+          hide-details
+          autofocus
+          rounded
+          filled
+          rows="1"
+          auto-grow
+          dense
+          @input="emitTyping"
+          @keydown.enter.exact.prevent
+          @keyup.enter.exact="sendMessage()"
+          v-model="content.value"
+        />
+
         <v-btn class="mx-1" icon @click.prevent="sendMessage()">
           <v-icon color="primary">mdi-send</v-icon>
         </v-btn>
@@ -252,17 +253,14 @@ export default {
 }
 .messages-box__header {
   box-shadow: 0px 3px 10px rgba(0, 0, 0, 0.2);
-  position: absolute;
-  top: 0;
-  z-index: 2;
+  height: 60px;
   width: 100%;
 }
 .messages-box {
   max-height: 100vh;
   &__messages__container {
     width: 100%;
-    height: 90%;
-    padding-top: 56px;
+    height: 82vh;
   }
   &__messages {
     width: 100%;
@@ -272,7 +270,6 @@ export default {
     overflow-y: auto;
   }
   &__actions {
-    height: 10%;
     box-shadow: 0px -3px 10px rgba(0, 0, 0, 0.2);
     position: absolute;
     bottom: 0;
@@ -281,6 +278,9 @@ export default {
     #sendMessageTextArea {
       max-height: 100px;
       overflow-y: auto;
+    }
+    .v-input__slot {
+      padding: 0 14px 2px 26px !important;
     }
   }
 }
