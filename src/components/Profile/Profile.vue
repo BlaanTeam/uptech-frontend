@@ -1,7 +1,7 @@
 <template>
   <div class="profile">
-    <v-row class="pt-10 align-center" no-gutters>
-      <v-col cols="3" class="ms-2 lighten-1 text-center ">
+    <v-row class="pt-8 align-center justify-center" no-gutters wrap>
+      <v-col class="ms-2 lighten-1 text-center profile__image">
         <img
           src="@/assets/images/avatar.svg"
           width="150"
@@ -9,7 +9,7 @@
           color="primary"
         />
       </v-col>
-      <v-col class="ms-2 pe-2">
+      <v-col class="pt-4 ms-2 px-2 mx-auto profile__info">
         <h2
           v-if="userInfo.profile.firstName || userInfo.profile.lastName"
           class="title mt-n3 d-inline-block"
@@ -135,17 +135,27 @@ export default {
 };
 </script>
 
-<style>
-.profile a:hover {
-  text-decoration: underline;
-}
-.profile .follows:hover {
-  text-decoration: underline;
-}
-.profile .follows-disabled {
-  pointer-events: none;
-}
-.profile .bio {
-  white-space: pre-line;
+<style lang="scss">
+.profile {
+  &__image {
+    min-width: 154px !important;
+    max-width: 154px !important;
+  }
+  &__info {
+    min-width: 300px !important;
+    margin: 0 auto;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+  .follows:hover {
+    text-decoration: underline;
+  }
+  .follows-disabled {
+    pointer-events: none;
+  }
+  .bio {
+    white-space: pre-line;
+  }
 }
 </style>

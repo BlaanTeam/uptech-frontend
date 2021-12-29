@@ -1,5 +1,5 @@
 <template>
-  <div class="tabs mt-8 px-4">
+  <div class="tabs mt-8 px-2">
     <v-tabs v-model="tabs" centered grow background-color="bg">
       <v-tab>
         {{ $t("posts") }}
