@@ -80,6 +80,10 @@ export default {
   .auth-main__container {
     border-left: 1px solid #adadad;
     border-right: 1px solid #adadad;
+    @media screen and (max-width: 800px) {
+      border-left: unset;
+      border-right: unset;
+    }
   }
   .chat-view {
     border-right: 1px solid #adadad;
@@ -89,6 +93,10 @@ export default {
   .auth-main__container {
     border-left: 1px solid rgba(255, 255, 255, 0.12);
     border-right: 1px solid rgba(255, 255, 255, 0.12);
+    @media screen and (max-width: 800px) {
+      border-left: unset;
+      border-right: unset;
+    }
   }
   .chat-view {
     border-right: 1px solid rgba(255, 255, 255, 0.12);

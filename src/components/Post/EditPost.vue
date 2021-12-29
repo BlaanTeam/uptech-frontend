@@ -6,49 +6,38 @@
           <slot></slot>
         </span>
       </template>
-      <v-card elevation="4" class="auth-secondarybg pe-4 edit-post-dialog">
-        <v-card-title>
-          <v-row>
+      <v-card elevation="4" class="auth-secondarybg px-0 py-0 edit-post-dialog">
+        <v-card-title class="px-0 py-2">
+          <v-row no-gutters>
             <v-col cols="2" class="pa-0 ma-0 text-center">
               <img
                 src="@/assets/images/avatar.svg"
-                width="40"
+                width="36"
                 color="green"
-                class="mt-2"
+                class="mt-4"
               />
             </v-col>
             <v-col class="pa-0 ma-0 pe-4" height="100px">
               <v-textarea
                 id="EditTextArea"
                 autofocus
-                append-outer-icon="mdi-close"
-                @click:append-outer="clearTextArea"
-                placeholder="What's on your mind"
-                label=""
+                class="ma-0 pa-0"
                 auto-grow
-                :rows="
-                  parseInt(
-                    content.value.length > 100
-                      ? content.value.length / 30
-                      : content.value.length / 10
-                  )
-                "
-                height="auto"
+                rows="6"
                 counter="5000"
                 v-model="content.value"
               />
             </v-col>
           </v-row>
         </v-card-title>
-
         <v-divider></v-divider>
-        <v-card-actions class="px-4">
+        <v-card-actions class="px-0">
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
               <v-btn
                 icon
                 elevation="0"
-                class="ms-4 me-2 options"
+                class="options me-n2"
                 @click="isPrivate = !isPrivate"
                 v-bind="attrs"
                 v-on="on"
@@ -72,7 +61,7 @@
 
           <DeletePost class="ms-auto" :post="post" :index="index">
             <v-btn
-              class="pa-0 px-1 ma-0 caption text-capitalize"
+              class="px-0 ma-0 caption text-capitalize"
               elevation="0"
               text
               color="red"
@@ -83,19 +72,20 @@
             </v-btn>
           </DeletePost>
           <v-btn
-            class="mx-1 px-1 ma-0  text-capitalize"
+            class="px-0 ma-0 text-capitalize"
             elevation="0"
             text
             color="info"
             @click="close"
             height="30"
+            width="40"
           >
             {{ $t("cancel") }}
           </v-btn>
           <v-btn
             :disabled="btnDisabler"
             elevation="0"
-            class="white--text"
+            class="white--text me-2"
             color="primary"
             @click="editPost"
             height="30"
@@ -135,9 +125,9 @@ export default {
     }
   },
   methods: {
-    clearTextArea() {
-      this.content.value = "";
-    },
+    // clearTextArea() {
+    //   this.content.value = "";
+    // },
     close() {
       this.dialog = false;
       this.content.value = this.post.content;

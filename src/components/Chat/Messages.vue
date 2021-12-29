@@ -1,7 +1,7 @@
 <template>
   <div class="messages-box ms-auto">
     <v-card flat height="100%" class="bg messages-box__card">
-      <v-card-title class="bg messages-box__header px-4">
+      <v-card-title class="bg messages-box__header px-2 py-2">
         <v-btn
           class="me-2"
           v-if="$vuetify.breakpoint.smAndDown"
@@ -41,7 +41,10 @@
           </v-btn>
         </div>
       </v-card-title>
-      <div v-if="user && user.blockedByViewer" class="mt-14 text-center bg">
+      <div
+        v-if="user && user.blockedByViewer"
+        class="d-flex flex-column messages-box__messages justify-center text-center bg"
+      >
         <h2>You have been blocked this user</h2>
         <h4>Unblock to send messages</h4>
         <Unblock :userInfo="user">
@@ -53,36 +56,38 @@
       </div>
       <div
         v-else-if="user && user.hasBlockedViewer"
-        class="mt-14 text-center bg"
+        class="d-flex flex-column messages-box__messages justify-center text-center bg"
       >
         <h2>You have been blocked from this user</h2>
         <h4>Sorry you can't send messages</h4>
       </div>
-      <v-card-text v-else class="bg messages-box__messages d-flex pt-4 px-6">
-        <infinite-loading direction="top" @infinite="loadMessages">
-        </infinite-loading>
-        <div
-          v-for="message in messages"
-          :key="message._id"
-          class="message__container"
-          :id="'message' + message._id"
-        >
-          <Message :message="message" @unsend="unsent(message)" />
-        </div>
-        <div v-if="typing" class="ps-2">
-          <Dots />
-        </div>
-      </v-card-text>
-      <v-card-actions class="messages-box__actions bg px-6">
-        <v-btn icon>
+      <div v-else class="messages-box__messages__container">
+        <v-card-text class="bg messages-box__messages d-flex px-6">
+          <infinite-loading direction="top" @infinite="loadMessages">
+          </infinite-loading>
+          <div
+            v-for="message in messages"
+            :key="message._id"
+            class="message__container"
+            :id="'message' + message._id"
+          >
+            <Message :message="message" @unsend="unsent(message)" />
+          </div>
+          <div v-if="typing" class="ps-2">
+            <Dots />
+          </div>
+        </v-card-text>
+      </div>
+      <v-card-actions class="px-0 messages-box__actions bg">
+        <v-btn icon width="30" height="30" class="ms-1 mr-n2">
           <v-icon color="primary">mdi-plus-box</v-icon>
         </v-btn>
-        <v-btn icon>
+        <v-btn icon width="30" height="30">
           <v-icon color="primary">mdi-image</v-icon>
         </v-btn>
         <v-textarea
           id="sendMessageTextArea"
-          class="mx-4"
+          class="mx-2"
           hide-details
           autofocus
           rounded
@@ -253,17 +258,21 @@ export default {
   width: 100%;
 }
 .messages-box {
-  &__card {
-    padding-top: 64px;
+  max-height: 100vh;
+  &__messages__container {
+    width: 100%;
+    height: 90%;
+    padding-top: 56px;
   }
   &__messages {
     width: 100%;
-    height: 90%;
+    height: 100%;
     flex-direction: column;
-    padding: 30px 0px;
+    padding: 0 0 30px 0;
     overflow-y: auto;
   }
   &__actions {
+    height: 10%;
     box-shadow: 0px -3px 10px rgba(0, 0, 0, 0.2);
     position: absolute;
     bottom: 0;

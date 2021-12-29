@@ -39,7 +39,6 @@ export default {
     }
   },
   mounted() {
-    console.log(this);
     this.$store.state.MessagesModule.msgsCount = 0;
   }
 };

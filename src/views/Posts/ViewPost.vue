@@ -1,15 +1,17 @@
 <template>
-  <div class="view-post mt-5">
-    <template>
-      <PostSkeleton v-if="!loaded">
-        <CommentSkeleton v-for="n in 3" :key="n" />
-      </PostSkeleton>
-      <Post v-else :post="post" :comments="comments">
-        <template #commentsLoading>
-          <infinite-loading @infinite="infiniteHandler"> </infinite-loading>
-        </template>
-      </Post>
-    </template>
+  <div class="view-post__container">
+    <div class="view-post mt-5">
+      <template>
+        <PostSkeleton v-if="!loaded">
+          <CommentSkeleton v-for="n in 3" :key="n" />
+        </PostSkeleton>
+        <Post v-else :post="post" :comments="comments">
+          <template #commentsLoading>
+            <infinite-loading @infinite="infiniteHandler"> </infinite-loading>
+          </template>
+        </Post>
+      </template>
+    </div>
   </div>
 </template>
 
@@ -75,8 +77,10 @@ export default {
 </script>
 
 <style lang="scss">
+.view-post__container {
+  padding: 30px 10px 40px 10px;
+}
 .view-post {
-  padding: 16px 10px 40px 10px;
   overflow-y: auto;
   overflow-x: hidden;
   .view-post-btn {

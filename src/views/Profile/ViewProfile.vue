@@ -16,15 +16,16 @@
 
 <script>
 import ProfileSkeleton from "@/components/Skeletons/ProfileSkeleton";
+import Profile from "@/components/Profile/Profile";
 
 export default {
   name: "ViewProfile",
   components: {
+    ProfileSkeleton,
+    Profile,
     Menu: () => import("@/components/Profile/Menu"),
     Edit: () => import("@/components/Profile/Edit"),
-    Profile: () => import("@/components/Profile/Profile"),
-    Tabs: () => import("@/components/Profile/Tabs"),
-    ProfileSkeleton
+    Tabs: () => import("@/components/Profile/Tabs")
   },
 
   data: () => ({

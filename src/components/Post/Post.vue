@@ -46,7 +46,7 @@
           </v-tooltip>
         </router-link>
 
-        <v-col lg="1" md="1" sm="2" class="pa-0 ma-0 text-center">
+        <v-col lg="1" md="1" sm="2" class="pa-0 ma-0 text-end">
           <v-menu
             :attach="'.card-title' + index"
             nudge-right="25"
