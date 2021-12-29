@@ -87,7 +87,6 @@
         </v-btn>
         <div class="d-flex justify-center me-n10" style="z-index: 2">
           <Emojis
-            left
             top
             attach=".messages-box__actions"
             element="sendMessageTextArea"
