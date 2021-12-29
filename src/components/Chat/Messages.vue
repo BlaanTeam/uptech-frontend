@@ -85,7 +85,7 @@
         <v-btn icon width="30" height="30">
           <v-icon color="primary">mdi-image</v-icon>
         </v-btn>
-        <div class="d-flex justify-center ms-1 me-n6" style="width: 20px">
+        <div class="d-flex justify-center me-n10" style="z-index: 2">
           <Emojis
             left
             top
@@ -280,7 +280,7 @@ export default {
       overflow-y: auto;
     }
     .v-input__slot {
-      padding: 0 14px 2px 26px !important;
+      padding: 0 14px 2px 34px !important;
     }
   }
 }
