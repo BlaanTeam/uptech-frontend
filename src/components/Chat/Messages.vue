@@ -1,7 +1,20 @@
 <template>
   <div class="messages-box ms-auto">
     <v-card flat height="100%" class="bg messages-box__card">
-      <v-card-title class="bg messages-box__header px-6">
+      <v-card-title class="bg messages-box__header px-4">
+        <v-btn
+          class="me-2"
+          v-if="$vuetify.breakpoint.smAndDown"
+          text
+          icon
+          width="35"
+          height="35"
+          @click="$store.state.drawer = !$store.state.drawer"
+        >
+          <v-icon>
+            mdi-menu
+          </v-icon>
+        </v-btn>
         <router-link
           :to="{
             name: 'ViewProfile',

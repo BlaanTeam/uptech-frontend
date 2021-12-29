@@ -112,6 +112,10 @@ main {
   width: 80vw !important;
   max-width: 1000px !important;
   min-height: 100vh;
+  @media screen and (max-width: 800px) {
+    width: 100vw !important;
+    max-width: 100vw !important;
+  }
 }
 
 .right-side {
