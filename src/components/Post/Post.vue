@@ -2,7 +2,7 @@
   <v-card class="mb-2 py-0 post auth-secondarybg" :id="'card' + post._id">
     <v-card-title :class="'ma-0 pt-2 pb-3 card-title' + index">
       <v-row no-gutters>
-        <v-col lg="1" md="1" sm="4" class="pa-0 ma-0 me-2">
+        <v-col style="max-width:44px;min-width:44px" class="pa-0 ma-0 me-2">
           <PopoverProfile :index="post._id" :userName="post.user.userName">
             <router-link
               :to="{
@@ -14,7 +14,7 @@
             </router-link>
           </PopoverProfile>
         </v-col>
-        <v-col lg="3" md="3" sm="6" cols="4" class="pa-0 ma-0 mt-n1">
+        <v-col cols="6" class="pa-0 ma-0 mt-n1">
           <PopoverProfile :index="post._id" :userName="post.user.userName">
             <router-link
               :to="{
